@@ -2,8 +2,11 @@ import React from "react";
 import { Box, Paper, Typography } from "@mui/material";
 import ResumeFormContainer from "../containers/ResumeFormContainer";
 
+
 function ResumeBuilderPage() {
   return (
+
+    
     <Box
       sx={{
         display: "flex",
@@ -11,10 +14,11 @@ function ResumeBuilderPage() {
         justifyContent: "center",
         minHeight: "100vh",
         width: "100vw",
-        backgroundColor: "#111213ff", // light blue background
+        backgroundColor: "#101111ff", // light blue background
         px: 2,
       }}
     >
+      
       <Paper
         elevation={6}
         sx={{
@@ -27,6 +31,7 @@ function ResumeBuilderPage() {
         }}
       >
         <Box textAlign="left" mb={3}>
+        
           <Typography
             variant="h4"
             fontWeight="bold"

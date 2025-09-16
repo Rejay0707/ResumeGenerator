@@ -8,7 +8,7 @@ function ResumePreview({ resumeText }) {
       sx={{
         p: 3,
         borderRadius: 2,
-        backgroundColor: "#994545ff",
+        backgroundColor: "#7c9945ff",
         mt: 10,          // <-- adds margin top and bottom (vertical spacing)
       }}
     >

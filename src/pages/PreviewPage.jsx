@@ -157,33 +157,33 @@ function PreviewPage() {
 
   return (
     <Box
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        minHeight: "100vh",
-        width: "100vw",
-        backgroundColor: "#5d6981ff",
-        px: 2,
-        py: 4,
-        overflowX: "hidden",
-        alignItems: "center",  // center all children horizontally
-      }}
-    >
+          sx={{
+    display: "flex",
+    justifyContent: "center",  // horizontally center
+    alignItems: "center",      // vertically center
+    minHeight: "100vh",
+    width: "100vw",            // use full viewport width
+    maxWidth: "100%",          // prevent overflow
+    backgroundColor: "#edeff3ff",
+    boxSizing: "border-box",
+    px: { xs: 1, sm: 4 },      // responsive horizontal padding
+    overflowX:'hidden'
+  }}
+  >
       <Paper
-        sx={{
-          p: 5,
-          maxWidth: 750,
-          width: '100%',
-          boxSizing: "border-box",
-          backgroundColor: "#fff",
-          borderRadius: 3,
-          boxShadow: 3,
-          // marginLeft:'auto',
-          justifyContent:'center',
-          alignContent:'center'
-        }}
-        elevation={6}
-      >
+  sx={{
+    p: { xs: 3, sm: 5 },      // responsive padding
+    maxWidth: { xs: "100%", sm: 750 },
+    width: "100%",
+    boxSizing: "border-box",
+    backgroundColor: "#465666ff",
+    borderRadius: 3,
+    boxShadow: 3,
+    overflowX: "hidden",       // prevent horizontal overflow
+  }}
+  elevation={6}
+>
+
         {/* Name */}
         <Typography variant="h3" fontWeight="bold" gutterBottom>
           {sections.name || "John Doe"}

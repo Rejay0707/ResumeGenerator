@@ -14,6 +14,7 @@ import ResumePreview from "../components/ResumePreview.jsx";
 import SkillTag from "../components/SkillTag.jsx";
 import { useNavigate } from "react-router-dom";
 
+
 function ResumeFormContainer() {
   const [formData, setFormData] = useState({
     name: "",
@@ -120,7 +121,9 @@ Skills: React, Node.js, MongoDB, Tailwind CSS, Socket.io`;
 
 
 return (
-  <Box sx={{ mx: "auto", mt: 5,px:0,overflowX:'hidden' }}>
+
+  <Box sx={{ mx: "auto", mt: -2,px:0,overflowX:'hidden' }}>
+    
     {/* <Paper sx={{ p: 3,px:0,overflowX:'hidden' }}> */}
     <Typography variant="h6" mb={1}>
           Basic Details
@@ -241,7 +244,7 @@ return (
         </Button>
 
         {/* Submit Button */}
-        <Box mt={4} display="flex" justifyContent="center">
+        <Box mt={2} display="flex" justifyContent="center">
           <Button
             type="submit"
             variant="contained"
