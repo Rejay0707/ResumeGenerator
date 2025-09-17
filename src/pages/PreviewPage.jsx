@@ -1,17 +1,32 @@
-import React from "react";
-import { Box, Paper, Typography, Button, Divider } from "@mui/material";
+
+
+import React, { useRef, useState } from "react";
+import {
+  Box,
+  Paper,
+  Typography,
+  Button,
+  Divider,
+  CircularProgress,
+} from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import SkillTag from "../components/SkillTag";
-import SchoolIcon from '@mui/icons-material/School';
-import WorkIcon from '@mui/icons-material/Work';
-import FolderOpenIcon from '@mui/icons-material/FolderOpen';
-import BuildIcon from '@mui/icons-material/Build';
+import SchoolIcon from "@mui/icons-material/School";
+import WorkIcon from "@mui/icons-material/Work";
+import FolderOpenIcon from "@mui/icons-material/FolderOpen";
+import BuildIcon from "@mui/icons-material/Build";
+import DownloadIcon from "@mui/icons-material/Download"
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 
 function PreviewPage() {
   const location = useLocation();
   const navigate = useNavigate();
 
   const { resumeText, skills } = location.state || {};
+
+  const [loading, setLoading] = useState(false);
+  const resumeRef = useRef(null);
 
   if (!resumeText) {
     return (
@@ -75,6 +90,61 @@ function PreviewPage() {
 
   const sections = parseResume(resumeText);
 
+const handleDownload = async () => {
+  if (!resumeRef.current) return;
+
+  setLoading(true);
+  try {
+    const element = resumeRef.current;
+
+    // Create canvas of the resume
+    const canvas = await html2canvas(element, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: "#465666ff",
+      scrollY: -window.scrollY,
+    });
+
+    const imgData = canvas.toDataURL("image/png");
+
+    // Standard A4 page
+    const pdf = new jsPDF("p", "pt", "a4");
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+
+    const imgWidth = pageWidth;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+    // If image fits in one page
+    if (imgHeight <= pageHeight) {
+      pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+    } else {
+      // Slice the canvas into A4 chunks
+      let position = 0;
+      let heightLeft = imgHeight;
+
+      while (heightLeft > 0) {
+        pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+        position -= pageHeight;
+
+        if (heightLeft > 0) {
+          pdf.addPage();
+        }
+      }
+    }
+
+    pdf.save("resume.pdf");
+  } catch (error) {
+    console.error("Failed to generate PDF:", error);
+    alert("Failed to download resume. Please try again.");
+  } finally {
+    setLoading(false);
+  }
+};
+
+
+
   return (
     <Box
       sx={{
@@ -88,9 +158,40 @@ function PreviewPage() {
         boxSizing: "border-box",
         px: { xs: 1, sm: 4 },
         overflowX: "hidden",
+        flexDirection: "column",
+        py: 4,
       }}
     >
+      {/* Back to Form button at top right */}
+      <Box
+        sx={{
+          position: "absolute",
+          top: 0,
+          left: { xs: 8, sm: 16 }, // move arrow a bit more right on xs screens
+          zIndex: 10,
+          cursor: "pointer",
+          userSelect: "none",
+        }}
+        onClick={() => navigate(-1)}
+        aria-label="Back to form"
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            navigate(-1);
+          }
+        }}
+      >
+        <Typography
+          variant="h4"
+          component="span"
+          sx={{ color: "#1976d2", fontWeight: "bold" }}
+        >
+          ←
+        </Typography>
+      </Box>
       <Paper
+        ref={resumeRef}
         sx={{
           p: { xs: 3, sm: 5 },
           maxWidth: { xs: "100%", sm: 750 },
@@ -100,9 +201,35 @@ function PreviewPage() {
           borderRadius: 3,
           boxShadow: 3,
           overflowX: "hidden",
+          color: "white",
+          userSelect: "text",
+          marginTop:'40px',
+          pl: { xs: 6, sm: 5 },
         }}
         elevation={6}
       >
+        {/* Download button at top right */}
+  <Button
+    variant="contained"
+    color="primary"
+    onClick={handleDownload}
+    disabled={loading}
+    startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <DownloadIcon />}
+    sx={{
+      position: "absolute",
+      top: { xs: 12, sm: 16 },
+      right: { xs: 12, sm: 16 },
+      zIndex: 10,
+      fontWeight: "bold",
+      textTransform: "none",
+      fontSize: { xs: "0.8rem", sm: "1rem" },
+      padding: { xs: "6px 12px", sm: "8px 16px" },
+      minWidth: "auto",
+      whiteSpace: "nowrap",
+    }}
+  >
+    {loading ? "Generating..." : "Download PDF"}
+  </Button>
         {/* Name */}
         <Typography variant="h3" fontWeight="bold" gutterBottom>
           {sections.name || "John Doe"}
@@ -121,7 +248,7 @@ function PreviewPage() {
           </Typography>
         </Box>
 
-        <Divider sx={{ mb: 4 }} />
+        <Divider sx={{ mb: 4, borderColor: "rgba(255,255,255,0.3)" }} />
 
         {/* Projects */}
         <Box mb={4}>
@@ -156,7 +283,7 @@ function PreviewPage() {
           ))}
         </Box>
 
-        <Divider sx={{ mb: 4 }} />
+        <Divider sx={{ mb: 4, borderColor: "rgba(255,255,255,0.3)" }} />
 
         {/* Internships */}
         <Box mb={4}>
@@ -198,7 +325,7 @@ function PreviewPage() {
           ))}
         </Box>
 
-        <Divider sx={{ mb: 4 }} />
+        <Divider sx={{ mb: 4, borderColor: "rgba(255,255,255,0.3)" }} />
 
         {/* Skills */}
         <Box mb={4}>
@@ -212,17 +339,29 @@ function PreviewPage() {
             <SkillTag skills={skills.length ? skills : sections.skills} />
           </Box>
         </Box>
-
-        {/* Back Button */}
-        <Box textAlign="center" mt={5}>
-          <Button variant="contained" onClick={() => navigate(-1)} size="large">
-            Back to Form
-          </Button>
-        </Box>
       </Paper>
+
+      {/* Buttons */}
+      {/* <Box
+        textAlign="center"
+        mt={4}
+        display="flex"
+        gap={2}
+        flexWrap="wrap"
+        justifyContent="center"
+      >
+        <Button
+          variant="outlined"
+          onClick={handleDownload}
+          size="large"
+          disabled={loading}
+          startIcon={loading ? <CircularProgress size={20} /> : null}
+        >
+          {loading ? "Generating PDF..." : "Download Resume"}
+        </Button>
+      </Box> */}
     </Box>
   );
 }
 
 export default PreviewPage;
-

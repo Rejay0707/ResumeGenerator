@@ -14,7 +14,6 @@ import ResumePreview from "../components/ResumePreview.jsx";
 import SkillTag from "../components/SkillTag.jsx";
 import { useNavigate } from "react-router-dom";
 
-
 function ResumeFormContainer() {
   const [formData, setFormData] = useState({
     name: "",
@@ -23,9 +22,9 @@ function ResumeFormContainer() {
     internships: [{ company: "", role: "", description: "" }],
   });
 
-  const [resume, setResume] = useState("");
-  const [skills, setSkills] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [resume] = useState("");
+  const [skills] = useState([]);
+  const [loading] = useState(false);
   const navigate = useNavigate();
 
   // Handle form input
@@ -48,47 +47,47 @@ function ResumeFormContainer() {
   };
 
   // Extract skills from AI output
-//   const handleGenerateSkills = (aiOutput) => {
-//     const skillLine = aiOutput.match(/Skills[:|-]\s*(.*)/i);
-//     if (skillLine && skillLine[1]) {
-//       const extracted = skillLine[1].split(",").map((s) => s.trim());
-//       setSkills(extracted);
-//     }
-//   };
+  //   const handleGenerateSkills = (aiOutput) => {
+  //     const skillLine = aiOutput.match(/Skills[:|-]\s*(.*)/i);
+  //     if (skillLine && skillLine[1]) {
+  //       const extracted = skillLine[1].split(",").map((s) => s.trim());
+  //       setSkills(extracted);
+  //     }
+  //   };
 
   // Submit form and generate resume
-//   const handleSubmit = async (e) => {
-//   e.preventDefault();
+  //   const handleSubmit = async (e) => {
+  //   e.preventDefault();
 
-// try {
-//   const aiOutput = await generateResumePrompt(formData);
-//   console.log(aiOutput)
+  // try {
+  //   const aiOutput = await generateResumePrompt(formData);
+  //   console.log(aiOutput)
 
-//   // extract skills
-//   const extractedSkills = [];
-//   const skillLine = aiOutput.match(/Skills[:|-]\s*(.*)/i);
-//   if (skillLine && skillLine[1]) {
-//     skillLine[1].split(",").forEach((s) => extractedSkills.push(s.trim()));
-//   }
+  //   // extract skills
+  //   const extractedSkills = [];
+  //   const skillLine = aiOutput.match(/Skills[:|-]\s*(.*)/i);
+  //   if (skillLine && skillLine[1]) {
+  //     skillLine[1].split(",").forEach((s) => extractedSkills.push(s.trim()));
+  //   }
 
-//   // navigate to preview page
-//   navigate("/preview", {
-//     state: { resumeText: aiOutput, skills: extractedSkills },
-//   });
+  //   // navigate to preview page
+  //   navigate("/preview", {
+  //     state: { resumeText: aiOutput, skills: extractedSkills },
+  //   });
 
-// } catch (error) {
-//   console.error("AI Error:", error);
-//   alert("Something went wrong while generating the resume. Please try again.");
-// }
-// };
+  // } catch (error) {
+  //   console.error("AI Error:", error);
+  //   alert("Something went wrong while generating the resume. Please try again.");
+  // }
+  // };
 
-const handleSubmit = (e) => {
-  e.preventDefault();
+  const handleSubmit = (e) => {
+    e.preventDefault();
 
-  try {
-    // Mock AI output for testing
-    const aiOutput = `John Doe
-Education: B.Tech in Computer Science
+    try {
+      // Mock AI output for testing
+      const aiOutput = `John Doe
+Education: B.Tech
 Projects:
 - Portfolio Website: Built a personal portfolio website using React and Tailwind CSS
 - Chat App: Created a real-time chat app using Node.js, Express, Socket.io
@@ -96,38 +95,33 @@ Internships:
 - Tech Solutions: Frontend Developer Intern, Worked on UI development using React
 Skills: React, Node.js, MongoDB, Tailwind CSS, Socket.io`;
 
-    console.log("AI Output (mock):", aiOutput);
+      console.log("AI Output (mock):", aiOutput);
 
-    // Extract skills from AI output
-    const extractedSkills = [];
-    const skillLine = aiOutput.match(/Skills[:|-]\s*(.*)/i);
-    if (skillLine && skillLine[1]) {
-      skillLine[1].split(",").forEach((s) => extractedSkills.push(s.trim()));
+      // Extract skills from AI output
+      const extractedSkills = [];
+      const skillLine = aiOutput.match(/Skills[:|-]\s*(.*)/i);
+      if (skillLine && skillLine[1]) {
+        skillLine[1].split(",").forEach((s) => extractedSkills.push(s.trim()));
+      }
+
+      // Navigate to PreviewPage with resume and skills
+      navigate("/preview", {
+        state: { resumeText: aiOutput, skills: extractedSkills },
+      });
+    } catch (error) {
+      console.error("AI Error:", error);
+      alert(
+        "Something went wrong while generating the resume. Please check your API quota or try again later."
+      );
     }
+  };
 
-    // Navigate to PreviewPage with resume and skills
-    navigate("/preview", {
-      state: { resumeText: aiOutput, skills: extractedSkills },
-    });
-
-  } catch (error) {
-    console.error("AI Error:", error);
-    alert(
-      "Something went wrong while generating the resume. Please check your API quota or try again later."
-    );
-  }
-};
-
-
-
-return (
-
-  <Box sx={{ mx: "auto", mt: -2,px:0,overflowX:'hidden' }}>
-    
-    {/* <Paper sx={{ p: 3,px:0,overflowX:'hidden' }}> */}
-    <Typography variant="h6" mb={1}>
-          Basic Details
-        </Typography>
+  return (
+    <Box sx={{ mx: "auto", mt: -2, px: 0, overflowX: "hidden" }}>
+      {/* <Paper sx={{ p: 3,px:0,overflowX:'hidden' }}> */}
+      <Typography variant="h6" mb={1}>
+        Basic Details
+      </Typography>
       <form onSubmit={handleSubmit}>
         <Grid container spacing={2} sx={{ width: "100%" }}>
           <Grid item xs={12} sm={6} sx={{ width: { xs: "100%", md: "340px" } }}>
@@ -158,7 +152,12 @@ return (
         </Typography>
         {formData.projects.map((project, index) => (
           <Grid container spacing={2} mb={2} key={index}>
-            <Grid item xs={12} md={6} sx={{ width: { xs: "100%", md: "340px" } }}>
+            <Grid
+              item
+              xs={12}
+              md={6}
+              sx={{ width: { xs: "100%", md: "340px" } }}
+            >
               <TextField
                 label="Project Title"
                 name="title"
@@ -167,7 +166,12 @@ return (
                 fullWidth
               />
             </Grid>
-            <Grid item xs={12} md={6} sx={{ width: { xs: "100%", md: "340px" } }}>
+            <Grid
+              item
+              xs={12}
+              md={6}
+              sx={{ width: { xs: "100%", md: "340px" } }}
+            >
               <TextField
                 label="Project Description"
                 name="description"
@@ -179,29 +183,29 @@ return (
           </Grid>
         ))}
         <Button
-  variant="outlined"
-  onClick={() => handleAdd("projects")}
-  sx={{
-    px: 2,
-    py: 2,
-    fontSize: "1rem",
-    borderRadius: 2,
-    mb: 3,
-    borderLeft: "4px solid #1976d2", // example left border color
-    // Keep border and background consistent on focus and active
-    "&:focus": {
-      outline: "none",
-      backgroundColor: "transparent",
-      borderLeft: "4px solid #1976d2",
-    },
-    "&:active": {
-      backgroundColor: "transparent",
-      borderLeft: "4px solid #1976d2",
-    },
-  }}
->
-  + Add Project
-</Button>
+          variant="outlined"
+          onClick={() => handleAdd("projects")}
+          sx={{
+            px: 2,
+            py: 2,
+            fontSize: "1rem",
+            borderRadius: 2,
+            mb: 3,
+            borderLeft: "4px solid #1976d2", // example left border color
+            // Keep border and background consistent on focus and active
+            "&:focus": {
+              outline: "none",
+              backgroundColor: "transparent",
+              borderLeft: "4px solid #1976d2",
+            },
+            "&:active": {
+              backgroundColor: "transparent",
+              borderLeft: "4px solid #1976d2",
+            },
+          }}
+        >
+          + Add Project
+        </Button>
 
         <Divider sx={{ my: 3 }} />
 
@@ -211,7 +215,12 @@ return (
         </Typography>
         {formData.internships.map((internship, index) => (
           <Grid container spacing={2} mb={2} key={index}>
-            <Grid item xs={12} md={6} sx={{ width: { xs: "100%", md: "340px" } }}>
+            <Grid
+              item
+              xs={12}
+              md={6}
+              sx={{ width: { xs: "100%", md: "340px" } }}
+            >
               <TextField
                 label="Company"
                 name="company"
@@ -220,7 +229,12 @@ return (
                 fullWidth
               />
             </Grid>
-            <Grid item xs={12} md={6} sx={{ width: { xs: "100%", md: "340px" } }}>
+            <Grid
+              item
+              xs={12}
+              md={6}
+              sx={{ width: { xs: "100%", md: "340px" } }}
+            >
               <TextField
                 label="Role"
                 name="role"
@@ -229,7 +243,12 @@ return (
                 fullWidth
               />
             </Grid>
-            <Grid item xs={12} md={12} sx={{ width: { xs: "100%", md: "700px" } }}>
+            <Grid
+              item
+              xs={12}
+              md={12}
+              sx={{ width: { xs: "100%", md: "700px" } }}
+            >
               <TextField
                 label="Description"
                 name="description"
@@ -241,27 +260,27 @@ return (
           </Grid>
         ))}
         <Button
-  variant="outlined"
-  onClick={() => handleAdd("internships")}
-  sx={{
-    px: 2,
-    py: 2,
-    fontSize: "1rem",
-    borderRadius: 2,
-    mb: 3,
-    borderLeft: "4px solid #1976d2", // example left border color
-    // Keep border and background consistent on focus and active
-    "&:focus": {
-      outline: "none",
-      backgroundColor: "transparent",
-      borderLeft: "4px solid #1976d2",
-    },
-    "&:active": {
-      backgroundColor: "transparent",
-      borderLeft: "4px solid #1976d2",
-    },
-  }}
->
+          variant="outlined"
+          onClick={() => handleAdd("internships")}
+          sx={{
+            px: 2,
+            py: 2,
+            fontSize: "1rem",
+            borderRadius: 2,
+            mb: 3,
+            borderLeft: "4px solid #1976d2", // example left border color
+            // Keep border and background consistent on focus and active
+            "&:focus": {
+              outline: "none",
+              backgroundColor: "transparent",
+              borderLeft: "4px solid #1976d2",
+            },
+            "&:active": {
+              backgroundColor: "transparent",
+              borderLeft: "4px solid #1976d2",
+            },
+          }}
+        >
           + Add Internship
         </Button>
 
@@ -298,11 +317,9 @@ return (
           <SkillTag skills={skills} />
         </Box>
       )}
-    {/* </Paper> */}
-  </Box>
-);
+      {/* </Paper> */}
+    </Box>
+  );
 }
 
 export default ResumeFormContainer;
-
-
