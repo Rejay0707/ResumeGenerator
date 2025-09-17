@@ -1,86 +1,11 @@
-// import React from "react";
-// import { Box, Typography, Paper, Button } from "@mui/material";
-// import { useLocation, useNavigate } from "react-router-dom";
-// import SkillTag from "../components/SkillTag";
-
-// function PreviewPage() {
-//   const location = useLocation();
-//   const navigate = useNavigate();
-
-//   // Data passed from form page
-//   const { resumeText, skills } = location.state || {};
-
-//   if (!resumeText) {
-//     return (
-//       <Box textAlign="center" mt={5}>
-//         <Typography variant="h6">No resume to display.</Typography>
-//         <Button variant="contained" onClick={() => navigate(-1)} sx={{ mt: 2 }}>
-//           Go Back
-//         </Button>
-//       </Box>
-//     );
-//   }
-
-//   return (
-//     <Box
-//       sx={{
-//         display: "flex",
-//         alignItems: "center",       // vertical center
-//         justifyContent: "center",   // horizontal center
-//         minHeight: "100vh",         // full viewport height
-//         width: "100vw",             // full viewport width
-//         backgroundColor: "#5d6981ff",
-//         px: 0,
-//         overflowX: "hidden"
-//       }}
-//     >
-//       <Paper
-//         sx={{
-//           p: 4,
-//           maxWidth: 800,
-//           width: "100%",
-//           margin: "auto",           // center horizontally inside flex container
-//           boxSizing: "border-box",  // ensure padding doesn't break width
-//         }}
-//       >
-//         <Typography variant="h4" fontWeight="bold" gutterBottom>
-//           Generated Resume
-//         </Typography>
-
-//         <Typography
-//           component="pre"
-//           sx={{
-//             whiteSpace: "pre-wrap",
-//             fontFamily: "Roboto, sans-serif",
-//             mb: 3,
-//           }}
-//         >
-//           {resumeText}
-//         </Typography>
-
-//         <Typography variant="h6" gutterBottom>
-//           Extracted Skills
-//         </Typography>
-//         <SkillTag skills={skills} />
-
-//         <Button
-//           variant="contained"
-//           sx={{ mt: 4 }}
-//           onClick={() => navigate(-1)}
-//         >
-//           Back to Form
-//         </Button>
-//       </Paper>
-//     </Box>
-//   );
-// }
-
-// export default PreviewPage;
-
 import React from "react";
 import { Box, Paper, Typography, Button, Divider } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import SkillTag from "../components/SkillTag";
+import SchoolIcon from '@mui/icons-material/School';
+import WorkIcon from '@mui/icons-material/Work';
+import FolderOpenIcon from '@mui/icons-material/FolderOpen';
+import BuildIcon from '@mui/icons-material/Build';
 
 function PreviewPage() {
   const location = useLocation();
@@ -90,7 +15,7 @@ function PreviewPage() {
 
   if (!resumeText) {
     return (
-      <Box textAlign="center"  mt={5}>
+      <Box textAlign="center" mt={5}>
         <Typography variant="h6">No resume to display.</Typography>
         <Button variant="contained" onClick={() => navigate(-1)} sx={{ mt: 2 }}>
           Go Back
@@ -99,8 +24,6 @@ function PreviewPage() {
     );
   }
 
-  // Parse resumeText to extract sections (simple parsing based on your mock data format)
-  // This is a basic example; you can improve parsing logic as needed.
   const parseResume = (text) => {
     const lines = text.split("\n").map((line) => line.trim());
     const sections = {
@@ -127,7 +50,6 @@ function PreviewPage() {
       } else if (currentSection === "education" && line) {
         sections.education = line;
       } else if (currentSection === "projects" && line.startsWith("-")) {
-        // Example: "- Portfolio Website: Built a personal portfolio website using React and Tailwind CSS"
         const projectLine = line.slice(1).trim();
         const [title, ...descParts] = projectLine.split(":");
         sections.projects.push({
@@ -135,7 +57,6 @@ function PreviewPage() {
           description: descParts.join(":").trim(),
         });
       } else if (currentSection === "internships" && line.startsWith("-")) {
-        // Example: "- Tech Solutions: Frontend Developer Intern, Worked on UI development using React"
         const internshipLine = line.slice(1).trim();
         const [company, ...rest] = internshipLine.split(":");
         const [role, ...descParts] = rest.join(":").split(",");
@@ -145,7 +66,6 @@ function PreviewPage() {
           description: descParts.join(",").trim(),
         });
       } else if (currentSection === "skills" && line) {
-        // Skills line might be comma separated
         sections.skills = line.split(",").map((s) => s.trim());
       }
     });
@@ -157,33 +77,32 @@ function PreviewPage() {
 
   return (
     <Box
-          sx={{
-    display: "flex",
-    justifyContent: "center",  // horizontally center
-    alignItems: "center",      // vertically center
-    minHeight: "100vh",
-    width: "100vw",            // use full viewport width
-    maxWidth: "100%",          // prevent overflow
-    backgroundColor: "#edeff3ff",
-    boxSizing: "border-box",
-    px: { xs: 1, sm: 4 },      // responsive horizontal padding
-    overflowX:'hidden'
-  }}
-  >
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "100vh",
+        width: "100vw",
+        maxWidth: "100%",
+        backgroundColor: "#edeff3ff",
+        boxSizing: "border-box",
+        px: { xs: 1, sm: 4 },
+        overflowX: "hidden",
+      }}
+    >
       <Paper
-  sx={{
-    p: { xs: 3, sm: 5 },      // responsive padding
-    maxWidth: { xs: "100%", sm: 750 },
-    width: "100%",
-    boxSizing: "border-box",
-    backgroundColor: "#465666ff",
-    borderRadius: 3,
-    boxShadow: 3,
-    overflowX: "hidden",       // prevent horizontal overflow
-  }}
-  elevation={6}
->
-
+        sx={{
+          p: { xs: 3, sm: 5 },
+          maxWidth: { xs: "100%", sm: 750 },
+          width: "100%",
+          boxSizing: "border-box",
+          backgroundColor: "#465666ff",
+          borderRadius: 3,
+          boxShadow: 3,
+          overflowX: "hidden",
+        }}
+        elevation={6}
+      >
         {/* Name */}
         <Typography variant="h3" fontWeight="bold" gutterBottom>
           {sections.name || "John Doe"}
@@ -191,10 +110,13 @@ function PreviewPage() {
 
         {/* Education */}
         <Box mb={4}>
-          <Typography variant="h5" fontWeight="bold" gutterBottom>
-            Education
-          </Typography>
-          <Typography variant="body1" sx={{ ml: 2 }}>
+          <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+            <SchoolIcon sx={{ mr: 1, color: "#1976d2" }} />
+            <Typography variant="h5" fontWeight="bold">
+              Education
+            </Typography>
+          </Box>
+          <Typography variant="body1" sx={{ ml: 4 }}>
             {sections.education || "B.Tech in Computer Science"}
           </Typography>
         </Box>
@@ -203,11 +125,14 @@ function PreviewPage() {
 
         {/* Projects */}
         <Box mb={4}>
-          <Typography variant="h5" fontWeight="bold" gutterBottom>
-            Projects
-          </Typography>
+          <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+            <FolderOpenIcon sx={{ mr: 1, color: "#1976d2" }} />
+            <Typography variant="h5" fontWeight="bold">
+              Projects
+            </Typography>
+          </Box>
           {sections.projects.length === 0 && (
-            <Typography variant="body2" sx={{ ml: 2, fontStyle: "italic" }}>
+            <Typography variant="body2" sx={{ ml: 4, fontStyle: "italic" }}>
               No projects listed.
             </Typography>
           )}
@@ -218,6 +143,7 @@ function PreviewPage() {
                 borderLeft: "4px solid #1976d2",
                 pl: 2,
                 mb: 3,
+                ml: 4,
               }}
             >
               <Typography variant="h6" fontWeight="bold">
@@ -234,11 +160,14 @@ function PreviewPage() {
 
         {/* Internships */}
         <Box mb={4}>
-          <Typography variant="h5" fontWeight="bold" gutterBottom>
-            Internships
-          </Typography>
+          <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+            <WorkIcon sx={{ mr: 1, color: "#388e3c" }} />
+            <Typography variant="h5" fontWeight="bold">
+              Internships
+            </Typography>
+          </Box>
           {sections.internships.length === 0 && (
-            <Typography variant="body2" sx={{ ml: 2, fontStyle: "italic" }}>
+            <Typography variant="body2" sx={{ ml: 4, fontStyle: "italic" }}>
               No internships listed.
             </Typography>
           )}
@@ -249,12 +178,17 @@ function PreviewPage() {
                 borderLeft: "4px solid #388e3c",
                 pl: 2,
                 mb: 3,
+                ml: 4,
               }}
             >
               <Typography variant="h6" fontWeight="bold">
                 {internship.company}
               </Typography>
-              <Typography variant="subtitle1" fontStyle="italic" color="text.secondary">
+              <Typography
+                variant="subtitle1"
+                fontStyle="italic"
+                color="text.secondary"
+              >
                 {internship.role}
               </Typography>
               <Typography variant="body1" sx={{ whiteSpace: "pre-line" }}>
@@ -268,10 +202,15 @@ function PreviewPage() {
 
         {/* Skills */}
         <Box mb={4}>
-          <Typography variant="h5" fontWeight="bold" gutterBottom>
-            Skills
-          </Typography>
-          <SkillTag skills={skills.length ? skills : sections.skills} />
+          <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+            <BuildIcon sx={{ mr: 1, color: "#6a1b9a" }} />
+            <Typography variant="h5" fontWeight="bold">
+              Skills
+            </Typography>
+          </Box>
+          <Box sx={{ ml: 4 }}>
+            <SkillTag skills={skills.length ? skills : sections.skills} />
+          </Box>
         </Box>
 
         {/* Back Button */}
@@ -286,5 +225,4 @@ function PreviewPage() {
 }
 
 export default PreviewPage;
-
 

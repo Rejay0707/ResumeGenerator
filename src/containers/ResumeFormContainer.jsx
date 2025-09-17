@@ -179,18 +179,29 @@ return (
           </Grid>
         ))}
         <Button
-          variant="outlined"
-          onClick={() => handleAdd("projects")}
-          sx={{
-            px: 2,
-            py: 2,
-            fontSize: "1rem",
-            borderRadius: 2,
-            mb: 3,
-          }}
-        >
-          + Add Project
-        </Button>
+  variant="outlined"
+  onClick={() => handleAdd("projects")}
+  sx={{
+    px: 2,
+    py: 2,
+    fontSize: "1rem",
+    borderRadius: 2,
+    mb: 3,
+    borderLeft: "4px solid #1976d2", // example left border color
+    // Keep border and background consistent on focus and active
+    "&:focus": {
+      outline: "none",
+      backgroundColor: "transparent",
+      borderLeft: "4px solid #1976d2",
+    },
+    "&:active": {
+      backgroundColor: "transparent",
+      borderLeft: "4px solid #1976d2",
+    },
+  }}
+>
+  + Add Project
+</Button>
 
         <Divider sx={{ my: 3 }} />
 
@@ -230,16 +241,27 @@ return (
           </Grid>
         ))}
         <Button
-          variant="outlined"
-          onClick={() => handleAdd("internships")}
-          sx={{
-            px: 2,
-            py: 2,
-            fontSize: "1rem",
-            borderRadius: 2,
-            mb: 3,
-          }}
-        >
+  variant="outlined"
+  onClick={() => handleAdd("internships")}
+  sx={{
+    px: 2,
+    py: 2,
+    fontSize: "1rem",
+    borderRadius: 2,
+    mb: 3,
+    borderLeft: "4px solid #1976d2", // example left border color
+    // Keep border and background consistent on focus and active
+    "&:focus": {
+      outline: "none",
+      backgroundColor: "transparent",
+      borderLeft: "4px solid #1976d2",
+    },
+    "&:active": {
+      backgroundColor: "transparent",
+      borderLeft: "4px solid #1976d2",
+    },
+  }}
+>
           + Add Internship
         </Button>
 

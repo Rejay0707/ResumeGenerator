@@ -9,7 +9,7 @@ function ResumePreview({ resumeText }) {
         p: 3,
         borderRadius: 2,
         backgroundColor: "#7c9945ff",
-        mt: 10,          // <-- adds margin top and bottom (vertical spacing)
+        mt: 0,          // <-- adds margin top and bottom (vertical spacing)
       }}
     >
       <Box component="pre" sx={{ whiteSpace: "pre-wrap", fontFamily: "monospace" }}>

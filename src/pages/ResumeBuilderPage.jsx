@@ -13,9 +13,14 @@ function ResumeBuilderPage() {
         alignItems: "center",
         justifyContent: "center",
         minHeight: "100vh",
-        width: "100vw",
+        // width: "100vw",
         backgroundColor: "#101111ff", // light blue background
         px: 2,
+            position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    
       }}
     >
       
@@ -28,6 +33,11 @@ function ResumeBuilderPage() {
           maxWidth: "700px",
           margin: "auto",
           backgroundColor: "#ffffff", // white card
+            position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    // bottom: 0,
         }}
       >
         <Box textAlign="left" mb={3}>
