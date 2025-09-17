@@ -97,7 +97,7 @@ const handleDownload = async () => {
   try {
     const element = resumeRef.current;
 
-    // Create canvas of the resume
+    // Capture resume as canvas
     const canvas = await html2canvas(element, {
       scale: 2,
       useCORS: true,
@@ -107,32 +107,14 @@ const handleDownload = async () => {
 
     const imgData = canvas.toDataURL("image/png");
 
-    // Standard A4 page
-    const pdf = new jsPDF("p", "pt", "a4");
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
-
-    const imgWidth = pageWidth;
+    // Canvas dimensions
+    const imgWidth = 595.28; // A4 width in pt
     const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-    // If image fits in one page
-    if (imgHeight <= pageHeight) {
-      pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
-    } else {
-      // Slice the canvas into A4 chunks
-      let position = 0;
-      let heightLeft = imgHeight;
+    // Create PDF with custom height (same as content)
+    const pdf = new jsPDF("p", "pt", [imgWidth, imgHeight]);
 
-      while (heightLeft > 0) {
-        pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
-        position -= pageHeight;
-
-        if (heightLeft > 0) {
-          pdf.addPage();
-        }
-      }
-    }
+    pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
 
     pdf.save("resume.pdf");
   } catch (error) {
@@ -142,6 +124,7 @@ const handleDownload = async () => {
     setLoading(false);
   }
 };
+
 
 
 
