@@ -1,5 +1,3 @@
-
-
 import React, { useRef, useState } from "react";
 import {
   Box,
@@ -125,9 +123,6 @@ const handleDownload = async () => {
   }
 };
 
-
-
-
   return (
     <Box
       sx={{
@@ -172,8 +167,11 @@ const handleDownload = async () => {
         >
           ←
         </Typography>
+
       </Box>
+
       <Paper
+
         ref={resumeRef}
         sx={{
           p: { xs: 3, sm: 5 },
@@ -181,10 +179,9 @@ const handleDownload = async () => {
           width: "100%",
           boxSizing: "border-box",
 
-
           // background: 'linear-gradient(90deg, rgba(42, 123, 155, 1) 0%, rgba(87, 199, 133, 1) 50%, rgba(237, 221, 83, 1) 100%)',
           /* Horizontal gradient */
-background: 'linear-gradient(90deg, #11998e 0%, #38ef7d 50%, #06beb6 100%)',
+background: 'linear-gradient(to bottom, #33ccff 0%, #ffccff 100%)',
           borderRadius: 3,
           boxShadow: 3,
           overflowX: "hidden",
@@ -195,6 +192,7 @@ background: 'linear-gradient(90deg, #11998e 0%, #38ef7d 50%, #06beb6 100%)',
         }}
         elevation={6}
       >
+
         {/* Download button at top right */}
   <Button
     variant="contained"
@@ -332,3 +330,5 @@ background: 'linear-gradient(90deg, #11998e 0%, #38ef7d 50%, #06beb6 100%)',
 }
 
 export default PreviewPage;
+
+

@@ -10,8 +10,6 @@ function ResumeBuilderPage() {
         alignItems: "center",
         justifyContent: "center",
         minHeight: "100vh",
-        // width: "100vw",
-        backgroundColor: "#101111ff", // light blue background
         px: 2,
         position: "absolute",
         left: 0,
