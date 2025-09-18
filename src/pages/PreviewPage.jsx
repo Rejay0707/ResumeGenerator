@@ -180,7 +180,11 @@ const handleDownload = async () => {
           maxWidth: { xs: "100%", sm: 750 },
           width: "100%",
           boxSizing: "border-box",
-          backgroundColor: "#465666ff",
+
+
+          // background: 'linear-gradient(90deg, rgba(42, 123, 155, 1) 0%, rgba(87, 199, 133, 1) 50%, rgba(237, 221, 83, 1) 100%)',
+          /* Horizontal gradient */
+background: 'linear-gradient(90deg, #11998e 0%, #38ef7d 50%, #06beb6 100%)',
           borderRadius: 3,
           boxShadow: 3,
           overflowX: "hidden",
@@ -227,7 +231,7 @@ const handleDownload = async () => {
             </Typography>
           </Box>
           <Typography variant="body1" sx={{ ml: 4 }}>
-            {sections.education || "B.Tech in Computer Science"}
+            {sections.education || "B.Tech "}
           </Typography>
         </Box>
 
@@ -323,26 +327,6 @@ const handleDownload = async () => {
           </Box>
         </Box>
       </Paper>
-
-      {/* Buttons */}
-      {/* <Box
-        textAlign="center"
-        mt={4}
-        display="flex"
-        gap={2}
-        flexWrap="wrap"
-        justifyContent="center"
-      >
-        <Button
-          variant="outlined"
-          onClick={handleDownload}
-          size="large"
-          disabled={loading}
-          startIcon={loading ? <CircularProgress size={20} /> : null}
-        >
-          {loading ? "Generating PDF..." : "Download Resume"}
-        </Button>
-      </Box> */}
     </Box>
   );
 }
