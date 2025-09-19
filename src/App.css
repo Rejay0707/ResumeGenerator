@@ -40,3 +40,13 @@
 .read-the-docs {
   color: #888;
 }
+
+/* ResumeBuilderPage.jsx
+ */
+
+ @media (min-width:700px) and (max-width:800px) {
+  .css-p6r6fe-MuiPaper-root{
+    max-width:500px !important
+  }
+ }
+ 

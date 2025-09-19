@@ -20,7 +20,3 @@ function ResumePreview({ resumeText }) {
 }
 
 export default ResumePreview;
-
-
-
-

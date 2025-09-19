@@ -124,7 +124,7 @@ Skills: React, Node.js, MongoDB, Tailwind CSS, Socket.io`;
       </Typography>
       <form onSubmit={handleSubmit}>
         <Grid container spacing={2} sx={{ width: "100%" }}>
-          <Grid item xs={12} sm={6} sx={{ width: { xs: "100%", md: "340px" } }}>
+          <Grid item xs={12} sm={6} sx={{ width: { xs: "100%", md: "340px",} }}>
             <TextField
               label="Full Name"
               name="name"

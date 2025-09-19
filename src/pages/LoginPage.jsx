@@ -8,9 +8,13 @@ import {
   TextField,
   Button,
   Alert,
+  Checkbox,
+  FormControlLabel,
+  Link,
   useTheme,
   useMediaQuery,
 } from "@mui/material";
+import logo1 from "../assets/logo1.png"
 
 export default function LoginPage() {
   const { user, loading, error, login } = useAuth();
@@ -18,7 +22,7 @@ export default function LoginPage() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [form, setForm] = useState({ email: "", password: "", remember: false });
 
   useEffect(() => {
     if (user) {
@@ -31,7 +35,11 @@ export default function LoginPage() {
   }, [user, navigate]);
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value, type, checked } = e.target;
+    setForm({
+      ...form,
+      [name]: type === "checkbox" ? checked : value,
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -43,97 +51,157 @@ export default function LoginPage() {
     <Box
       sx={{
         minHeight: "100vh",
-        position: "relative",
+        width:"100vw",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        width:"100vw",
         px: 2,
-        // Background image with cover and center
+        backgroundColor: "#eaf7ff",
         backgroundImage:
-          "url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1470&q=80')",
+          "url('https://infixedu.spondan.com/public/backEnd/img/edulia-login-bg.jpg')",
         backgroundSize: "cover",
         backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-        // Overlay with dark transparent layer for readability
-        "&::before": {
-          content: '""',
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-        //   bgcolor: "rgba(0, 0, 0, 0.5)",
-          zIndex: 1,
-        },
+        boxSizing: "border-box",
       }}
     >
-      <Paper
-        elevation={8}
+      <Box
         sx={{
-          position: "relative",
-          zIndex: 2, // above overlay
-        //   maxWidth: 400,
-        //   width: "100vw",
-          p: { xs: 3, sm: 5 },
-          borderRadius: 3,
-          boxSizing: "border-box",
-          backgroundColor: "rgba(255, 255, 255, 0.9)", // slightly transparent white
-        //   color: "#000",
+          display: "flex",
+          flexDirection: { xs: "column", md: "row" }, // children image on side
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 4,
+          width: "100%",
+          
         }}
       >
-        <Typography
-          variant={isMobile ? "h4" : "h3"}
-          component="h1"
-          align="center"
-          gutterBottom
-          sx={{ color: "#1976d2", fontWeight: "bold" }}
+        {/* Login Card */}
+        <Paper
+          elevation={6}
+          sx={{
+            width: { xs: "90%", sm: "450px", md: "500px" },
+            p: { xs: 3, sm: 5 },
+            borderRadius: 2,
+            textAlign: "center",
+            backgroundColor: "white",
+          }}
         >
-          Login
-        </Typography>
+          {/* Logo */}
+          <Box sx={{ mb: 2 }}>
+            <img
+              src={logo1}
+              alt="logo"
+              style={{ width: "150px", height: "auto" }}
+            />
+          </Box>
 
-        <Box component="form" onSubmit={handleSubmit} noValidate>
-          <TextField
-            label="Email"
-            name="email"
-            type="email"
-            value={form.email}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-            required
-            autoComplete="email"
-          />
-          <TextField
-            label="Password"
-            name="password"
-            type="password"
-            value={form.password}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-            required
-            autoComplete="current-password"
-          />
-
-          {error && (
-            <Alert severity="error" sx={{ mt: 2 }}>
-              {error}
-            </Alert>
-          )}
-
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            fullWidth
-            disabled={loading}
-            sx={{ mt: 3, py: 1.5, fontWeight: "bold" }}
+          {/* Heading */}
+          <Typography
+            variant={isMobile ? "h5" : "h4"}
+            sx={{ fontWeight: "bold", mb: 3, color: "#0d47a1" }}
           >
-            {loading ? "Logging in..." : "Login"}
-          </Button>
-        </Box>
-      </Paper>
+            Login Details
+          </Typography>
+
+          {/* Form */}
+          <Box component="form" onSubmit={handleSubmit} noValidate>
+            <TextField
+              label="Enter Email Address"
+              name="email"
+              type="email"
+              value={form.email}
+              onChange={handleChange}
+              fullWidth
+              margin="normal"
+              required
+              variant="standard"
+            />
+            <TextField
+              label="Enter Password"
+              name="password"
+              type="password"
+              value={form.password}
+              onChange={handleChange}
+              fullWidth
+              margin="normal"
+              required
+              variant="standard"
+            />
+
+            <Box
+              sx={{
+                mt: 1,
+                mb: 2,
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    name="remember"
+                    checked={form.remember}
+                    onChange={handleChange}
+                    color="primary"
+                  />
+                }
+                label="Remember Me"
+              />
+              <Link href="#" underline="hover" sx={{ fontSize: 14 }}>
+                Forgot Password?
+              </Link>
+            </Box>
+
+            {error && (
+              <Alert severity="error" sx={{ mb: 2 }}>
+                {error}
+              </Alert>
+            )}
+
+            <Button
+              type="submit"
+              variant="contained"
+              fullWidth
+              disabled={loading}
+              sx={{
+                py: 1.2,
+                fontWeight: "bold",
+                backgroundColor: "#0d47a1",
+                "&:hover": { backgroundColor: "#08306b" },
+              }}
+            >
+              {loading ? "Logging in..." : "SIGN IN"}
+            </Button>
+          </Box>
+
+          {/* Role Buttons */}
+          <Box
+            sx={{
+              mt: 3,
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))",
+              gap: 1.5,
+            }}
+          >
+            {[
+              "SUPER ADMIN",
+              "ADMIN",
+              "STUDENT",
+              "PARENT",
+              "TEACHER",
+              "RECRUITER",
+            ].map((role) => (
+              <Button key={role} variant="outlined" size="small">
+                {role}
+              </Button>
+            ))}
+          </Box>
+        </Paper>
+
+        {/* Side Image (only on desktop/tablet) */}
+      </Box>
     </Box>
   );
 }
+

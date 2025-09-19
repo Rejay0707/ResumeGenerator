@@ -54,7 +54,10 @@ export default function ResponsiveSidebar() {
   return (
     <div style={{ display: "flex" }}>
       <CssBaseline />
-      <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+      <AppBar
+        position="fixed"
+        sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+      >
         <Toolbar>
           {isMobile && (
             <IconButton
@@ -80,7 +83,10 @@ export default function ResponsiveSidebar() {
           sx={{
             width: drawerWidth,
             flexShrink: 0,
-            [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: "border-box" },
+            [`& .MuiDrawer-paper`]: {
+              width: drawerWidth,
+              boxSizing: "border-box",
+            },
           }}
           open
         >
@@ -98,14 +104,17 @@ export default function ResponsiveSidebar() {
             keepMounted: true, // Better open performance on mobile.
           }}
           sx={{
-            [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: "border-box" },
+            [`& .MuiDrawer-paper`]: {
+              width: drawerWidth,
+              boxSizing: "border-box",
+            },
           }}
         >
           {drawer}
         </Drawer>
       )}
 
-      <main style={{ flexGrow: 1, padding: "80px 24px 24px 24px" }}>
+      <main style={{ flexGrow: 1, padding: "24px" }}>
         {/* This is the key: render matched child route here */}
         <Outlet />
       </main>
