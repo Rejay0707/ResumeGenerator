@@ -65,14 +65,49 @@ export default function EntityList({
       <Box
         display="flex"
         justifyContent="space-between"
-        alignItems="flex-start" // <-- Fix vertical alignment here
+        alignItems="flex-start"
         mb={2}
-        sx={{ flexWrap: "wrap" }}
+        sx={{
+          flexWrap: "wrap",
+          gap: 1,
+          // Responsive adjustments
+          "@media (max-width:600px)": {
+            justifyContent: "left",
+            textAlign: "left",
+          },
+          "@media(max-width:375px)":{
+            justifyContent:'left',
+            textAlign:'left',
+            gap: 0.25,
+          }
+        }}
       >
-        <Typography variant="h5" sx={{ flexGrow: 1, textAlign: "left" }}>
+        <Typography
+          variant="h5"
+          sx={{
+            flexGrow: 1,
+            textAlign: "left",
+            fontSize: {
+              xs: "1.25rem",
+              sm: "1.5rem",
+              md: "1.75rem",
+            },
+          }}
+        >
           List
         </Typography>
-        <IconButton color="primary" onClick={onAdd} aria-label="add new">
+        <IconButton
+          color="primary"
+          onClick={onAdd}
+          aria-label="add new"
+          sx={{
+            flexShrink: 0,
+            "@media (max-width:600px)": {
+              width: 40,
+              height: 40,
+            },
+          }}
+        >
           <AddIcon />
         </IconButton>
       </Box>
@@ -80,11 +115,34 @@ export default function EntityList({
       {items.length === 0 ? (
         <Typography>No records found.</Typography>
       ) : (
-        <Box sx={{ width: "100%", overflowX: "auto" }}>
+        <Box
+          sx={{
+            width: "100%",
+            overflowX: "auto",
+            // Add some bottom margin on small screens
+            mb: { xs: 2, sm: 0 },
+            px:{xs:1,sm:0},
+          }}
+        >
           <Table
             size="small"
             aria-label="entity table"
-            sx={{ minWidth: 650, width: "100%" }}
+            sx={{
+              minWidth: 300,
+              width: "100%",
+              // Responsive font sizes for table cells
+              "& td, & th": {
+                fontSize: {
+                  xs: "0.75rem",
+                  sm: "0.875rem",
+                  md: "1rem",
+                },
+                padding: {
+                  xs: "6px 8px",
+                  sm: "8px 12px",
+                },
+              },
+            }}
           >
             <TableHead>
               <TableRow>

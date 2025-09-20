@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { Link, Outlet } from "react-router-dom";
+import logo2 from "../assets/logo2.png.png";
 
 const drawerWidth = 240;
 
@@ -27,8 +28,23 @@ export default function ResponsiveSidebar() {
   };
 
   const drawer = (
+    
     <div>
+      <box sx={{
+        display:"flex",
+        justifyContent:"center",
+        alignItems:"center",
+        p:2,
+        mb:1,
+      }}>
+        <img 
+          src={logo2}
+          alt="logo"
+          style={{maxWidth:"100%",height:40,objectFit:"contain"}}
+        />
+      </box>
       <Toolbar />
+      
       <List>
         {[
           { text: "Dashboard", to: "/admin/dashboard" },
@@ -56,7 +72,13 @@ export default function ResponsiveSidebar() {
       <CssBaseline />
       <AppBar
         position="fixed"
-        sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        // sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        sx={{
+    zIndex: (theme) => theme.zIndex.drawer + 1,
+    width: { sm: `calc(100% - ${drawerWidth}px)` }, // shrink width on desktop
+    ml: { sm: `${drawerWidth}px` }, // margin-left to push right of sidebar
+    borderLeft: { sm: "1px solid rgba(0, 0, 0, 0.12)" }, // vertical separator line on left of AppBar
+  }}
       >
         <Toolbar>
           {isMobile && (
@@ -86,6 +108,10 @@ export default function ResponsiveSidebar() {
             [`& .MuiDrawer-paper`]: {
               width: drawerWidth,
               boxSizing: "border-box",
+              borderRight: "5px solid rgba(29, 20, 20, 0.12)", // vertical separator line
+              backgroundColor:"black",
+              color:"white",
+              
             },
           }}
           open
@@ -107,6 +133,8 @@ export default function ResponsiveSidebar() {
             [`& .MuiDrawer-paper`]: {
               width: drawerWidth,
               boxSizing: "border-box",
+              backgroundColor:"black",
+              color:"white"
             },
           }}
         >
@@ -114,7 +142,7 @@ export default function ResponsiveSidebar() {
         </Drawer>
       )}
 
-      <main style={{ flexGrow: 1, padding: "24px" }}>
+      <main style={{ flexGrow: 1, padding: "24px",paddingLeft:0,paddingTop:"100px"}}>
         {/* This is the key: render matched child route here */}
         <Outlet />
       </main>

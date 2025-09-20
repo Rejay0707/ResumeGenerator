@@ -74,6 +74,7 @@ export default function Dashboard() {
               >
                 {item.count}
               </Typography>
+              
             </Paper>
           </Grid>
         ))}
