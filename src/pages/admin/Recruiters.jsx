@@ -50,7 +50,8 @@ export default function Recruiters() {
           px: 1,
         },
         "@media(max-width:360px)":{
-          px:0.2
+          px:0,
+          paddingLeft:"0px"
         }
       }}
     >

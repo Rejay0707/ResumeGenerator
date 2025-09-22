@@ -1,5 +1,15 @@
 import React, { useState } from "react";
-import { Typography, Box } from "@mui/material";
+import {
+  Typography,
+  Box,
+  Paper,
+  TextField,
+  InputAdornment,
+  IconButton,
+  Alert,
+} from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
+import ClearIcon from "@mui/icons-material/Clear";
 import useAdminManagement from "../../containers/AdminManagement";
 import EntityList from "../../components/EntityList";
 import EntityFormDialog from "../../components/EntityFormDialog";
@@ -9,6 +19,12 @@ export default function Students() {
     useAdminManagement("students");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");  // New state for search
+
+  // Filter items based on search term (by name, case-insensitive)
+  const filteredItems = items.filter((item) =>
+    item.name?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const handleAdd = () => {
     setEditingItem(null);
@@ -16,7 +32,7 @@ export default function Students() {
   };
 
   const handleEdit = (id) => {
-    const item = items.find((i) => i.id === id);
+    const item = items.find((i) => i.id === id);  // Use full items for edit (not filtered)
     setEditingItem(item);
     setDialogOpen(true);
   };
@@ -32,6 +48,16 @@ export default function Students() {
       addItem(formData);
     }
     setDialogOpen(false);
+  };
+
+  // Handle search input change
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  // Clear search
+  const handleClearSearch = () => {
+    setSearchTerm("");
   };
 
   return (
@@ -69,14 +95,98 @@ export default function Students() {
       >
         Manage Students
       </Typography>
+
+      {/* Search Section - Professional Header */}
+      <Paper
+        elevation={1}
+        sx={{
+          p: { xs: 2, sm: 3 },
+          mb: 3,  // Margin below to separate from EntityList
+          borderRadius: 2,
+          backgroundColor: "background.paper",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", sm: "row" },
+            alignItems: { xs: "stretch", sm: "center" },
+            justifyContent: "space-between",
+            gap: 2,
+          }}
+        >
+          {/* Search Input */}
+          <Box sx={{ flexGrow: 1, maxWidth: { xs: "100%", md: 400 } }}>
+            <TextField
+              fullWidth
+              variant="outlined"
+              placeholder="Search students by name..."
+              value={searchTerm}
+              onChange={handleSearchChange}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon color="action" />
+                  </InputAdornment>
+                ),
+                endAdornment: searchTerm && (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="clear search"
+                      onClick={handleClearSearch}
+                      edge="end"
+                      size="small"
+                    >
+                      <ClearIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: 2,
+                  backgroundColor: "background.default",
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "primary.main",
+                  },
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "primary.main",
+                    borderWidth: 2,
+                  },
+                },
+              }}
+            />
+          </Box>
+
+          {/* Results Counter */}
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{ mt: { xs: 1, sm: 0 }, textAlign: { xs: "center", sm: "right" } }}
+          >
+            {filteredItems.length} of {items.length} students
+          </Typography>
+        </Box>
+      </Paper>
+
+      {/* No Results Alert (if searching and no matches) */}
+      {searchTerm && filteredItems.length === 0 && !loading && (
+        <Alert severity="info" sx={{ mb: 2 }}>
+          No students found matching "{searchTerm}".
+        </Alert>
+      )}
+
+      {/* Existing EntityList with Filtered Items */}
       <EntityList
-        items={items}
+        items={filteredItems}  // Pass filtered items here
         loading={loading}
         error={error}
         onAdd={handleAdd}
         onEdit={handleEdit}
         onDelete={handleDelete}
       />
+
+      {/* Existing Dialog */}
       <EntityFormDialog
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
@@ -86,3 +196,4 @@ export default function Students() {
     </Box>
   );
 }
+

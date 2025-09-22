@@ -9,7 +9,11 @@ const initialData = {
     { id: 2, name: "Parent Two", email: "parent2@example.com" },
   ],
   teachers: [{ id: 1, name: "Teacher One", email: "teacher1@example.com" }],
-  students: [{ id: 1, name: "Student One", email: "student1@example.com" }],
+  students: [
+    { id: 1, name: "Student One", email: "student1@example.com" },
+    { id: 2, name: "Student Two", email: "student2@example.com" },
+    { id: 3, name: "Student Three", email: "student3@example.com" },
+  ],
   recruiters: [
     { id: 1, name: "Recruiter One", email: "recruiter1@example.com" },
   ],
