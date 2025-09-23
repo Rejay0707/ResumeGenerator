@@ -8,12 +8,12 @@ import {
   TableRow,
   TableCell,
   IconButton,
+  Button,
   CircularProgress,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
-  Button,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
@@ -26,6 +26,7 @@ export default function EntityList({
   onAdd,
   onEdit,
   onDelete,
+  entityType, // "students" | "teachers" | "parents" | "recruiters"
 }) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
@@ -60,119 +61,152 @@ export default function EntityList({
       </Typography>
     );
 
+  // Dynamic columns based on entityType
+  const columns =
+    entityType === "students"
+      ? [
+          { key: "admissionNo", label: "Admission No" },
+          { key: "name", label: "Name" },
+          { key: "fatherName", label: "Father Name" },
+          { key: "dob", label: "DOB" },
+          { key: "classSec", label: "Class/Sec" },
+          { key: "gender", label: "Gender" },
+          { key: "phone", label: "Phone" },
+          { key: "email", label: "Email" },
+        ]
+      : [
+          { key: "name", label: "Name" },
+          { key: "email", label: "Email" },
+        ];
+
+  // Header text for Add button
+  const addButtonText =
+    entityType === "students"
+      ? "Add Student"
+      : entityType === "teachers"
+      ? "Add Teacher"
+      : entityType === "parents"
+      ? "Add Parent"
+      : entityType === "recruiters"
+      ? "Add Recruiter"
+      : "Add";
+
   return (
     <Box>
+      {/* Header with Add button */}
       <Box
         display="flex"
         justifyContent="space-between"
-        alignItems="flex-start"
+        alignItems="center"
         mb={2}
-        sx={{
-          flexWrap: "wrap",
-          gap: 1,
-          // Responsive adjustments
-          "@media (max-width:600px)": {
-            justifyContent: "left",
-            textAlign: "left",
-          },
-          "@media(max-width:375px)":{
-            justifyContent:'left',
-            textAlign:'left',
-            gap: 0.25,
-          }
-        }}
+        sx={{ flexWrap: "wrap", gap: 1 }}
       >
-        <Typography
-          variant="h5"
-          sx={{
-            flexGrow: 1,
-            textAlign: "left",
-            fontSize: {
-              xs: "1.25rem",
-              sm: "1.5rem",
-              md: "1.75rem",
-            },
-          }}
-        >
-          List
+        {/* Optional page title */}
+        <Typography variant="h5" sx={{ fontWeight: 600 }}>
+          {/* {entityType.charAt(0).toUpperCase() + entityType.slice(1)} */}
         </Typography>
-        <IconButton
+
+        <Button
+          variant="contained"
           color="primary"
           onClick={onAdd}
-          aria-label="add new"
+          endIcon={<AddIcon />}
           sx={{
-            flexShrink: 0,
-            "@media (max-width:600px)": {
-              width: 40,
-              height: 40,
-            },
+            whiteSpace: "nowrap",
+            textTransform: "none",
+            fontWeight: 500,
+            px: 2,
+            py: 0.8,
           }}
         >
-          <AddIcon />
-        </IconButton>
+          {addButtonText}
+        </Button>
       </Box>
 
+      {/* Table */}
       {items.length === 0 ? (
         <Typography>No records found.</Typography>
       ) : (
-        <Box
-          sx={{
-            width: "100%",
-            overflowX: "auto",
-            // Add some bottom margin on small screens
-            mb: { xs: 2, sm: 0 },
-            px:{xs:1,sm:0},
-          }}
-        >
-          <Table
-            size="small"
-            aria-label="entity table"
-            sx={{
-              minWidth: 300,
-              width: "100%",
-              // Responsive font sizes for table cells
-              "& td, & th": {
-                fontSize: {
-                  xs: "0.75rem",
-                  sm: "0.875rem",
-                  md: "1rem",
-                },
-                padding: {
-                  xs: "6px 8px",
-                  sm: "8px 12px",
-                },
-              },
-            }}
-          >
+        <Box sx={{ width: "100%", overflowX: "auto" }}>
+          <Table size="small" aria-label="entity table">
             <TableHead>
               <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell align="right">Actions</TableCell>
+                {columns.map((col) => (
+                  <TableCell
+                    key={col.key}
+                    sx={{ fontWeight: 700, backgroundColor: "grey.50" }}
+                  >
+                    {col.label}
+                  </TableCell>
+                ))}
+                <TableCell
+                  align="right"
+                  sx={{ fontWeight: 700, backgroundColor: "grey.50" }}
+                >
+                  Actions
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {items.map(({ id, name, email }) => (
-                <TableRow key={id} hover>
-                  <TableCell>{name}</TableCell>
-                  <TableCell>{email}</TableCell>
-                  <TableCell align="right">
-                    <IconButton
-                      aria-label="edit"
-                      size="small"
-                      onClick={() => onEdit(id)}
-                      sx={{ mr: 1 }}
+              {items.map((row, index) => (
+                <TableRow
+                  key={row.id}
+                  hover
+                  sx={{
+                    backgroundColor: index % 2 !== 0 ? "grey.50" : "inherit",
+                    "&:hover": { backgroundColor: "grey.100" },
+                  }}
+                >
+                  {columns.map((col) => (
+                    <TableCell
+                      key={col.key}
+                      sx={{
+                        wordBreak: "break-word",
+                        hyphens: "auto",
+                        minWidth:
+                          col.key === "email" || col.key === "phone"
+                            ? "120px"
+                            : "auto",
+                        p: { xs: 0.5, sm: 1 },
+                      }}
                     >
-                      <EditIcon fontSize="small" />
-                    </IconButton>
-                    <IconButton
-                      aria-label="delete"
-                      size="small"
-                      onClick={() => handleDeleteClick(id)}
-                      color="error"
+                      {row[col.key] || "-"}
+                    </TableCell>
+                  ))}
+                  <TableCell
+                    align="right"
+                    sx={{
+                      whiteSpace: "nowrap",
+                      p: { xs: 0.5, sm: 1 },
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        alignItems: "center",
+                        gap: 0.5,
+                        flexWrap: { xs: "wrap", sm: "nowrap" },
+                      }}
                     >
-                      <DeleteIcon fontSize="small" />
-                    </IconButton>
+                      <IconButton
+                        aria-label="edit"
+                        size="small"
+                        onClick={() => onEdit(row.id)}
+                        sx={{ p: { xs: 0.5, sm: 1 } }}
+                      >
+                        <EditIcon fontSize="small" />
+                      </IconButton>
+                      <IconButton
+                        aria-label="delete"
+                        size="small"
+                        onClick={() => handleDeleteClick(row.id)}
+                        color="error"
+                        sx={{ p: { xs: 0.5, sm: 1 } }}
+                      >
+                        <DeleteIcon fontSize="small" />
+                      </IconButton>
+                    </Box>
                   </TableCell>
                 </TableRow>
               ))}
@@ -181,7 +215,7 @@ export default function EntityList({
         </Box>
       )}
 
-      {/* Delete Confirmation Dialog */}
+      {/* Delete Dialog */}
       <Dialog open={deleteDialogOpen} onClose={handleDeleteCancel}>
         <DialogTitle>Confirm Delete</DialogTitle>
         <DialogContent>
@@ -201,5 +235,4 @@ export default function EntityList({
     </Box>
   );
 }
-
 

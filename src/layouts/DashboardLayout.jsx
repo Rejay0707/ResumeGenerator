@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { Link, Outlet } from "react-router-dom";
-import logo2 from "../assets/logo2.png.png";
+import logo1 from "../assets/logo1.png";
 
 const drawerWidth = 240;
 
@@ -39,9 +39,9 @@ export default function ResponsiveSidebar() {
         }}
       >
         <img
-          src={logo2}
+          src={logo1}
           alt="logo"
-          style={{ maxWidth: "100%", height: 64, objectFit: "contain" }}
+          style={{ width:"234px", height: 100, }}
         />
       </box>
       <Toolbar />
@@ -69,7 +69,7 @@ export default function ResponsiveSidebar() {
   );
 
   return (
-    <div style={{ display: "flex" }}>
+    <div style={{ display: "flex", }}>
       <CssBaseline />
       <AppBar
         position="fixed"
@@ -78,7 +78,7 @@ export default function ResponsiveSidebar() {
           zIndex: (theme) => theme.zIndex.drawer + 1,
           width: { sm: `calc(100% - ${drawerWidth}px)` }, // shrink width on desktop
           ml: { sm: `${drawerWidth}px` }, // margin-left to push right of sidebar
-          borderLeft: { sm: "1px solid rgba(0, 0, 0, 0.12)" }, // vertical separator line on left of AppBar
+          borderLeft: { sm: "1px solid rgba(245, 248, 245, 0.82)" }, // vertical separator line on left of AppBar
         }}
       >
         <Toolbar>

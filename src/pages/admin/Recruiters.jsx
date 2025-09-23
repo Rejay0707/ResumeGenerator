@@ -77,6 +77,7 @@ export default function Recruiters() {
         onAdd={handleAdd}
         onEdit={handleEdit}
         onDelete={handleDelete}
+        entityType="recruiters"
       />
       <EntityFormDialog
         open={dialogOpen}

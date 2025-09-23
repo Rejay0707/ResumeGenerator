@@ -41,6 +41,7 @@ export default function Teachers() {
         px: 2,
         pt: 0,
         textAlign: "left",
+        
 
         // MUI breakpoints
         "@media (min-width:600px)": {
@@ -76,6 +77,7 @@ export default function Teachers() {
         onAdd={handleAdd}
         onEdit={handleEdit}
         onDelete={handleDelete}
+        entityType="teachers"
       />
       <EntityFormDialog
         open={dialogOpen}

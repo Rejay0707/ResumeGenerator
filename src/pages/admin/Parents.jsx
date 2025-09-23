@@ -55,7 +55,7 @@ export default function Parents() {
       }}
     >
       <Typography
-        variant="h4"
+        variant="h1"
         gutterBottom
         sx={{
           fontSize: {
@@ -76,6 +76,7 @@ export default function Parents() {
         onAdd={handleAdd}
         onEdit={handleEdit}
         onDelete={handleDelete}
+        entityType="parents"
       />
       <EntityFormDialog
         open={dialogOpen}
