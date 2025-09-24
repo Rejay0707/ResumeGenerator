@@ -14,6 +14,8 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  TablePagination,
+  TableContainer,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
@@ -26,10 +28,18 @@ export default function EntityList({
   onAdd,
   onEdit,
   onDelete,
-  entityType, // "students" | "teachers" | "parents" | "recruiters"
+  entityType,
 }) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
+
+  // ✅ Pagination state (only for students)
+  const [page, setPage] = useState(0);
+  const rowsPerPage = entityType === "students" ? 10 : items.length;
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
 
   const handleDeleteClick = (id) => {
     setDeleteId(id);
@@ -61,7 +71,7 @@ export default function EntityList({
       </Typography>
     );
 
-  // Dynamic columns based on entityType
+  // ✅ Dynamic columns
   const columns =
     entityType === "students"
       ? [
@@ -79,7 +89,7 @@ export default function EntityList({
           { key: "email", label: "Email" },
         ];
 
-  // Header text for Add button
+  // ✅ Add button text
   const addButtonText =
     entityType === "students"
       ? "Add Student"
@@ -91,6 +101,15 @@ export default function EntityList({
       ? "Add Recruiter"
       : "Add";
 
+  // ✅ Apply pagination only for students
+  const paginatedItems =
+    entityType === "students"
+      ? items.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+      : items;
+
+  // ✅ Helper to determine if scroll should be enabled (for students only, small screens)
+  const shouldScroll = entityType === "students" && window.innerWidth < 900; // Fallback check (md breakpoint ~900px)
+
   return (
     <Box>
       {/* Header with Add button */}
@@ -101,16 +120,13 @@ export default function EntityList({
         mb={2}
         sx={{ flexWrap: "wrap", gap: 1 }}
       >
-        {/* Optional page title */}
-        <Typography variant="h5" sx={{ fontWeight: 600 }}>
-          {/* {entityType.charAt(0).toUpperCase() + entityType.slice(1)} */}
-        </Typography>
+        <Typography variant="h5" sx={{ fontWeight: 600 }}></Typography>
 
         <Button
           variant="contained"
           color="primary"
           onClick={onAdd}
-          endIcon={<AddIcon />}
+          startIcon={<AddIcon />}
           sx={{
             whiteSpace: "nowrap",
             textTransform: "none",
@@ -127,92 +143,157 @@ export default function EntityList({
       {items.length === 0 ? (
         <Typography>No records found.</Typography>
       ) : (
-        <Box sx={{ width: "100%", overflowX: "auto" }}>
-          <Table size="small" aria-label="entity table">
-            <TableHead>
-              <TableRow>
-                {columns.map((col) => (
-                  <TableCell
-                    key={col.key}
-                    sx={{ fontWeight: 700, backgroundColor: "grey.50" }}
-                  >
-                    {col.label}
-                  </TableCell>
-                ))}
-                <TableCell
-                  align="right"
-                  sx={{ fontWeight: 700, backgroundColor: "grey.50" }}
-                >
-                  Actions
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {items.map((row, index) => (
-                <TableRow
-                  key={row.id}
-                  hover
-                  sx={{
-                    backgroundColor: index % 2 !== 0 ? "grey.50" : "inherit",
-                    "&:hover": { backgroundColor: "grey.100" },
-                  }}
-                >
+        <>
+          {/* ✅ TableContainer with aggressive horizontal scroll (only for students on small screens) */}
+          <TableContainer
+            component="div"
+            style={{
+              // Fallback inline styles for critical scroll (overrides any CSS issues)
+              width: "100%",
+              maxWidth: "100%",
+              overflowX: shouldScroll ? "auto" : "visible",
+              WebkitOverflowScrolling: shouldScroll ? "touch" : "auto", // Smooth iOS scroll
+              border: shouldScroll ? "1px solid #e0e0e0" : "none", // Visual border to see scroll area
+              borderRadius: 1,
+              boxShadow: shouldScroll ? "0 2px 4px rgba(0,0,0,0.1)" : "none",
+            }}
+            sx={{
+              // MUI sx for responsive fine-tuning
+              overflowX: entityType === "students"
+                ? {
+                    xs: "auto",
+                    sm: "auto",
+                    md: "visible",
+                  }
+                : "visible",
+              // Ensure no vertical scroll interference
+              overflowY: "visible",
+            }}
+          >
+            <Table
+              size="small"
+              aria-label="entity table"
+              sx={{
+                // Force wide table on small screens to trigger scroll
+                minWidth: entityType === "students"
+                  ? {
+                      xs: "1200px", // Aggressive: Forces scroll on mobile (<600px)
+                      sm: "1200px", // Aggressive: Forces scroll on tablet (600-900px)
+                      md: "auto", // No force on laptop+ (900px+)
+                    }
+                  : "auto",
+                // Table-specific styles
+                tableLayout: "fixed", // Helps with column consistency during scroll
+              }}
+            >
+              <TableHead sx={{
+    padding: "8px 12px", // custom top/bottom + left/right
+    height: "50px",      // custom row height
+  }}>
+                <TableRow>
                   {columns.map((col) => (
                     <TableCell
                       key={col.key}
                       sx={{
-                        wordBreak: "break-word",
-                        hyphens: "auto",
-                        minWidth:
-                          col.key === "email" || col.key === "phone"
-                            ? "120px"
-                            : "auto",
-                        p: { xs: 0.5, sm: 1 },
+                        fontWeight: 700,
+                        backgroundColor: "#896C6C",
+                        width: shouldScroll ? "150px" : "auto", // Fixed width on scroll to prevent reflow
                       }}
                     >
-                      {row[col.key] || "-"}
+                      {col.label}
                     </TableCell>
                   ))}
                   <TableCell
                     align="right"
                     sx={{
-                      whiteSpace: "nowrap",
-                      p: { xs: 0.5, sm: 1 },
+                      fontWeight: 700,
+                      backgroundColor: "#896C6C",
+                      width: shouldScroll ? "120px" : "auto",
                     }}
                   >
-                    <Box
-                      sx={{
-                        display: "flex",
-                        justifyContent: "flex-end",
-                        alignItems: "center",
-                        gap: 0.5,
-                        flexWrap: { xs: "wrap", sm: "nowrap" },
-                      }}
-                    >
-                      <IconButton
-                        aria-label="edit"
-                        size="small"
-                        onClick={() => onEdit(row.id)}
-                        sx={{ p: { xs: 0.5, sm: 1 } }}
-                      >
-                        <EditIcon fontSize="small" />
-                      </IconButton>
-                      <IconButton
-                        aria-label="delete"
-                        size="small"
-                        onClick={() => handleDeleteClick(row.id)}
-                        color="error"
-                        sx={{ p: { xs: 0.5, sm: 1 } }}
-                      >
-                        <DeleteIcon fontSize="small" />
-                      </IconButton>
-                    </Box>
+                    Actions
                   </TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </Box>
+              </TableHead>
+              <TableBody>
+                {paginatedItems.map((row, index) => (
+                  <TableRow
+                    key={row.id}
+                    hover
+                    sx={{
+                      backgroundColor: index % 2 !== 0 ? "grey.50" : "inherit",
+                      "&:hover": { backgroundColor: "grey.100" },
+                    }}
+                  >
+                    {columns.map((col) => (
+                      <TableCell
+                        key={col.key}
+                        sx={{
+                          wordBreak: "break-word",
+                          hyphens: "auto",
+                          minWidth: shouldScroll ? "150px" : (col.key === "email" || col.key === "phone" ? "120px" : "auto"),
+                          p: { xs: 0.5, sm: 1 },
+                          width: shouldScroll ? "150px" : "auto", // Fixed for scroll
+                        }}
+                      >
+                        {row[col.key] || "-"}
+                      </TableCell>
+                    ))}
+                    <TableCell
+                      align="right"
+                      sx={{
+                        whiteSpace: "nowrap",
+                        p: { xs: 0.5, sm: 1 },
+                        width: shouldScroll ? "120px" : "auto",
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "flex-end",
+                          alignItems: "center",
+                          gap: 0.5,
+                          flexWrap: { xs: "wrap", sm: "nowrap" },
+                        }}
+                      >
+                        <IconButton
+                          aria-label="edit"
+                          size="small"
+                          onClick={() => onEdit(row.id)}
+                          sx={{ p: { xs: 0.5, sm: 1 } }}
+                        >
+                          <EditIcon fontSize="small" />
+                        </IconButton>
+                        <IconButton
+                          aria-label="delete"
+                          size="small"
+                          onClick={() => handleDeleteClick(row.id)}
+                          color="error"
+                          sx={{ p: { xs: 0.5, sm: 1 } }}
+                        >
+                          <DeleteIcon fontSize="small" />
+                        </IconButton>
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+
+          {/* ✅ Pagination (outside container, always visible) */}
+          {entityType === "students" && (
+            <TablePagination
+              component="div"
+              count={items.length}
+              page={page}
+              onPageChange={handleChangePage}
+              rowsPerPage={rowsPerPage}
+              rowsPerPageOptions={[]}
+              sx={{ mt: 2, px: 1 }} // Padding to align with table
+            />
+          )}
+        </>
       )}
 
       {/* Delete Dialog */}
@@ -223,11 +304,7 @@ export default function EntityList({
         </DialogContent>
         <DialogActions>
           <Button onClick={handleDeleteCancel}>Cancel</Button>
-          <Button
-            onClick={handleDeleteConfirm}
-            color="error"
-            variant="contained"
-          >
+          <Button onClick={handleDeleteConfirm} color="error" variant="contained">
             Delete
           </Button>
         </DialogActions>
@@ -235,4 +312,5 @@ export default function EntityList({
     </Box>
   );
 }
+
 
