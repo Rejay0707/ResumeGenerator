@@ -159,13 +159,14 @@ export default function EntityList({
             }}
             sx={{
               // MUI sx for responsive fine-tuning
-              overflowX: entityType === "students"
-                ? {
-                    xs: "auto",
-                    sm: "auto",
-                    md: "visible",
-                  }
-                : "visible",
+              overflowX:
+                entityType === "students"
+                  ? {
+                      xs: "auto",
+                      sm: "auto",
+                      md: "visible",
+                    }
+                  : "visible",
               // Ensure no vertical scroll interference
               overflowY: "visible",
             }}
@@ -175,21 +176,24 @@ export default function EntityList({
               aria-label="entity table"
               sx={{
                 // Force wide table on small screens to trigger scroll
-                minWidth: entityType === "students"
-                  ? {
-                      xs: "1200px", // Aggressive: Forces scroll on mobile (<600px)
-                      sm: "1200px", // Aggressive: Forces scroll on tablet (600-900px)
-                      md: "auto", // No force on laptop+ (900px+)
-                    }
-                  : "auto",
+                minWidth:
+                  entityType === "students"
+                    ? {
+                        xs: "1200px", // Aggressive: Forces scroll on mobile (<600px)
+                        sm: "1200px", // Aggressive: Forces scroll on tablet (600-900px)
+                        md: "auto", // No force on laptop+ (900px+)
+                      }
+                    : "auto",
                 // Table-specific styles
                 tableLayout: "fixed", // Helps with column consistency during scroll
               }}
             >
-              <TableHead sx={{
-    padding: "8px 12px", // custom top/bottom + left/right
-    height: "50px",      // custom row height
-  }}>
+              <TableHead
+                sx={{
+                  padding: "8px 12px", // custom top/bottom + left/right
+                  height: "50px", // custom row height
+                }}
+              >
                 <TableRow>
                   {columns.map((col) => (
                     <TableCell
@@ -231,7 +235,11 @@ export default function EntityList({
                         sx={{
                           wordBreak: "break-word",
                           hyphens: "auto",
-                          minWidth: shouldScroll ? "150px" : (col.key === "email" || col.key === "phone" ? "120px" : "auto"),
+                          minWidth: shouldScroll
+                            ? "150px"
+                            : col.key === "email" || col.key === "phone"
+                            ? "120px"
+                            : "auto",
                           p: { xs: 0.5, sm: 1 },
                           width: shouldScroll ? "150px" : "auto", // Fixed for scroll
                         }}
@@ -304,7 +312,11 @@ export default function EntityList({
         </DialogContent>
         <DialogActions>
           <Button onClick={handleDeleteCancel}>Cancel</Button>
-          <Button onClick={handleDeleteConfirm} color="error" variant="contained">
+          <Button
+            onClick={handleDeleteConfirm}
+            color="error"
+            variant="contained"
+          >
             Delete
           </Button>
         </DialogActions>

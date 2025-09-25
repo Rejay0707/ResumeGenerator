@@ -110,7 +110,7 @@ export default function Students() {
           mb: { xs: 1.5, sm: 2, md: 3 },
           borderRadius: { xs: 1, sm: 2 },
           boxSizing: "border-box",
-          
+
         }}
       >
         <Box

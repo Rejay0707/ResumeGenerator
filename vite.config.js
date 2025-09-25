@@ -6,4 +6,13 @@ export default defineConfig({
   build: {
     outDir: "dist", // Vercel expects this
   },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://192.168.1.39:8000',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
 })
