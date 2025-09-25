@@ -87,7 +87,7 @@ export default function ResponsiveSidebar() {
   );
 
   return (
-    <div style={{ display: "flex" }}>
+    <div >
       <CssBaseline />
       <AppBar
         position="fixed"
@@ -173,6 +173,8 @@ export default function ResponsiveSidebar() {
           paddingLeft: 0,
           paddingRight: "5px",
           paddingTop: "100px",
+          width:"calc(100% - 240px)",
+          marginLeft:"240px",
         }}
       >
         {/* Child route renders here */}

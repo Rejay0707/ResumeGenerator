@@ -171,6 +171,7 @@ export default function EntityList({
               overflowY: "visible",
             }}
           >
+            <div style={{width:"100%",overflowX:"auto"}}>
             <Table
               size="small"
               aria-label="entity table"
@@ -287,6 +288,7 @@ export default function EntityList({
                 ))}
               </TableBody>
             </Table>
+            </div>
           </TableContainer>
 
           {/* ✅ Pagination (outside container, always visible) */}
