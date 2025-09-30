@@ -65,11 +65,19 @@ export default function ResponsiveSidebar() {
 
       <List>
         {[
-          { text: "Dashboard", to: "/admin/dashboard", icon: <DashboardIcon /> },
+          {
+            text: "Dashboard",
+            to: "/admin/dashboard",
+            icon: <DashboardIcon />,
+          },
           { text: "Parents", to: "/admin/parents", icon: <PeopleIcon /> },
           { text: "Teachers", to: "/admin/teachers", icon: <SchoolIcon /> },
           { text: "Students", to: "/admin/students", icon: <GroupIcon /> },
-          { text: "Recruiters", to: "/admin/recruiters", icon: <BusinessIcon /> },
+          {
+            text: "Recruiters",
+            to: "/admin/recruiters",
+            icon: <BusinessIcon />,
+          },
         ].map(({ text, to, icon }) => (
           <ListItem
             button
@@ -79,7 +87,7 @@ export default function ResponsiveSidebar() {
             onClick={() => isMobile && setMobileOpen(false)}
           >
             <ListItemIcon sx={{ color: "white" }}>{icon}</ListItemIcon>
-            <ListItemText primary={text} />
+            <ListItemText primary={text}  />
           </ListItem>
         ))}
       </List>
@@ -87,7 +95,7 @@ export default function ResponsiveSidebar() {
   );
 
   return (
-    <div >
+    <div>
       <CssBaseline />
       <AppBar
         position="fixed"
@@ -173,8 +181,8 @@ export default function ResponsiveSidebar() {
           paddingLeft: 0,
           paddingRight: "5px",
           paddingTop: "100px",
-          width:"calc(100% - 240px)",
-          marginLeft:"240px",
+          width: isMobile ? "100%" : "calc(100% - 240px)",
+          marginLeft: isMobile ? 0 : "240px",
         }}
       >
         {/* Child route renders here */}
@@ -183,4 +191,3 @@ export default function ResponsiveSidebar() {
     </div>
   );
 }
-

@@ -23,9 +23,9 @@ a:hover {
 }
 
 .MuiTableContainer-root::-webkit-scrollbar {
-       height: 8px !important;
-       display: block !important;
-     }
+  height: 8px !important;
+  display: block !important;
+}
 
 body {
   margin: 0;
