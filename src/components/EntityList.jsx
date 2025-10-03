@@ -17,12 +17,32 @@ import {
   TablePagination,
   TableContainer,
   useMediaQuery,
+  Tooltip,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
+import DescriptionIcon from "@mui/icons-material/Description";
+import TableChartIcon from "@mui/icons-material/TableChart";
 
+// PDF imports
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
+// Excel import
+import * as XLSX from "xlsx";
+
+// Word imports
+import {
+  Document,
+  Packer,
+  Paragraph,
+  Table as DocxTable,
+  TableRow as DocxTableRow,
+  TableCell as DocxTableCell,
+} from "docx";
+import { saveAs } from "file-saver";
 
 export default function EntityList({
   items,
@@ -36,11 +56,10 @@ export default function EntityList({
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
 
-    // const theme = useTheme(); // ✅ Always at top
-  const below1600 = useMediaQuery('(max-width:1600px)'); // ✅ Always at top
-  const shouldScroll = entityType === "students" && below1600; // ✅ No window.innerWidth
+  const below1600 = useMediaQuery("(max-width:1600px)");
+  const shouldScroll = entityType === "students" && below1600;
 
-  // ✅ Pagination state (only for students)
+  // Pagination state (only for students)
   const [page, setPage] = useState(0);
   const rowsPerPage = entityType === "students" ? 10 : items.length;
 
@@ -64,21 +83,7 @@ export default function EntityList({
     setDeleteId(null);
   };
 
-  if (loading)
-    return (
-      <Box textAlign="center" mt={4}>
-        <CircularProgress />
-      </Box>
-    );
-
-  if (error)
-    return (
-      <Typography color="error" mt={2}>
-        {error}
-      </Typography>
-    );
-
-  // ✅ Dynamic columns
+  // Dynamic columns
   const columns =
     entityType === "students"
       ? [
@@ -96,7 +101,7 @@ export default function EntityList({
           { key: "email", label: "Email" },
         ];
 
-  // ✅ Add button text
+  // Add button text
   const addButtonText =
     entityType === "students"
       ? "Add Student"
@@ -108,14 +113,131 @@ export default function EntityList({
       ? "Add Recruiter"
       : "Add";
 
-  // ✅ Apply pagination only for students
+  // Apply pagination only for students
   const paginatedItems =
     entityType === "students"
       ? items.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
       : items;
 
+  // PDF Download Handler
+  const handleDownloadPDF = () => {
+    try {
+      const doc = new jsPDF();
+      const fileName = `${entityType}-list.pdf`;
 
+      // Add title
+      doc.text(
+        `${entityType.charAt(0).toUpperCase() + entityType.slice(1)} List`,
+        14,
+        20
+      );
 
+      // Add table
+      autoTable(doc, {
+        head: [columns.map((col) => col.label)],
+        body: items.map((item) =>
+          columns.map((col) => item[col.key] || "-")
+        ),
+        startY: 30,
+        theme: "grid",
+        styles: { fontSize: 8, cellPadding: 3 },
+        headStyles: { fillColor: [137, 108, 108] },
+        margin: { top: 30 },
+      });
+
+      doc.save(fileName);
+    } catch (err) {
+      console.error("PDF generation failed:", err);
+      alert("Failed to generate PDF. Please try again.");
+    }
+  };
+
+  // Excel Download Handler
+  const handleDownloadExcel = () => {
+    try {
+      const fileName = `${entityType}-list.xlsx`;
+      const wsData = [
+        columns.map((col) => col.label), // Headers
+        ...items.map((item) => columns.map((col) => item[col.key] || "-")),
+      ];
+
+      const ws = XLSX.utils.aoa_to_sheet(wsData);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Data");
+      XLSX.writeFile(wb, fileName);
+    } catch (err) {
+      console.error("Excel generation failed:", err);
+      alert("Failed to generate Excel. Please try again.");
+    }
+  };
+
+  // Word Download Handler
+  const handleDownloadWord = async () => {
+    try {
+      const fileName = `${entityType}-list.docx`;
+
+      // Table Header
+      const headerRow = new DocxTableRow({
+        children: columns.map(
+          (col) =>
+            new DocxTableCell({
+              children: [new Paragraph({ text: col.label })],
+            })
+        ),
+      });
+
+      // Table Body
+      const bodyRows = items.map(
+        (item) =>
+          new DocxTableRow({
+            children: columns.map(
+              (col) =>
+                new DocxTableCell({
+                  children: [new Paragraph({ text: item[col.key] || "-" })],
+                })
+            ),
+          })
+      );
+
+      const doc = new Document({
+        sections: [
+          {
+            children: [
+              new Paragraph({
+                text: `${
+                  entityType.charAt(0).toUpperCase() + entityType.slice(1)
+                } List`,
+                heading: "Heading1",
+              }),
+              new DocxTable({
+                rows: [headerRow, ...bodyRows],
+              }),
+            ],
+          },
+        ],
+      });
+
+      const blob = await Packer.toBlob(doc);
+      saveAs(blob, fileName);
+    } catch (err) {
+      console.error("Word generation failed:", err);
+      alert("Failed to generate Word document. Please try again.");
+    }
+  };
+
+  if (loading)
+    return (
+      <Box textAlign="center" mt={4}>
+        <CircularProgress />
+      </Box>
+    );
+
+  if (error)
+    return (
+      <Typography color="error" mt={2}>
+        {error}
+      </Typography>
+    );
 
   return (
     <Box>
@@ -129,21 +251,61 @@ export default function EntityList({
       >
         <Typography variant="h5" sx={{ fontWeight: 600 }}></Typography>
 
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={onAdd}
-          startIcon={<AddIcon />}
+        {/* Icons and Add button group */}
+        <Box
           sx={{
-            whiteSpace: "nowrap",
-            textTransform: "none",
-            fontWeight: 500,
-            px: 2,
-            py: 0.8,
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+            flexWrap: "wrap",
           }}
         >
-          {addButtonText}
-        </Button>
+          <Tooltip title="Download as PDF">
+            <IconButton
+              onClick={handleDownloadPDF}
+              sx={{
+                color: "primary.main",
+              }}
+            >
+              <PictureAsPdfIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Download as Word">
+            <IconButton
+              onClick={handleDownloadWord}
+              sx={{
+                color: "primary.main",
+              }}
+            >
+              <DescriptionIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Download as Excel">
+            <IconButton
+              onClick={handleDownloadExcel}
+              sx={{
+                color: "primary.main",
+              }}
+            >
+              <TableChartIcon />
+            </IconButton>
+          </Tooltip>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={onAdd}
+            startIcon={<AddIcon />}
+            sx={{
+              whiteSpace: "nowrap",
+              textTransform: "none",
+              fontWeight: 500,
+              px: 2,
+              py: 0.8,
+            }}
+          >
+            {addButtonText}
+          </Button>
+        </Box>
       </Box>
 
       {/* Table */}
@@ -151,7 +313,6 @@ export default function EntityList({
         <Typography>No records found.</Typography>
       ) : (
         <>
-          {/* ✅ TableContainer with aggressive horizontal scroll */}
           <TableContainer
             component="div"
             style={{
@@ -276,7 +437,6 @@ export default function EntityList({
             </div>
           </TableContainer>
 
-          {/* ✅ Pagination (outside container, always visible) */}
           {entityType === "students" && (
             <TablePagination
               component="div"
@@ -311,3 +471,5 @@ export default function EntityList({
     </Box>
   );
 }
+
+

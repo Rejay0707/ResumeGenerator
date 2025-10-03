@@ -32,7 +32,7 @@ export default function LoginPage() {
   const loading = adminLoading || reduxAuth.loading;
   const error = adminError || reduxAuth.error;
 
-  const SUPERADMIN_DASHBOARD_URL = "http://192.168.1.41:8000/superadmin/dashboard";
+  const SUPERADMIN_DASHBOARD_URL = "http://192.168.1.33:8000/superadmin/dashboard";
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
