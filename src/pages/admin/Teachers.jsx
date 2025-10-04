@@ -84,6 +84,7 @@ export default function Teachers() {
         onClose={() => setDialogOpen(false)}
         onSubmit={handleSubmit}
         initialData={editingItem}
+        entityType="teachers"
       />
     </Box>
   );

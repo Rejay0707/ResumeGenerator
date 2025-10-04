@@ -83,6 +83,7 @@ export default function Parents() {
         onClose={() => setDialogOpen(false)}
         onSubmit={handleSubmit}
         initialData={editingItem}
+        entityType="parents"
       />
     </Box>
   );

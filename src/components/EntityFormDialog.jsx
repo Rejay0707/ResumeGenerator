@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react"; // Added useMemo
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -22,7 +22,7 @@ export default function EntityFormDialog({
   const [form, setForm] = useState({});
   const [errors, setErrors] = useState({});
 
-  // Memoize fields to prevent new array on every render (fixes useEffect loop)
+  // Updated fields with new entity types and fields
   const fields = useMemo(() => {
     if (entityType === "students") {
       return [
@@ -39,14 +39,35 @@ export default function EntityFormDialog({
       return [
         { key: "name", label: "Name", type: "text", required: true },
         { key: "email", label: "Email", type: "email", required: true },
+        { key: "phone", label: "Phone Number", type: "tel", required: false },
+        { key: "studentLinked", label: "Student Linked", type: "text", required: false },
+        { key: "address", label: "Address", type: "text", required: false },
+      ];
+    } else if (entityType === "teachers") {
+      return [
+        { key: "name", label: "Name", type: "text", required: true },
+        { key: "email", label: "Email", type: "email", required: true },
+        { key: "subjects", label: "Subject(s) Taught", type: "text", required: false },
+        { key: "classAssigned", label: "Class Assigned", type: "text", required: false },
+        { key: "phone", label: "Phone Number", type: "tel", required: false },
+        { key: "joiningDate", label: "Joining Date", type: "date", required: false },
+      ];
+    } else if (entityType === "recruiters") {
+      return [
+        { key: "companyName", label: "Company Name", type: "text", required: true },
+        { key: "email", label: "Email", type: "email", required: true },
+        { key: "contactPerson", label: "Contact Person", type: "text", required: false },
+        { key: "phone", label: "Phone Number", type: "tel", required: false },
+        { key: "industryType", label: "Industry Type", type: "text", required: false },
+        { key: "jobRoles", label: "Job Roles Offered", type: "text", required: false },
       ];
     }
-    // Fallback
+    // Fallback for other entities
     return [
       { key: "name", label: "Name", type: "text", required: true },
       { key: "email", label: "Email", type: "email", required: true },
     ];
-  }, [entityType]); // Only re-compute if entityType changes
+  }, [entityType]);
 
   useEffect(() => {
     if (open) {
@@ -54,7 +75,7 @@ export default function EntityFormDialog({
         // Edit: Pre-fill all fields as strings
         const prefilledForm = {};
         fields.forEach((field) => {
-          prefilledForm[field.key] = String(initialData[field.key] || ""); // Ensure string
+          prefilledForm[field.key] = String(initialData[field.key] || "");
         });
         setForm(prefilledForm);
       } else {
@@ -67,10 +88,10 @@ export default function EntityFormDialog({
       }
       setErrors({});
     }
-  }, [open, initialData, fields]); // fields is now stable (memoized)
+  }, [open, initialData, fields]);
 
   const handleChange = (key, value) => {
-    setForm((prev) => ({ ...prev, [key]: String(value) })); // Ensure string update
+    setForm((prev) => ({ ...prev, [key]: String(value) }));
     if (errors[key]) {
       setErrors((prev) => ({ ...prev, [key]: "" }));
     }
@@ -86,7 +107,7 @@ export default function EntityFormDialog({
         newErrors[field.key] = "Invalid email";
       }
     });
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -101,11 +122,9 @@ export default function EntityFormDialog({
   };
 
   const isEditing = !!initialData;
-  const title = isEditing 
-    ? `Edit ${entityType.charAt(0).toUpperCase() + entityType.slice(1)}` 
+  const title = isEditing
+    ? `Edit ${entityType.charAt(0).toUpperCase() + entityType.slice(1)}`
     : `Add ${entityType.charAt(0).toUpperCase() + entityType.slice(1)}`;
-
-
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
@@ -117,7 +136,7 @@ export default function EntityFormDialog({
               <FormControl fullWidth error={!!errors[field.key]} required={field.required}>
                 <InputLabel>{field.label}</InputLabel>
                 <Select
-                  value={form[field.key] || ""} // Ensure string
+                  value={form[field.key] || ""}
                   label={field.label}
                   onChange={(e) => handleChange(field.key, e.target.value)}
                 >
@@ -127,12 +146,12 @@ export default function EntityFormDialog({
                     </MenuItem>
                   ))}
                 </Select>
-                <TextField // Helper for error (like TextField's helperText)
+                <TextField
                   variant="standard"
                   value={errors[field.key] || ""}
                   error={!!errors[field.key]}
                   helperText={errors[field.key]}
-                  style={{ minHeight: 20, marginTop: 4 }} // Mimic helperText style
+                  style={{ minHeight: 20, marginTop: 4 }}
                   InputProps={{ disableUnderline: true }}
                 />
               </FormControl>
@@ -141,7 +160,7 @@ export default function EntityFormDialog({
                 fullWidth
                 label={field.label}
                 type={field.type}
-                value={form[field.key] || ""} // Controlled by form state
+                value={form[field.key] || ""}
                 onChange={(e) => handleChange(field.key, e.target.value)}
                 required={field.required}
                 error={!!errors[field.key]}

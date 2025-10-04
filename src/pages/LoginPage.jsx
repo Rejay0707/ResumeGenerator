@@ -25,14 +25,23 @@ export default function LoginPage() {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const reduxAuth = useSelector((state) => state.auth);
-  const { user: adminUser , login: adminLogin, loading: adminLoading, error: adminError } = useAuth();
+  const {
+    user: adminUser,
+    login: adminLogin,
+    loading: adminLoading,
+    error: adminError,
+  } = useAuth();
 
-  const [form, setForm] = useState({ email: "", password: "", remember: false });
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+    remember: false,
+  });
 
   const loading = adminLoading || reduxAuth.loading;
   const error = adminError || reduxAuth.error;
 
-  const SUPERADMIN_DASHBOARD_URL = "http://192.168.1.33:8000/superadmin/dashboard";
+  const SUPERADMIN_DASHBOARD_URL = "http://192.168.1.36:8000";
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -46,7 +55,10 @@ export default function LoginPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (form.email === "admin@example.com" || form.email === "admin@gmail.com") {
+    if (
+      form.email === "admin@example.com" ||
+      form.email === "admin@gmail.com"
+    ) {
       // Admin login
       await adminLogin(form.email, form.password);
       navigate("/admin/dashboard");
@@ -98,7 +110,11 @@ export default function LoginPage() {
         }}
       >
         <Box sx={{ mb: 2 }}>
-          <img src={logo1} alt="logo" style={{ width: "150px", height: "auto" }} />
+          <img
+            src={logo1}
+            alt="logo"
+            style={{ width: "150px", height: "auto" }}
+          />
         </Box>
 
         <Typography
@@ -134,7 +150,14 @@ export default function LoginPage() {
             autoComplete="current-password"
           />
 
-          <Box sx={{ mt: 1, mb: 2, display: "flex", justifyContent: "space-between" }}>
+          <Box
+            sx={{
+              mt: 1,
+              mb: 2,
+              display: "flex",
+              justifyContent: "space-between",
+            }}
+          >
             <FormControlLabel
               control={
                 <Checkbox
@@ -195,12 +218,18 @@ export default function LoginPage() {
             </Button>
           ))}
         </Box>
+        {/* 👇 Add this register link below login */}
+        <Typography sx={{ mt: 3, fontSize: 14 }}>
+          Don’t have an account?{" "}
+          <Link
+            href="/register"
+            underline="hover"
+            sx={{ fontWeight: "bold", color: "#0d47a1" }}
+          >
+            Register
+          </Link>
+        </Typography>
       </Paper>
     </Box>
   );
 }
-
-
-
-
-

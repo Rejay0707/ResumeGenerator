@@ -84,22 +84,51 @@ export default function EntityList({
   };
 
   // Dynamic columns
-  const columns =
-    entityType === "students"
-      ? [
-          { key: "admissionNo", label: "Admission No" },
-          { key: "name", label: "Name" },
-          { key: "fatherName", label: "Father Name" },
-          { key: "dob", label: "DOB" },
-          { key: "classSec", label: "Class/Sec" },
-          { key: "gender", label: "Gender" },
-          { key: "phone", label: "Phone" },
-          { key: "email", label: "Email" },
-        ]
-      : [
-          { key: "name", label: "Name" },
-          { key: "email", label: "Email" },
-        ];
+// Inside EntityList component, replace the columns definition with this:
+
+const columns =
+  entityType === "students"
+    ? [
+        { key: "admissionNo", label: "Admission No" },
+        { key: "name", label: "Name" },
+        { key: "fatherName", label: "Father Name" },
+        { key: "dob", label: "DOB" },
+        { key: "classSec", label: "Class/Sec" },
+        { key: "gender", label: "Gender" },
+        { key: "phone", label: "Phone" },
+        { key: "email", label: "Email" },
+      ]
+    : entityType === "parents"
+    ? [
+        { key: "name", label: "Name" },
+        { key: "email", label: "Email" },
+        { key: "phone", label: "Phone Number" },
+        { key: "studentLinked", label: "Student Linked" },
+        { key: "address", label: "Address" },
+      ]
+    : entityType === "teachers"
+    ? [
+        { key: "name", label: "Name" },
+        { key: "email", label: "Email" },
+        { key: "subjects", label: "Subject(s) Taught" },
+        { key: "classAssigned", label: "Class Assigned" },
+        { key: "phone", label: "Phone Number" },
+        { key: "joiningDate", label: "Joining Date" },
+      ]
+    : entityType === "recruiters"
+    ? [
+        { key: "companyName", label: "Company Name" },
+        { key: "email", label: "Email" },
+        { key: "contactPerson", label: "Contact Person" },
+        { key: "phone", label: "Phone Number" },
+        { key: "industryType", label: "Industry Type" },
+        { key: "jobRoles", label: "Job Roles Offered" },
+      ]
+    : [
+        { key: "name", label: "Name" },
+        { key: "email", label: "Email" },
+      ];
+
 
   // Add button text
   const addButtonText =
@@ -135,9 +164,7 @@ export default function EntityList({
       // Add table
       autoTable(doc, {
         head: [columns.map((col) => col.label)],
-        body: items.map((item) =>
-          columns.map((col) => item[col.key] || "-")
-        ),
+        body: items.map((item) => columns.map((col) => item[col.key] || "-")),
         startY: 30,
         theme: "grid",
         styles: { fontSize: 8, cellPadding: 3 },
@@ -330,7 +357,7 @@ export default function EntityList({
                 size="small"
                 aria-label="entity table"
                 sx={{
-                  minWidth: shouldScroll ? "1200px" : "auto",
+                  minWidth: shouldScroll ? "1200px" : "1200px",
                   tableLayout: "fixed",
                 }}
               >
@@ -471,5 +498,3 @@ export default function EntityList({
     </Box>
   );
 }
-
-

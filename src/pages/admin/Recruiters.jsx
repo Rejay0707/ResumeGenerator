@@ -84,6 +84,7 @@ export default function Recruiters() {
         onClose={() => setDialogOpen(false)}
         onSubmit={handleSubmit}
         initialData={editingItem}
+        entityType="recruiters"
       />
     </Box>
   );

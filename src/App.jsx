@@ -10,6 +10,7 @@ import Teachers from "./pages/admin/Teachers";
 import Students from "./pages/admin/Students";
 import Recruiters from "./pages/admin/Recruiters";
 import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
 
 // Check authentication
 // const isAuthenticated = () => {
@@ -39,6 +40,7 @@ function App() {
       <Routes>
         {/* Public Route: Login */}
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
 
         {/* Student + Admin can access HomePage */}
         <Route
