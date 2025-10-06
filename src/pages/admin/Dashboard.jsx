@@ -64,19 +64,19 @@ export default function Dashboard() {
   };
 
   // Recent Activity: Mock data (simulate based on today's date; extend with real timestamps)
-  const recentActivities = useMemo(() => {
-    // Simulate activities (e.g., new additions today)
-    const activities = [
-      `${students.length} total students (3 new added today)`,
-      `${teachers.length} total teachers (1 new joined this week)`,
-      `${parents.length} total parents (2 linked today)`,
-      `${recruiters.length} total recruiters (1 new company registered)`,
-      "Recent edit: Updated student Jane Smith's class to 6B",
-      "System alert: 5 students need parent contact verification",
-    ];
-    // Filter for "today" activities (mock logic)
-    return activities.slice(0, 4); // Show top 4
-  }, [students.length, teachers.length, parents.length, recruiters.length]);
+  // const recentActivities = useMemo(() => {
+  //   // Simulate activities (e.g., new additions today)
+  //   const activities = [
+  //     `${students.length} total students (3 new added today)`,
+  //     `${teachers.length} total teachers (1 new joined this week)`,
+  //     `${parents.length} total parents (2 linked today)`,
+  //     `${recruiters.length} total recruiters (1 new company registered)`,
+  //     "Recent edit: Updated student Jane Smith's class to 6B",
+  //     "System alert: 5 students need parent contact verification",
+  //   ];
+  //   // Filter for "today" activities (mock logic)
+  //   return activities.slice(0, 4); // Show top 4
+  // }, [students.length, teachers.length, parents.length, recruiters.length]);
 
   // Charts Data
   // 1. Student Distribution by Class (group students by classSec)
@@ -160,7 +160,7 @@ export default function Dashboard() {
         ))}
       </Grid>
 
-      {/* New: Recent Activity Section */}
+      {/* New: Recent Activity Section
       <Box sx={{ mt: 5 }}>
         <Typography variant="h5" gutterBottom fontWeight="600">
           Recent Activity
@@ -177,7 +177,7 @@ export default function Dashboard() {
             ))}
           </List>
         </Paper>
-      </Box>
+      </Box> */}
 
       {/* New: Charts/Graphs Section */}
       <Box sx={{ mt: 5 }}>

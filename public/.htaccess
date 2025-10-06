@@ -1,0 +1,11 @@
+Options -MultiViews
+RewriteEngine On
+
+# Optional: Force HTTPS (add if you want auto-redirect from HTTP)
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# SPA Routing: Fallback to index.html for client-side routes
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.html [QSA,L]
