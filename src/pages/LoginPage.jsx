@@ -238,7 +238,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { loginAsync, adminLoginAsync, clearError, setUser  } from "../features/authSlice";
+import {
+  loginAsync,
+  adminLoginAsync,
+  clearError,
+} from "../features/authSlice";
 import {
   Box,
   Paper,
@@ -259,7 +263,6 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-
   const reduxAuth = useSelector((state) => state.auth);
 
   const [form, setForm] = useState({
@@ -267,7 +270,7 @@ export default function LoginPage() {
     password: "",
     remember: false,
   });
-  const [selectedRole, setSelectedRole] = useState("");  // Track selected role from buttons
+  const [selectedRole, setSelectedRole] = useState("");
 
   const loading = reduxAuth.loading;
   const error = reduxAuth.error;
@@ -283,186 +286,77 @@ export default function LoginPage() {
     if (error) dispatch(clearError());
   };
 
-  // Handle role button clicks with logging
   const handleRoleClick = (roleLabel, roleValue) => {
-    console.log(`🔹 Role clicked: ${roleLabel} (value: ${roleValue})`);  // Debug: Confirm click
     setSelectedRole(roleValue);
-    // Optional: Pre-fill email for testing (replace with real emails from your backend)
-    let prefillEmail = "";
-    if (roleValue === "superadmin") {
-      prefillEmail = "superadmin@company.com";  // Customize
-    } else if (roleValue === "admin") {
-      prefillEmail = "admin@company.com";  // Customize
-    } else if (roleValue === "student") {
-      prefillEmail = "student@example.com";
-    } else if (roleValue === "parent") {
-      prefillEmail = "parent@example.com";
-    } else if (roleValue === "teacher") {
-      prefillEmail = "teacher@example.com";
-    } else if (roleValue === "recruiter") {
-      prefillEmail = "recruiter@example.com";
-    }
-    setForm((prev) => ({ ...prev, email: prefillEmail }));
-    // Clear error and password for security
     setForm((prev) => ({ ...prev, password: "" }));
     if (error) dispatch(clearError());
-    console.log(`🔹 Role set: ${roleValue}, Email pre-filled: ${prefillEmail}`);  // Debug
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("🚀 Form submitted! Email:", form.email, "Password:", form.password ? "[hidden]" : "", "Selected Role:", selectedRole);  // Debug: Confirm submit
+    if (!form.email || !form.password) return;
 
-    // Check if fields are filled (browser validation might block otherwise)
-    if (!form.email || !form.password) {
-      console.error("❌ Submit blocked: Email or password empty");
-      return;  // Exit - show error in UI if needed
-    }
+    try {
+      let resultAction;
 
-    // Primary: Use selectedRole to decide endpoint/thunk
-    if (selectedRole) {
-      console.log("🔹 Step 1: Role selected, handling based on role");  // Debug
-      if (selectedRole === "superadmin") {
-        console.log("🔹 Step 2: Superadmin - Calling /api/login");
-        const resultAction = await dispatch(
-          loginAsync({ email: form.email, password: form.password })
-        );
-        if (loginAsync.fulfilled.match(resultAction)) {
-          console.log("✅ Superadmin success, checking role...");
-          const user = resultAction.payload;
-          const role = user.role?.toLowerCase();
-          if (role === "superadmin") {
-            window.location.href = SUPERADMIN_DASHBOARD_URL;
-          } else if (role === "admin") {
-            navigate("/admin/dashboard");
-          } else if (role === "student") {
-            navigate("/");
-          } else {
-            navigate("/"); 
-          }
-        } else {
-          console.log("❌ Superadmin failed");
-        }
-      } else if (selectedRole === "admin") {
-        console.log("🔹 Step 2: Admin - Calling /api/superadmin/login");
-        const resultAction = await dispatch(
+      if (selectedRole === "admin") {
+        // Admin login
+        resultAction = await dispatch(
           adminLoginAsync({ email: form.email, password: form.password })
         );
-        if (adminLoginAsync.fulfilled.match(resultAction)) {
-          console.log("✅ Admin success, navigating to dashboard");
-          navigate("/admin/dashboard");
-        } else {
-          console.log("❌ Admin failed");
-        }
-      } else if (selectedRole === "student") {
-        // Student: Mock - Store fake user, no API
-        console.log("🔹 Step 2: Student - Mock login with state storage (NO API CALL)");
-        const mockUser  = {
-          id: Date.now(),  // Fake ID
-          email: form.email,
-          role: "student",
-          name: "Student User",  // Customize as needed
-          // Add more fields if your app expects them (e.g., avatar, permissions)
-        };
-        setForm({ email: "", password: "", remember: false });  // Clear form
-        dispatch(setUser (mockUser ));  // Store mock user in Redux/localStorage
-        console.log("🔹 Mock user stored:", mockUser );
-        console.log("🔹 Attempting redirect to /");
-        navigate("/");  // Now it should stay on home (user exists)
-        console.log("✅ Student redirect completed with auth state");
-        return;
       } else {
-        // Other roles (PARENT, TEACHER, RECRUITER): Fallback to superadmin endpoint
-        // TODO: Add specific thunks/endpoints, e.g., parentLoginAsync for /api/parent/login
-        console.log(`🔹 Step 2: Other role (${selectedRole}) - Fallback to superadmin /api/login`);
-        const resultAction = await dispatch(
+        // Superadmin, student, teacher, parent, recruiter — all handled via /api/login
+        resultAction = await dispatch(
           loginAsync({ email: form.email, password: form.password })
         );
-        if (loginAsync.fulfilled.match(resultAction)) {
-          console.log("✅ Fallback success, checking role...");
-          const user = resultAction.payload;
-          const role = user.role?.toLowerCase();
-          // Handle based on backend role (extend as needed)
-          if (role === "superadmin") {
-            window.location.href = SUPERADMIN_DASHBOARD_URL;
-          } else {
-            navigate("/");  // Fallback
-          }
-        } else {
-          console.log("❌ Fallback failed");
-        }
       }
-    } else {
-      // Fallback: Email-based logic (if no role selected)
-      console.log("🔹 Step 1: No role selected, using email fallback");  // Debug
-      if (
-        form.email.includes("admin@") ||  // e.g., admin@company.com or admin@gmail.com
-        form.email === "admin@gmail.com"
-      ) {
-        console.log("🔹 Step 2: Admin email detected - Calling /api/superadmin/login");
-        const resultAction = await dispatch(
-          adminLoginAsync({ email: form.email, password: form.password })
-        );
-        if (adminLoginAsync.fulfilled.match(resultAction)) {
-          console.log("✅ Admin fallback success");
+
+      if (loginAsync.fulfilled.match(resultAction) || adminLoginAsync.fulfilled.match(resultAction)) {
+        const user = resultAction.payload;
+
+        // Handle nested data
+        const role =
+          user?.role?.toLowerCase() ||
+          user?.admin?.role?.toLowerCase() ||
+          user?.user?.role?.toLowerCase() ||
+          "";
+
+        console.log("✅ Login success:", role);
+
+        // Navigate by role
+        if (role === "superadmin") {
+          window.location.href = SUPERADMIN_DASHBOARD_URL;
+        } else if (role === "admin") {
           navigate("/admin/dashboard");
+        } else if (role === "Student") {
+          navigate("/");
+        } else if (role === "teacher") {
+          navigate("/teacher/dashboard");
+        } else if (role === "parent") {
+          navigate("/parent/dashboard");
+        } else if (role === "recruiter") {
+          navigate("/recruiter/dashboard");
         } else {
-          console.log("❌ Admin fallback failed");
+          navigate("/");
         }
-      } else if (form.email.includes("student")) {  // Flexible match
-        // Student fallback: Mock - Store fake user
-        console.log("🔹 Step 2: Student email detected - Mock login with state storage (NO API CALL)");
-        const mockUser  = {
-          id: Date.now(),
-          email: form.email,
-          role: "student",
-          name: "Student User",
-        };
-        setForm({ email: "", password: "", remember: false });
-        dispatch(setUser (mockUser ));  // Store mock user
-        console.log("🔹 Mock user stored (fallback):", mockUser );
-        console.log("🔹 Attempting fallback redirect to /");
-        navigate("/");  // Should stay now
-        console.log("✅ Student fallback redirect completed with auth state");
-        return;
       } else {
-        console.log("🔹 Step 2: No match - Default to superadmin /api/login");
-        const resultAction = await dispatch(
-          loginAsync({ email: form.email, password: form.password })
-        );
-        if (loginAsync.fulfilled.match(resultAction)) {
-          console.log("✅ Default success, checking role...");
-          const user = resultAction.payload;
-          const role = user.role?.toLowerCase();
-          if (role === "superadmin") {
-            window.location.href = SUPERADMIN_DASHBOARD_URL;
-          } else if (role === "admin") {
-            navigate("/admin/dashboard");
-          } else if (role === "student") {
-            navigate("/");
-          } else {
-            navigate("/");  // Fallback
-          }
-        } else {
-          console.log("❌ Default failed");
-        }
+        console.log("❌ Login failed:", resultAction.payload);
       }
+    } catch (err) {
+      console.error("❌ Login error:", err);
     }
-    console.log("🏁 handleSubmit ended");  // Debug: Always log end
   };
 
   return (
     <Box
       sx={{
         minHeight: "100vh",
-        width: "100vw",
+        // width: "100vw",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
         px: 2,
         backgroundColor: "#eaf7ff",
-        boxSizing: "border-box",
-        overflow: "hidden", // prevent scroll
       }}
     >
       <Paper
@@ -478,7 +372,7 @@ export default function LoginPage() {
         <Box sx={{ mb: 2 }}>
           <img
             src={logo1}
-            alt="logo"
+            alt="Logo"
             style={{ width: "150px", height: "auto" }}
           />
         </Box>
@@ -499,11 +393,11 @@ export default function LoginPage() {
             onChange={handleChange}
             fullWidth
             margin="normal"
-            // required  // Temporarily removed for testing
+            required
             variant="standard"
             autoComplete="email"
           />
-                    <TextField
+          <TextField
             label="Enter Password"
             name="password"
             type="password"
@@ -511,7 +405,7 @@ export default function LoginPage() {
             onChange={handleChange}
             fullWidth
             margin="normal"
-            // required  // Temporarily removed for testing
+            required
             variant="standard"
             autoComplete="current-password"
           />
@@ -546,12 +440,6 @@ export default function LoginPage() {
             </Alert>
           )}
 
-          {(!form.email || !form.password) && (
-            <Alert severity="warning" sx={{ mb: 2 }}>
-              Please enter email and password.
-            </Alert>
-          )}
-
           <Button
             type="submit"
             variant="contained"
@@ -568,7 +456,7 @@ export default function LoginPage() {
           </Button>
         </Box>
 
-        {/* Role Buttons with Click Handlers and Highlighting */}
+        {/* Role Buttons */}
         <Box
           sx={{
             mt: 3,
@@ -589,9 +477,9 @@ export default function LoginPage() {
               key={label}
               variant={selectedRole === value ? "contained" : "outlined"}
               size="small"
-              onClick={() => handleRoleClick(label, value)}  // Click to select role
+              onClick={() => handleRoleClick(label, value)}
               sx={{
-                ...(selectedRole === value && { 
+                ...(selectedRole === value && {
                   backgroundColor: "#0d47a1",
                   color: "white",
                 }),
@@ -602,7 +490,6 @@ export default function LoginPage() {
           ))}
         </Box>
 
-        {/* Register link below login */}
         <Typography sx={{ mt: 3, fontSize: 14 }}>
           Don’t have an account?{" "}
           <Link
@@ -617,6 +504,7 @@ export default function LoginPage() {
     </Box>
   );
 }
+
 
 
 

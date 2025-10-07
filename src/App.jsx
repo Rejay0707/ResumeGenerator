@@ -26,13 +26,16 @@ function ProtectedRoute({ children, roles }) {
     return <Navigate to="/login" replace />;
   }
 
-  // If roles are specified and user role is not in it, redirect
-  if (roles && !roles.includes(user.role)) {
+  // Normalize role to lowercase
+  const userRole = user.role?.toLowerCase();
+
+  if (roles && !roles.map((r) => r.toLowerCase()).includes(userRole)) {
     return <Navigate to="/" replace />;
   }
 
   return children;
 }
+
 
 function App() {
   return (
