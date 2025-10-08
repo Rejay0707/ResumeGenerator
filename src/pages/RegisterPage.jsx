@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Box,
   Paper,
@@ -12,62 +13,119 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import logo1 from "../assets/logo1.png";
+import { registerUser, clearError } from "../features/registerSlice";
 
 export default function RegisterPage() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+  // Select from register slice state
+  const { isLoading: reduxLoading, error: reduxError, user } = useSelector(
+    (state) => state.register // Using 'register' slice
+  );
 
   const [form, setForm] = useState({
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
+    role: "", // Initial role state
   });
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [localError, setLocalError] = useState(null); // For frontend-only errors
+  const [loading, setLoading] = useState(false); // Local loading fallback
+
+  const SUPERADMIN_DASHBOARD_URL = "http://192.168.1.36:8000"; // Copied from LoginPage
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
-    if (error) setError(null);
+    if (localError) setLocalError(null);
+    dispatch(clearError()); // Clear Redux errors on input
   };
+
+  // Effect to handle successful registration from register slice (role-based navigation like LoginPage)
+  useEffect(() => {
+    if (user) {
+      // Handle nested data (mirroring LoginPage logic)
+      const role =
+        user?.role?.toLowerCase() ||
+        user?.admin?.role?.toLowerCase() ||
+        user?.user?.role?.toLowerCase() ||
+        "";
+
+      console.log("✅ Registration success:", role);
+
+      // Store user/token in localStorage (adjust as needed for your auth flow)
+      localStorage.setItem("user", JSON.stringify(user));
+      if (user.token) {
+        localStorage.setItem("token", user.token);
+      }
+
+      // Navigate by role (exactly like LoginPage)
+      if (role === "superadmin") {
+        window.location.href = SUPERADMIN_DASHBOARD_URL;
+      } else if (role === "admin") {
+        navigate("/admin/dashboard");
+      } else if (role === "student" || role === "Student") {
+        navigate("/");
+      } else if (role === "teacher") {
+        navigate("/teacher/dashboard");
+      } else if (role === "parent") {
+        navigate("/parent/dashboard");
+      } else if (role === "recruiter") {
+        navigate("/recruiter/dashboard");
+      } else {
+        navigate("/"); // Fallback
+      }
+    }
+  }, [user, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!form.name || !form.email || !form.password || !form.confirmPassword) {
-      setError("All fields are required");
+    // Frontend validation
+    if (!form.name || !form.email || !form.password || !form.confirmPassword || !form.role) {
+      setLocalError("All fields are required");
       return;
     }
     if (form.password !== form.confirmPassword) {
-      setError("Passwords do not match");
+      setLocalError("Passwords do not match");
+      return;
+    }
+    if (form.password.length < 6) {
+      setLocalError("Password must be at least 6 characters");
       return;
     }
 
+    // Prepare data for API (exclude confirmPassword)
+    const formData = {
+      name: form.name,
+      email: form.email,
+      password: form.password,
+      role: form.role,
+    };
+
     setLoading(true);
-    try {
-      // Mock registration (simulate backend call)
-      await new Promise((res) => setTimeout(res, 1000));
+    setLocalError(null);
 
-      const newUser = {
-        id: Date.now(),
-        name: form.name,
-        email: form.email,
-        role: "student", // default role for now
-        token: "mock-jwt-token",
-      };
+    // Dispatch Redux Thunk from registerSlice
+    const resultAction = await dispatch(registerUser  (formData));
 
-      localStorage.setItem("user", JSON.stringify(newUser));
-
-      navigate("/"); // redirect to homepage or login
-    } catch (err) {
-      setError("Registration failed. Try again.");
-      console.log(err);
-    } finally {
-      setLoading(false);
+    if (registerUser  .fulfilled.match(resultAction)) {
+      // Success handled in useEffect (no need to navigate here)
+      console.log("✅ Registration fulfilled");
+    } else {
+      console.log("❌ Registration failed:", resultAction.payload);
+      // Error is already set in Redux state
     }
+
+    setLoading(false);
   };
+
+  // Combined error display (local + Redux from register slice)
+  const displayError = localError || reduxError;
 
   return (
     <Box
@@ -144,17 +202,19 @@ export default function RegisterPage() {
           />
           <TextField
             select
-            label="Select Role"
+            // label="Select Role"
             name="role"
-            value={form.role || ""}
+            value={form.role}
             onChange={handleChange}
             fullWidth
             margin="normal"
+            required
+            variant="standard"
             SelectProps={{
               native: true,
             }}
-            required
           >
+            <option value="">Select a role</option>
             <option value="admin">Admin</option>
             <option value="superadmin">SuperAdmin</option>
             <option value="student">Student</option>
@@ -172,9 +232,9 @@ export default function RegisterPage() {
             variant="standard"
           />
 
-          {error && (
+          {displayError && (
             <Alert severity="error" sx={{ mt: 2 }}>
-              {error}
+              {displayError}
             </Alert>
           )}
 
@@ -182,7 +242,7 @@ export default function RegisterPage() {
             type="submit"
             variant="contained"
             fullWidth
-            disabled={loading}
+            disabled={loading || reduxLoading}
             sx={{
               mt: 3,
               py: 1.2,
@@ -191,7 +251,7 @@ export default function RegisterPage() {
               "&:hover": { backgroundColor: "#08306b" },
             }}
           >
-            {loading ? "Registering..." : "REGISTER"}
+            {(loading || reduxLoading) ? "Registering..." : "REGISTER"}
           </Button>
         </Box>
 
