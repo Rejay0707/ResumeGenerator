@@ -26,11 +26,11 @@ export default function EntityFormDialog({
   const fields = useMemo(() => {
     if (entityType === "students") {
       return [
-        { key: "admissionNo", label: "Admission No", type: "text", required: true },
+        { key: "admission_no", label: "Admission No", type: "text", required: true },
         { key: "name", label: "Name", type: "text", required: true },
-        { key: "fatherName", label: "Father Name", type: "text", required: true },
+        { key: "father_name", label: "Father Name", type: "text", required: true },
         { key: "dob", label: "Date of Birth (YYYY-MM-DD)", type: "text", required: true },
-        { key: "classSec", label: "Class/Section", type: "text", required: true },
+        { key: "class_sec", label: "Class/Section", type: "text", required: true },
         { key: "gender", label: "Gender", type: "select", required: true, options: ["Male", "Female", "Other"] },
         { key: "phone", label: "Phone", type: "tel", required: false },
         { key: "email", label: "Email", type: "email", required: true },
@@ -48,18 +48,18 @@ export default function EntityFormDialog({
         { key: "name", label: "Name", type: "text", required: true },
         { key: "email", label: "Email", type: "email", required: true },
         { key: "subjects", label: "Subject(s) Taught", type: "text", required: false },
-        { key: "classAssigned", label: "Class Assigned", type: "text", required: false },
+        { key: "class_assigned", label: "Class Assigned", type: "text", required: false },
         { key: "phone", label: "Phone Number", type: "tel", required: false },
-        { key: "joiningDate", label: "Joining Date", type: "date", required: false },
+        { key: "joining_date",  type: "date", required: false },
       ];
     } else if (entityType === "recruiters") {
       return [
-        { key: "companyName", label: "Company Name", type: "text", required: true },
+        { key: "company_name", label: "Company Name", type: "text", required: true },
         { key: "email", label: "Email", type: "email", required: true },
-        { key: "contactPerson", label: "Contact Person", type: "text", required: false },
+        { key: "contact_person", label: "Contact Person", type: "text", required: false },
         { key: "phone", label: "Phone Number", type: "tel", required: false },
-        { key: "industryType", label: "Industry Type", type: "text", required: false },
-        { key: "jobRoles", label: "Job Roles Offered", type: "text", required: false },
+        { key: "industry_type", label: "Industry Type", type: "text", required: false },
+        { key: "job_roles", label: "Job Roles Offered", type: "text", required: false },
       ];
     }
     // Fallback for other entities

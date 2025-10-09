@@ -15,8 +15,10 @@ import EntityList from "../../components/EntityList";
 import EntityFormDialog from "../../components/EntityFormDialog";
 
 export default function Students() {
+  // ✅ Hook now uses Redux Thunk version
   const { items, loading, error, addItem, updateItem, deleteItem } =
     useAdminManagement("students");
+
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -60,71 +62,63 @@ export default function Students() {
   return (
     <Box
       sx={{
-        backgroundColor: 'blue.100',
-        // Responsive padding: Minimal on mobile, scales up
+        backgroundColor: "blue.100",
         px: { xs: 1, sm: 2, md: 3, lg: 4 },
         py: { xs: 1, sm: 2, md: 3 },
         textAlign: "left",
         boxSizing: "border-box",
-        overflowX: "hidden", // Prevent page-level horizontal scroll
-        // Custom media for very small screens (<360px, e.g., small phones)
-        // MUI breakpoints
+        overflowX: "hidden",
         "@media (min-width:600px)": {
-          px: 4, // sm and up
+          px: 4,
         },
         "@media (max-width:600px)": {
           px: 1,
         },
-        "@media(max-width:360px)":{
-          px:0.2
+        "@media(max-width:360px)": {
+          px: 0.2,
         },
-        // Ensure full height utilization
       }}
     >
-      {/* Title: Responsive font scaling, left-aligned */}
       <Typography
         variant="h4"
         gutterBottom
         sx={{
           fontSize: {
-            xs: "1.25rem", // Smaller on mobile
+            xs: "1.25rem",
             sm: "1.75rem",
             md: "2.25rem",
             lg: "2.75rem",
             xl: "24px",
           },
           fontWeight: "bold",
-          mb: { xs: 1, sm: 2 }, // Reduced margin on mobile
-          lineHeight: 1.2, // Better stacking on small screens
+          mb: { xs: 1, sm: 2 },
+          lineHeight: 1.2,
         }}
       >
         Manage Students
       </Typography>
 
-      {/* Search Section: Stacks on mobile, row on tablet+ */}
       <Paper
         elevation={1}
         sx={{
           width: "100%",
-          p: { xs: 1, sm: 1.5, md: 2, lg: 2.5 }, // Scale padding
+          p: { xs: 1, sm: 1.5, md: 2, lg: 2.5 },
           mb: { xs: 1.5, sm: 2, md: 3 },
           borderRadius: { xs: 1, sm: 2 },
           boxSizing: "border-box",
-
         }}
       >
         <Box
           sx={{
             display: "flex",
-            flexDirection: { xs: "column", sm: "row" }, // Stack on mobile
+            flexDirection: { xs: "column", sm: "row" },
             alignItems: { xs: "stretch", sm: "center" },
             justifyContent: "space-between",
             gap: { xs: 1, sm: 1.5, md: 2 },
             boxSizing: "border-box",
           }}
         >
-          {/* Search Input: Full-width always, responsive font */}
-          <Box sx={{ flexGrow: 1, width: "100%", mb: { xs: 1, sm: 0 } }}> {/* Margin bottom only on mobile stack */}
+          <Box sx={{ flexGrow: 1, width: "100%", mb: { xs: 1, sm: 0 } }}>
             <TextField
               fullWidth
               variant="outlined"
@@ -144,7 +138,7 @@ export default function Students() {
                       onClick={handleClearSearch}
                       edge="end"
                       size="small"
-                      sx={{ p: { xs: 0.5, sm: 0.75 } }} // Touch-friendly on mobile
+                      sx={{ p: { xs: 0.5, sm: 0.75 } }}
                     >
                       <ClearIcon />
                     </IconButton>
@@ -155,28 +149,27 @@ export default function Students() {
                 "& .MuiOutlinedInput-root": {
                   borderRadius: { xs: 1, sm: 2 },
                   fontSize: {
-                    xs: "0.75rem", // Smaller on mobile
+                    xs: "0.75rem",
                     sm: "0.875rem",
                     md: "1rem",
                   },
-                  minHeight: { xs: 40, sm: 44 }, // Touch target height
+                  minHeight: { xs: 40, sm: 44 },
                 },
-                wordBreak: "break-word", // Wrap long placeholders
+                wordBreak: "break-word",
               }}
             />
           </Box>
 
-          {/* Results Counter: Centers on mobile, right on tablet+ */}
           <Typography
             variant="body2"
             color="text.secondary"
             sx={{
               textAlign: { xs: "center", sm: "right" },
               fontSize: { xs: "0.75rem", sm: "0.875rem", md: "1rem" },
-              minWidth: { sm: "100px", md: "120px" }, // Prevent squish on tablet
-              maxWidth: { xs: "100%" }, // Full on mobile
-              whiteSpace: "nowrap", // Prevent wrap on small text
-              flexShrink: 0, // Don't shrink
+              minWidth: { sm: "100px", md: "120px" },
+              maxWidth: { xs: "100%" },
+              whiteSpace: "nowrap",
+              flexShrink: 0,
             }}
           >
             {filteredItems.length} of {items.length} students
@@ -184,7 +177,6 @@ export default function Students() {
         </Box>
       </Paper>
 
-      {/* No Results Alert: Responsive margins/font */}
       {searchTerm && filteredItems.length === 0 && !loading && (
         <Alert
           severity="info"
@@ -200,7 +192,6 @@ export default function Students() {
         </Alert>
       )}
 
-      {/* Entity List: Full-width, scrolls if needed on mobile/tablet */}
       <EntityList
         items={filteredItems}
         loading={loading}
@@ -211,7 +202,6 @@ export default function Students() {
         entityType="students"
       />
 
-      {/* Dialog: Already responsive via EntityFormDialog */}
       <EntityFormDialog
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
@@ -222,5 +212,3 @@ export default function Students() {
     </Box>
   );
 }
-
-

@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { Typography, Grid, Paper, Box, List, ListItem, ListItemText, Divider } from "@mui/material";
+import { Typography, Grid, Paper, Box } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import useAdminManagement from "../../containers/AdminManagement";
 import {
@@ -63,31 +63,22 @@ export default function Dashboard() {
     }
   };
 
-  // Recent Activity: Mock data (simulate based on today's date; extend with real timestamps)
-  // const recentActivities = useMemo(() => {
-  //   // Simulate activities (e.g., new additions today)
-  //   const activities = [
-  //     `${students.length} total students (3 new added today)`,
-  //     `${teachers.length} total teachers (1 new joined this week)`,
-  //     `${parents.length} total parents (2 linked today)`,
-  //     `${recruiters.length} total recruiters (1 new company registered)`,
-  //     "Recent edit: Updated student Jane Smith's class to 6B",
-  //     "System alert: 5 students need parent contact verification",
-  //   ];
-  //   // Filter for "today" activities (mock logic)
-  //   return activities.slice(0, 4); // Show top 4
-  // }, [students.length, teachers.length, parents.length, recruiters.length]);
-
   // Charts Data
   // 1. Student Distribution by Class (group students by classSec)
-  const studentDistribution = useMemo(() => {
-    const classCounts = students.reduce((acc, student) => {
-      const classKey = student.classSec || "Unassigned";
-      acc[classKey] = (acc[classKey] || 0) + 1;
-      return acc;
-    }, {});
-    return Object.entries(classCounts).map(([name, value]) => ({ name, value }));
-  }, [students]);
+const studentDistribution = useMemo(() => {
+  if (!students || students.length === 0) return [];
+
+  const classCounts = students.reduce((acc, student) => {
+    // Use the correct backend field: class_sec
+    const classKey = student.class_sec || "Unassigned";
+    acc[classKey] = (acc[classKey] || 0) + 1;
+    return acc;
+  }, {});
+
+  return Object.entries(classCounts).map(([name, value]) => ({ name, value }));
+}, [students]);
+
+
 
   // Colors for pie chart
   const pieColors = ["#42a5f5", "#66bb6a", "#ffb74d", "#ba68c8", "#ef5350", "#26c6da"];
@@ -95,9 +86,7 @@ export default function Dashboard() {
   // 2. Teacher-Student Ratio (simple data for bar chart)
   const teacherStudentRatio = useMemo(() => {
     const ratio = teachers.length > 0 ? (students.length / teachers.length).toFixed(1) : 0;
-    return [
-      { category: "Students per Teacher", value: parseFloat(ratio) },
-    ];
+    return [{ category: "Students per Teacher", value: parseFloat(ratio) }];
   }, [students.length, teachers.length]);
 
   return (
@@ -160,26 +149,7 @@ export default function Dashboard() {
         ))}
       </Grid>
 
-      {/* New: Recent Activity Section
-      <Box sx={{ mt: 5 }}>
-        <Typography variant="h5" gutterBottom fontWeight="600">
-          Recent Activity
-        </Typography>
-        <Paper elevation={3} sx={{ p: 3, borderRadius: 3 }}>
-          <List>
-            {recentActivities.map((activity, index) => (
-              <React.Fragment key={index}>
-                <ListItem>
-                  <ListItemText primary={activity} secondary="Today" />
-                </ListItem>
-                {index < recentActivities.length - 1 && <Divider />}
-              </React.Fragment>
-            ))}
-          </List>
-        </Paper>
-      </Box> */}
-
-      {/* New: Charts/Graphs Section */}
+      {/* Analytics & Charts Section */}
       <Box sx={{ mt: 5 }}>
         <Typography variant="h5" gutterBottom fontWeight="600">
           Analytics & Charts
@@ -187,7 +157,7 @@ export default function Dashboard() {
         <Grid container spacing={3}>
           {/* Student Distribution by Class - Pie Chart */}
           <Grid item xs={12} md={6}>
-            <Paper elevation={3} sx={{ p: 3, borderRadius: 3, height: 400, width: "350px" }}>
+            <Paper elevation={3} sx={{ p: '3px', borderRadius: 3, height: 400, width: "350px" }}>
               <Typography variant="h6" gutterBottom>
                 Student Distribution by Class
               </Typography>
@@ -215,7 +185,7 @@ export default function Dashboard() {
 
           {/* Teacher-Student Ratio - Bar Chart */}
           <Grid item xs={12} md={6}>
-            <Paper elevation={3} sx={{ p: 3, borderRadius: 3, height: 400, width: "350px" }}>
+            <Paper elevation={3} sx={{ p: '3px', borderRadius: 3, height: 400, width: "350px" }}>
               <Typography variant="h6" gutterBottom>
                 Teacher-Student Ratio
               </Typography>
@@ -239,4 +209,3 @@ export default function Dashboard() {
     </Box>
   );
 }
-

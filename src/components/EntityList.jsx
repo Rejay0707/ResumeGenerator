@@ -89,11 +89,11 @@ export default function EntityList({
 const columns =
   entityType === "students"
     ? [
-        { key: "admissionNo", label: "Admission No" },
+        { key: "admission_no", label: "Admission No" },
         { key: "name", label: "Name" },
-        { key: "fatherName", label: "Father Name" },
+        { key: "father_name", label: "Father Name" },
         { key: "dob", label: "DOB" },
-        { key: "classSec", label: "Class/Sec" },
+        { key: "class_sec", label: "Class/Sec" },
         { key: "gender", label: "Gender" },
         { key: "phone", label: "Phone" },
         { key: "email", label: "Email" },
@@ -111,18 +111,18 @@ const columns =
         { key: "name", label: "Name" },
         { key: "email", label: "Email" },
         { key: "subjects", label: "Subject(s) Taught" },
-        { key: "classAssigned", label: "Class Assigned" },
+        { key: "class_assigned", label: "Class Assigned" },
         { key: "phone", label: "Phone Number" },
-        { key: "joiningDate", label: "Joining Date" },
+        { key: "joining_date", label: "Joining Date" },
       ]
     : entityType === "recruiters"
     ? [
-        { key: "companyName", label: "Company Name" },
+        { key: "company_name", label: "Company Name" },
         { key: "email", label: "Email" },
-        { key: "contactPerson", label: "Contact Person" },
+        { key: "contact_person", label: "Contact Person" },
         { key: "phone", label: "Phone Number" },
-        { key: "industryType", label: "Industry Type" },
-        { key: "jobRoles", label: "Job Roles Offered" },
+        { key: "industry_type", label: "Industry Type" },
+        { key: "job_roles", label: "Job Roles Offered" },
       ]
     : [
         { key: "name", label: "Name" },
