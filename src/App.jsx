@@ -12,13 +12,29 @@ import Recruiters from "./pages/admin/Recruiters";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 
-// Check authentication
-// const isAuthenticated = () => {
-//   const user = JSON.parse(localStorage.getItem("user"));
-//   return !!user; // returns true if a user exists
-// };
+// --------------------------
+// ✅ Role Redirect Component
+// --------------------------
+function RoleRedirect() {
+  const user = JSON.parse(localStorage.getItem("user"));
 
-// Role-based route guard
+  if (!user) return <Navigate to="/login" replace />;
+
+  const role = user.role?.toLowerCase();
+
+  if (role === "superadmin") return <Navigate to="http://192.168.62.205:8000" replace />;
+  if (role === "admin") return <Navigate to="/admin/dashboard" replace />;
+  if (role === "student") return <Navigate to="/home" replace />;
+  if (role === "teacher") return <Navigate to="/teacher/dashboard" replace />;
+  if (role === "parent") return <Navigate to="/parent/dashboard" replace />;
+  if (role === "recruiter") return <Navigate to="/recruiter/dashboard" replace />;
+
+  return <Navigate to="/login" replace />;
+}
+
+// --------------------------
+// ✅ Protected Route Component
+// --------------------------
 function ProtectedRoute({ children, roles }) {
   const user = JSON.parse(localStorage.getItem("user"));
 
@@ -26,7 +42,6 @@ function ProtectedRoute({ children, roles }) {
     return <Navigate to="/login" replace />;
   }
 
-  // Normalize role to lowercase
   const userRole = user.role?.toLowerCase();
 
   if (roles && !roles.map((r) => r.toLowerCase()).includes(userRole)) {
@@ -36,26 +51,45 @@ function ProtectedRoute({ children, roles }) {
   return children;
 }
 
-
+// --------------------------
+// ✅ Main App Component
+// --------------------------
 function App() {
   return (
     <Router>
       <Routes>
-        {/* Public Route: Login */}
+        {/* Public Routes */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
 
-        {/* Student + Admin can access HomePage */}
+        {/* Root Route - auto redirect based on user role */}
+        <Route path="/" element={<RoleRedirect />} />
+
+        {/* Student accessible pages */}
         <Route
-          path="/"
+          path="/home"
           element={
             <ProtectedRoute roles={["student", "admin"]}>
               <HomePage />
             </ProtectedRoute>
           }
         />
-        <Route path="/resume-builder" element={<ResumeBuilderPage />} />
-        <Route path="/preview" element={<PreviewPage />} />
+        <Route
+          path="/resume-builder"
+          element={
+            <ProtectedRoute roles={["student", "admin"]}>
+              <ResumeBuilderPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/preview"
+          element={
+            <ProtectedRoute roles={["student", "admin"]}>
+              <PreviewPage />
+            </ProtectedRoute>
+          }
+        />
 
         {/* Admin-only routes */}
         <Route
@@ -74,7 +108,7 @@ function App() {
           <Route path="recruiters" element={<Recruiters />} />
         </Route>
 
-        {/* Fallback: redirect unknown routes */}
+        {/* Fallback */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </Router>
@@ -82,3 +116,4 @@ function App() {
 }
 
 export default App;
+

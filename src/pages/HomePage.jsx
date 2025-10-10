@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@mui/material";
+import { Button, IconButton, Tooltip } from "@mui/material";
+import LogoutIcon from "@mui/icons-material/Logout"; // logout icon
 import logo from "../assets/logo.jpeg";
 import backgroundImage from "../assets/background-image.png";
 
@@ -9,6 +10,13 @@ function HomePage() {
 
   const handleGetStarted = () => {
     navigate("/resume-builder");
+  };
+
+  const handleLogout = () => {
+    // Clear auth data (if using localStorage or Redux)
+    localStorage.removeItem("token"); 
+    // redirect to login page
+    navigate("/login");
   };
 
   return (
@@ -24,10 +32,35 @@ function HomePage() {
           backgroundImage: `url(${backgroundImage})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
-          filter: "blur(25px)", // adjust blur strength here
+          filter: "blur(25px)",
           zIndex: 0,
         }}
       />
+
+      {/* Logout button at top-right */}
+      <div
+        style={{
+          position: "absolute",
+          top: 20,
+          right: 20,
+          zIndex: 2,
+        }}
+      >
+        <Tooltip title="Logout">
+          <IconButton
+            onClick={handleLogout}
+            sx={{
+              backgroundColor: "rgba(255,255,255,0.2)",
+              color: "white",
+              "&:hover": {
+                backgroundColor: "rgba(255,255,255,0.4)",
+              },
+            }}
+          >
+            <LogoutIcon />
+          </IconButton>
+        </Tooltip>
+      </div>
 
       {/* Content */}
       <div
@@ -58,7 +91,14 @@ function HomePage() {
         <h1 style={{ fontSize: "3rem", marginBottom: "20px", color: "white" }}>
           AI Resume Builder
         </h1>
-        <p style={{ fontSize: "1.2rem",fontWeight:'600', color: "#0c0a29", marginBottom: "40px" }}>
+        <p
+          style={{
+            fontSize: "1.2rem",
+            fontWeight: "600",
+            color: "#0c0a29",
+            marginBottom: "40px",
+          }}
+        >
           Build your professional resume in minutes with AI-powered suggestions.
         </p>
 
@@ -76,5 +116,4 @@ function HomePage() {
 }
 
 export default HomePage;
-
 
