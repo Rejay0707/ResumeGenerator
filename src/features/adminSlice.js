@@ -2,10 +2,10 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 const baseUrls = {
-  students: "http://192.168.1.36:8000/api/students",
-  teachers: "http://192.168.1.36:8000/api/teachers",
-  parents: "http://192.168.1.36:8000/api/guardians",
-  recruiters: "http://192.168.1.36:8000/api/admin-recruiters",
+  students: "https://www.scratchprod.in/resume-generator-backend/api/students",
+  teachers: "https://www.scratchprod.in/resume-generator-backend/api/teachers",
+  parents: "https://www.scratchprod.in/resume-generator-backend/api/guardians",
+  recruiters: "https://www.scratchprod.in/resume-generator-backend/api/admin-recruiters",
 };
 
 // 🔹 1. Fetch entities

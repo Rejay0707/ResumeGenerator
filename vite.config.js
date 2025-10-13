@@ -10,7 +10,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target:  "http://192.168.1.36:8000",  // Only for dev—update for production (see below)
+        target:  "https://www.scratchprod.in/resume-generator-backend/",  // Only for dev—update for production (see below)
         changeOrigin: true,
         secure: false,
       },

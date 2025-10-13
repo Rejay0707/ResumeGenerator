@@ -5,7 +5,7 @@ export const registerUser  = createAsyncThunk(
   'register/registerUser ',
   async (userData, { rejectWithValue }) => {
     try {
-      const response = await axios.post('http://192.168.1.36:8000/api/register', userData);
+      const response = await axios.post('https://www.scratchprod.in/resume-generator-backend/api/register', userData);
       if (response.data.success === false) {
         return rejectWithValue(response.data.message || 'Registration failed');
       }

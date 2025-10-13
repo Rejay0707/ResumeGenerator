@@ -372,7 +372,7 @@ const PreviewPage = () => {
 
   const fetchResume = async () => {
     try {
-      const res = await axios.get(`http://192.168.1.36:8000/api/resumes/${resumeId}`);
+      const res = await axios.get(`https://www.scratchprod.in/resume-generator-backend/api/resumes/${resumeId}`);
       console.log("Fetched resume:", res.data);
       setResumeData(res.data.data);
     } catch (error) {

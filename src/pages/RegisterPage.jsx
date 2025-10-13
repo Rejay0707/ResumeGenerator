@@ -36,7 +36,7 @@ export default function RegisterPage() {
   const [localError, setLocalError] = useState(null); // For frontend-only errors
   const [loading, setLoading] = useState(false); // Local loading fallback
 
-  const SUPERADMIN_DASHBOARD_URL = "http://192.168.1.36:8000"; // Copied from LoginPage
+  const SUPERADMIN_DASHBOARD_URL = "http://192.168.1.38:8000"; // Copied from LoginPage
 
   const handleChange = (e) => {
     const { name, value } = e.target;

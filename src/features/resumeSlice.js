@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const API_URL = "http://192.168.1.36:8000/api/resumes";
+const API_URL = "http://192.168.1.38:8000/api/resumes";
 
 // POST → create a resume
 export const createResumeAsync = createAsyncThunk(

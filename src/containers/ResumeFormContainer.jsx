@@ -375,7 +375,7 @@ function ResumeFormContainer() {
     try {
       // ✅ Post form data to backend
       const response = await axios.post(
-        "http://192.168.1.36:8000/api/resumes",
+        "https://www.scratchprod.in/resume-generator-backend/api/resumes",
         formData
       );
 

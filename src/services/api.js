@@ -1,7 +1,7 @@
 // src/services/api.js
 import axios from 'axios';
 
-const API_BASE_URL = 'http://192.168.1.36:8000';
+const API_BASE_URL = 'https://www.scratchprod.in/resume-generator-backend/';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
