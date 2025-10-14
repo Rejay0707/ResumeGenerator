@@ -464,7 +464,7 @@ const columns =
             </div>
           </TableContainer>
 
-          {entityType === "students" && (
+          {  (
             <TablePagination
               component="div"
               count={items.length}

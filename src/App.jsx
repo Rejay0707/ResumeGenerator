@@ -56,7 +56,7 @@ function ProtectedRoute({ children, roles }) {
 // --------------------------
 function App() {
   return (
-    <Router basename="/resume-generator/">
+    <Router >
       <Routes>
         {/* Public Routes */}
         <Route path="/login" element={<LoginPage />} />
