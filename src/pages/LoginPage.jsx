@@ -97,9 +97,8 @@ export default function LoginPage() {
           navigate("/teacher/dashboard");
         } else if (role === "parent") {
           navigate("/parent/dashboard");
-        } else if (role === "recruiter") {
-          navigate("/recruiter/dashboard");
-        } else {
+        } 
+        else {
           navigate("/");
         }
       } else {
@@ -234,7 +233,6 @@ export default function LoginPage() {
             { label: "STUDENT", value: "student" },
             { label: "PARENT", value: "parent" },
             { label: "TEACHER", value: "teacher" },
-            { label: "RECRUITER", value: "recruiter" },
           ].map(({ label, value }) => (
             <Button
               key={label}

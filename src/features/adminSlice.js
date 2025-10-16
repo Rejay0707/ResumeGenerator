@@ -5,7 +5,6 @@ const baseUrls = {
   students: "https://www.scratchprod.in/resume-generator-backend/api/students",
   teachers: "https://www.scratchprod.in/resume-generator-backend/api/teachers",
   parents: "https://www.scratchprod.in/resume-generator-backend/api/guardians",
-  recruiters: "https://www.scratchprod.in/resume-generator-backend/api/admin-recruiters",
 };
 
 // 🔹 1. Fetch entities
@@ -73,7 +72,6 @@ const adminSlice = createSlice({
       students: [],
       teachers: [],
       parents: [],
-      recruiters: [],
     },
     loading: false,
     error: null,

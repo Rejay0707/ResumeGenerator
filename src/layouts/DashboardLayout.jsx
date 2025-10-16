@@ -73,11 +73,6 @@ export default function ResponsiveSidebar() {
           { text: "Parents", to: "/admin/parents", icon: <PeopleIcon /> },
           { text: "Teachers", to: "/admin/teachers", icon: <SchoolIcon /> },
           { text: "Students", to: "/admin/students", icon: <GroupIcon /> },
-          {
-            text: "Recruiters",
-            to: "/admin/recruiters",
-            icon: <BusinessIcon />,
-          },
         ].map(({ text, to, icon }) => (
           <ListItem
             button

@@ -8,7 +8,15 @@ import Dashboard from "./pages/admin/Dashboard";
 import Parents from "./pages/admin/Parents";
 import Teachers from "./pages/admin/Teachers";
 import Students from "./pages/admin/Students";
-import Recruiters from "./pages/admin/Recruiters";
+
+import TeacherDashboardLayout from "./layouts/TeacherDashboardLayout";
+import TeacherHome from "./containers/TeacherHome";
+import TeacherAttendance from "./containers/TeacherAttendance";
+import TeacherClasses from "./containers/TeacherClasses";
+import TeacherSubjects from "./containers/TeacherSubjects";
+import TeacherStudents from "./containers/TeacherStudents";
+import TeacherProfile from "./containers/TeacherProfile";
+
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 
@@ -22,12 +30,11 @@ function RoleRedirect() {
 
   const role = user.role?.toLowerCase();
 
-  if (role === "superadmin") return <Navigate to="http://192.168.62.205:8000" replace />;
+  if (role === "superadmin") return <Navigate to="https://www.scratchprod.in/resume-generator-backend/" replace />;
   if (role === "admin") return <Navigate to="/admin/dashboard" replace />;
   if (role === "student") return <Navigate to="/home" replace />;
-  if (role === "teacher") return <Navigate to="/teacher/dashboard" replace />;
+  if (role === "teacher") return <Navigate to="/teacher/dashboard/home" replace />;
   if (role === "parent") return <Navigate to="/parent/dashboard" replace />;
-  if (role === "recruiter") return <Navigate to="/recruiter/dashboard" replace />;
 
   return <Navigate to="/login" replace />;
 }
@@ -56,7 +63,7 @@ function ProtectedRoute({ children, roles }) {
 // --------------------------
 function App() {
   return (
-    <Router >
+    <Router>
       <Routes>
         {/* Public Routes */}
         <Route path="/login" element={<LoginPage />} />
@@ -105,7 +112,23 @@ function App() {
           <Route path="parents" element={<Parents />} />
           <Route path="teachers" element={<Teachers />} />
           <Route path="students" element={<Students />} />
-          <Route path="recruiters" element={<Recruiters />} />
+        </Route>
+
+        {/* Teacher Dashboard routes */}
+        <Route
+          path="/teacher/dashboard"
+          element={
+            <ProtectedRoute roles={["teacher"]}>
+              <TeacherDashboardLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route path="home" element={<TeacherHome />} />
+          <Route path="attendance" element={<TeacherAttendance />} />
+          <Route path="classes" element={<TeacherClasses />} />
+          <Route path="subjects" element={<TeacherSubjects />} />
+          <Route path="students" element={<TeacherStudents />} />
+          <Route path="profile" element={<TeacherProfile />} />
         </Route>
 
         {/* Fallback */}

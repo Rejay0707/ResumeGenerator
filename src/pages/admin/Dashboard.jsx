@@ -20,7 +20,7 @@ export default function Dashboard() {
   const { items: parents } = useAdminManagement("parents");
   const { items: teachers } = useAdminManagement("teachers");
   const { items: students } = useAdminManagement("students");
-  const { items: recruiters } = useAdminManagement("recruiters");
+  
 
   const navigate = useNavigate();
 
@@ -40,11 +40,6 @@ export default function Dashboard() {
       count: teachers.length,
       gradient: "linear-gradient(135deg, #ffb74d, #f57c00)",
     },
-    {
-      label: "Recruiters",
-      count: recruiters.length,
-      gradient: "linear-gradient(135deg, #ba68c8, #8e24aa)",
-    },
   ];
 
   // Helper to get route based on label
@@ -56,8 +51,6 @@ export default function Dashboard() {
         return "/admin/parents";
       case "Teachers":
         return "/admin/teachers";
-      case "Recruiters":
-        return "/admin/recruiters";
       default:
         return "/admin/dashboard";
     }
@@ -140,8 +133,6 @@ const studentDistribution = useMemo(() => {
                   ? `Total number of parents: ${parents.length}`
                   : item.label === "Teachers"
                   ? `Total number of teachers: ${teachers.length}`
-                  : item.label === "Recruiters"
-                  ? `Total number of recruiters: ${recruiters.length}`
                   : item.count}
               </Typography>
             </Paper>

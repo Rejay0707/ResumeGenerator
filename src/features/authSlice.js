@@ -6,19 +6,30 @@ export const loginAsync = createAsyncThunk(
   async ({ email, password }, { rejectWithValue }) => {
     try {
       const response = await api.post('/api/login', { email, password });
+
+      // Save token
       if (response.data.token) {
         localStorage.setItem('token', response.data.token);
       }
-      if (response.data && response.data.admin) {
-        return response.data.admin;
-      } else {
-        return rejectWithValue('Login failed: No user in response');
+
+      // ✅ Flexible user extraction (teacher, student, parent, etc.)
+      const userData =
+        response.data.user || response.data.admin || response.data || null;
+
+      if (!userData) {
+        return rejectWithValue('Login failed: No user data found');
       }
+
+      localStorage.setItem('user', JSON.stringify(userData));
+      return userData;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || error.message || 'Network error');
+      return rejectWithValue(
+        error.response?.data?.message || error.message || 'Network error'
+      );
     }
   }
 );
+
 
 export const adminLoginAsync = createAsyncThunk(
   'auth/adminLoginAsync',

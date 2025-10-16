@@ -30,7 +30,8 @@ export default function EntityFormDialog({
         { key: "name", label: "Name", type: "text", required: true },
         { key: "father_name", label: "Father Name", type: "text", required: true },
         { key: "dob", label: "Date of Birth (YYYY-MM-DD)", type: "text", required: true },
-        { key: "class_sec", label: "Class/Section", type: "text", required: true },
+        { key: "year", label: "Year", type: "text", required: true },
+        { key: "department", label: "Department", type: "select", required: true, options: ['Mechanical','Electrical',' Civil','Computer Science']},
         { key: "gender", label: "Gender", type: "select", required: true, options: ["Male", "Female", "Other"] },
         { key: "phone", label: "Phone", type: "tel", required: false },
         { key: "email", label: "Email", type: "email", required: true },
@@ -45,22 +46,14 @@ export default function EntityFormDialog({
       ];
     } else if (entityType === "teachers") {
       return [
-        { key: "name", label: "Name", type: "text", required: true },
-        { key: "email", label: "Email", type: "email", required: true },
-        { key: "subjects", label: "Subject(s) Taught", type: "text", required: false },
-        { key: "class_assigned", label: "Class Assigned", type: "text", required: false },
-        { key: "phone", label: "Phone Number", type: "tel", required: false },
-        { key: "joining_date",  type: "date", required: false },
-      ];
-    } else if (entityType === "recruiters") {
-      return [
-        { key: "company_name", label: "Company Name", type: "text", required: true },
-        { key: "email", label: "Email", type: "email", required: true },
-        { key: "contact_person", label: "Contact Person", type: "text", required: false },
-        { key: "phone", label: "Phone Number", type: "tel", required: false },
-        { key: "industry_type", label: "Industry Type", type: "text", required: false },
-        { key: "job_roles", label: "Job Roles Offered", type: "text", required: false },
-      ];
+      { key: "name", label: "Name" },
+      { key: "email", label: "Email" },
+      { key: "department", label: "Department" },
+      { key: "subjects", label: "Subject(s) Taught" },
+      { key: "designation", label: "Designation" },
+      { key: "phone", label: "Phone Number" },
+      { key: "joining_date", label: "Joining Date" },
+    ]
     }
     // Fallback for other entities
     return [

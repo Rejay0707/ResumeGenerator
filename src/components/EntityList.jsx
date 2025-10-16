@@ -93,7 +93,8 @@ const columns =
         { key: "name", label: "Name" },
         { key: "father_name", label: "Father Name" },
         { key: "dob", label: "DOB" },
-        { key: "class_sec", label: "Class/Sec" },
+        { key: "year", label: "Year" },
+        { key: "department", label: "Department"},
         { key: "gender", label: "Gender" },
         { key: "phone", label: "Phone" },
         { key: "email", label: "Email" },
@@ -107,23 +108,16 @@ const columns =
         { key: "address", label: "Address" },
       ]
     : entityType === "teachers"
-    ? [
-        { key: "name", label: "Name" },
-        { key: "email", label: "Email" },
-        { key: "subjects", label: "Subject(s) Taught" },
-        { key: "class_assigned", label: "Class Assigned" },
-        { key: "phone", label: "Phone Number" },
-        { key: "joining_date", label: "Joining Date" },
-      ]
-    : entityType === "recruiters"
-    ? [
-        { key: "company_name", label: "Company Name" },
-        { key: "email", label: "Email" },
-        { key: "contact_person", label: "Contact Person" },
-        { key: "phone", label: "Phone Number" },
-        { key: "industry_type", label: "Industry Type" },
-        { key: "job_roles", label: "Job Roles Offered" },
-      ]
+  ? [
+      { key: "name", label: "Name" },
+      { key: "email", label: "Email" },
+      { key: "department", label: "Department" },
+      { key: "subjects", label: "Subject(s) Taught" },
+      { key: "designation", label: "Designation" },
+      { key: "phone", label: "Phone Number" },
+      { key: "joining_date", label: "Joining Date" },
+    ]
+
     : [
         { key: "name", label: "Name" },
         { key: "email", label: "Email" },
@@ -138,8 +132,6 @@ const columns =
       ? "Add Teacher"
       : entityType === "parents"
       ? "Add Parent"
-      : entityType === "recruiters"
-      ? "Add Recruiter"
       : "Add";
 
   // Apply pagination only for students
