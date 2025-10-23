@@ -91,29 +91,38 @@
 //     }
 //   }, [selectedClass, timetables]);
 
-//   // Dynamically filter times based on selected subject
+//   // Dynamically filter times based on selected class, subject, and day
 //   useEffect(() => {
-//     if (selectedClass && subject && timetables.length > 0) {
+//     if (selectedClass && subject && timetables.length > 0 && selectedDate) {
 //       const [department, year] = selectedClass.split(" - ");
+//       const day = new Date(selectedDate).toLocaleDateString("en-US", { weekday: "long" });
 //       const relatedTimes = timetables
 //         .filter(
 //           (t) =>
 //             t.department === department &&
 //             t.year === year &&
-//             t.subject_name === subject
+//             t.subject_name === subject &&
+//             t.day === day
 //         )
 //         .map((t) => t.time);
-//       setTimes([...new Set(relatedTimes)]);
+//       setTimes([...new Set(relatedTimes)].sort((a, b) => a.localeCompare(b)));
 //     } else {
 //       setTimes([]);
 //     }
-//   }, [selectedClass, subject, timetables]);
+//   }, [selectedClass, subject, selectedDate, timetables]);
 
-//   // Fetch existing attendance when selections change
+//   // Fetch existing attendance when selections change and initialize attendance with all students as absent
 //   useEffect(() => {
 //     if (selectedClass && subject && time && selectedDate) {
-//       setAttendance({});
 //       const [department, year] = selectedClass.split(" - ");
+//       const filteredStudents = students.filter(
+//         (s) => s.department === department && s.year === year
+//       );
+//       const initialAttendance = {};
+//       filteredStudents.forEach((s) => {
+//         initialAttendance[s.id] = false; // Initialize all as absent
+//       });
+//       setAttendance(initialAttendance);
 //       dispatch(fetchAttendanceAsync({
 //         teacher_id: teacher?.id,
 //         department,
@@ -125,7 +134,7 @@
 //     } else {
 //       setAttendance({});
 //     }
-//   }, [selectedClass, subject, time, selectedDate, teacher?.id, dispatch]);
+//   }, [selectedClass, subject, time, selectedDate, teacher?.id, dispatch, students]);
 
 //   // Populate attendance state from fetched records
 //   useEffect(() => {
@@ -139,15 +148,15 @@
 //           r.time === time &&
 //           r.date === selectedDate
 //       );
-//       const existingAttendance = {};
-//       filteredRecords.forEach((record) => {
-//         record.attendance.forEach((att) => {
-//           existingAttendance[att.student_id] = att.status === "present";
+//       setAttendance((prev) => {
+//         const updatedAttendance = { ...prev };
+//         filteredRecords.forEach((record) => {
+//           record.attendance.forEach((att) => {
+//             updatedAttendance[att.student_id] = att.status === "present";
+//           });
 //         });
+//         return updatedAttendance;
 //       });
-//       setAttendance(existingAttendance);
-//     } else {
-//       setAttendance({});
 //     }
 //   }, [records, selectedClass, subject, time, selectedDate]);
 
@@ -189,13 +198,25 @@
 //     dispatch(saveAttendanceAsync(attendanceData));
 //   };
 
-//   // Clear success/error after save
+//   // Clear success/error after save and refetch attendance on success
 //   useEffect(() => {
+//     if (success) {
+//       // Refetch attendance after successful save
+//       const [department, year] = selectedClass.split(" - ");
+//       dispatch(fetchAttendanceAsync({
+//         teacher_id: teacher?.id,
+//         department,
+//         year,
+//         subject,
+//         time,
+//         date: selectedDate,
+//       }));
+//     }
 //     if (success || error) {
 //       const timer = setTimeout(() => dispatch(clearAttendanceState()), 5000);
 //       return () => clearTimeout(timer);
 //     }
-//   }, [success, error, dispatch]);
+//   }, [success, error, dispatch, selectedClass, subject, time, selectedDate, teacher?.id]);
 
 //   const [department, year] = selectedClass.split(" - ") || ["", ""];
 //   const filteredRecords = records.filter(
@@ -248,7 +269,7 @@
 //         </Typography>
 //         <Grid container spacing={3} sx={{ alignItems: "center" }}>
 //           <Grid item xs={12} sm={6} md={3}>
-//             <FormControl fullWidth variant="outlined" sx={{ backgroundColor: "#f9f9f9", borderRadius: 1 }}>
+//             <FormControl fullWidth variant="outlined" sx={{ backgroundColor: "#ffffff", border: "1px solid #ddd", borderRadius: 2, boxShadow: "0 2px 4px rgba(0,0,0,0.1)", "&:hover": { boxShadow: "0 4px 8px rgba(0,0,0,0.15)" } }}>
 //               <InputLabel>Class</InputLabel>
 //               <Select
 //                 value={selectedClass}
@@ -264,7 +285,7 @@
 //             </FormControl>
 //           </Grid>
 //           <Grid item xs={12} sm={6} md={3}>
-//             <FormControl fullWidth variant="outlined" sx={{ backgroundColor: "#f9f9f9", borderRadius: 1 }}>
+//             <FormControl fullWidth variant="outlined" sx={{ backgroundColor: "#ffffff", border: "1px solid #ddd", borderRadius: 2, boxShadow: "0 2px 4px rgba(0,0,0,0.1)", "&:hover": { boxShadow: "0 4px 8px rgba(0,0,0,0.15)" } }}>
 //               <InputLabel>Subject</InputLabel>
 //               <Select
 //                 value={subject}
@@ -284,7 +305,7 @@
 //             </FormControl>
 //           </Grid>
 //           <Grid item xs={12} sm={6} md={3}>
-//             <FormControl fullWidth variant="outlined" sx={{ backgroundColor: "#f9f9f9", borderRadius: 1 }}>
+//             <FormControl fullWidth variant="outlined" sx={{ backgroundColor: "#ffffff", border: "1px solid #ddd", borderRadius: 2, boxShadow: "0 2px 4px rgba(0,0,0,0.1)", "&:hover": { boxShadow: "0 4px 8px rgba(0,0,0,0.15)" } }}>
 //               <InputLabel>Time</InputLabel>
 //               <Select
 //                 value={time}
@@ -361,7 +382,6 @@
 // };
 
 // export default TeacherAttendance;
-
 
 
 import React, { useEffect, useState } from "react";
@@ -477,11 +497,18 @@ const TeacherAttendance = () => {
     }
   }, [selectedClass, subject, selectedDate, timetables]);
 
-  // Fetch existing attendance when selections change
+  // Fetch existing attendance when selections change and initialize attendance with all students as absent
   useEffect(() => {
     if (selectedClass && subject && time && selectedDate) {
-      setAttendance({});
       const [department, year] = selectedClass.split(" - ");
+      const filteredStudents = students.filter(
+        (s) => s.department === department && s.year === year
+      );
+      const initialAttendance = {};
+      filteredStudents.forEach((s) => {
+        initialAttendance[s.id] = false; // Initialize all as absent
+      });
+      setAttendance(initialAttendance);
       dispatch(fetchAttendanceAsync({
         teacher_id: teacher?.id,
         department,
@@ -493,7 +520,7 @@ const TeacherAttendance = () => {
     } else {
       setAttendance({});
     }
-  }, [selectedClass, subject, time, selectedDate, teacher?.id, dispatch]);
+  }, [selectedClass, subject, time, selectedDate, teacher?.id, dispatch, students]);
 
   // Populate attendance state from fetched records
   useEffect(() => {
@@ -507,15 +534,15 @@ const TeacherAttendance = () => {
           r.time === time &&
           r.date === selectedDate
       );
-      const existingAttendance = {};
-      filteredRecords.forEach((record) => {
-        record.attendance.forEach((att) => {
-          existingAttendance[att.student_id] = att.status === "present";
+      setAttendance((prev) => {
+        const updatedAttendance = { ...prev };
+        filteredRecords.forEach((record) => {
+          record.attendance.forEach((att) => {
+            updatedAttendance[att.student_id] = att.status === "present";
+          });
         });
+        return updatedAttendance;
       });
-      setAttendance(existingAttendance);
-    } else {
-      setAttendance({});
     }
   }, [records, selectedClass, subject, time, selectedDate]);
 
@@ -557,13 +584,25 @@ const TeacherAttendance = () => {
     dispatch(saveAttendanceAsync(attendanceData));
   };
 
-  // Clear success/error after save
+  // Clear success/error after save and refetch attendance on success
   useEffect(() => {
+    if (success) {
+      // Refetch attendance after successful save
+      const [department, year] = selectedClass.split(" - ");
+      dispatch(fetchAttendanceAsync({
+        teacher_id: teacher?.id,
+        department,
+        year,
+        subject,
+        time,
+        date: selectedDate,
+      }));
+    }
     if (success || error) {
       const timer = setTimeout(() => dispatch(clearAttendanceState()), 5000);
       return () => clearTimeout(timer);
     }
-  }, [success, error, dispatch]);
+  }, [success, error, dispatch, selectedClass, subject, time, selectedDate, teacher?.id]);
 
   const [department, year] = selectedClass.split(" - ") || ["", ""];
   const filteredRecords = records.filter(
@@ -616,7 +655,7 @@ const TeacherAttendance = () => {
         </Typography>
         <Grid container spacing={3} sx={{ alignItems: "center" }}>
           <Grid item xs={12} sm={6} md={3}>
-            <FormControl fullWidth variant="outlined" sx={{ backgroundColor: "#f9f9f9", borderRadius: 1 }}>
+            <FormControl fullWidth variant="outlined" sx={{ backgroundColor: "#ffffff", border: "1px solid #ddd", borderRadius: 2, boxShadow: "0 2px 4px rgba(0,0,0,0.1)", "&:hover": { boxShadow: "0 4px 8px rgba(0,0,0,0.15)" }, minHeight: 56, width: 250 }}>
               <InputLabel>Class</InputLabel>
               <Select
                 value={selectedClass}
@@ -632,7 +671,7 @@ const TeacherAttendance = () => {
             </FormControl>
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
-            <FormControl fullWidth variant="outlined" sx={{ backgroundColor: "#f9f9f9", borderRadius: 1 }}>
+            <FormControl fullWidth variant="outlined" sx={{ backgroundColor: "#ffffff", border: "1px solid #ddd", borderRadius: 2, boxShadow: "0 2px 4px rgba(0,0,0,0.1)", "&:hover": { boxShadow: "0 4px 8px rgba(0,0,0,0.15)" }, minHeight: 56, width: 250 }}>
               <InputLabel>Subject</InputLabel>
               <Select
                 value={subject}
@@ -652,7 +691,7 @@ const TeacherAttendance = () => {
             </FormControl>
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
-            <FormControl fullWidth variant="outlined" sx={{ backgroundColor: "#f9f9f9", borderRadius: 1 }}>
+            <FormControl fullWidth variant="outlined" sx={{ backgroundColor: "#ffffff", border: "1px solid #ddd", borderRadius: 2, boxShadow: "0 2px 4px rgba(0,0,0,0.1)", "&:hover": { boxShadow: "0 4px 8px rgba(0,0,0,0.15)" }, minHeight: 56, width: 250 }}>
               <InputLabel>Time</InputLabel>
               <Select
                 value={time}
@@ -679,11 +718,17 @@ const TeacherAttendance = () => {
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
               variant="outlined"
-              sx={{ backgroundColor: "#f9f9f9", borderRadius: 1 }}
+              sx={{ backgroundColor: "#f9f9f9", borderRadius: 1, minHeight: 56, width: 250 }}
               InputLabelProps={{ shrink: true }}
             />
           </Grid>
         </Grid>
+        <Box sx={{ mt: 2 }}>
+          <Typography variant="body1"><strong>Class:</strong> {selectedClass || "Not selected"}</Typography>
+          <Typography variant="body1"><strong>Subject:</strong> {subject || "Not selected"}</Typography>
+          <Typography variant="body1"><strong>Time:</strong> {time || "Not selected"}</Typography>
+          <Typography variant="body1"><strong>Date:</strong> {selectedDate ? new Date(selectedDate).toLocaleDateString() : "Not selected"}</Typography>
+        </Box>
         {attendanceExists && (
           <Typography variant="body2" sx={{ mt: 2, color: "#4caf50", fontWeight: "medium" }}>
             Attendance already exists for this selection. Loaded and displayed below.
@@ -729,6 +774,8 @@ const TeacherAttendance = () => {
 };
 
 export default TeacherAttendance;
+
+
 
 
 

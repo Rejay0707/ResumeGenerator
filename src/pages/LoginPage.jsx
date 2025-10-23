@@ -94,7 +94,7 @@ export default function LoginPage() {
         } else if (role === "Student") {
           navigate("/");
         } else if (role === "teacher") {
-          navigate("/teacher/dashboard");
+          navigate("/teacher/dashboard/home");
         } else if (role === "parent") {
           navigate("/parent/dashboard");
         } 
