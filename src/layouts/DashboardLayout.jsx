@@ -23,6 +23,8 @@ import PeopleIcon from "@mui/icons-material/People";
 import SchoolIcon from "@mui/icons-material/School";
 import GroupIcon from "@mui/icons-material/Group";
 import BusinessIcon from "@mui/icons-material/Business";
+import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
+import EventNoteIcon from "@mui/icons-material/EventNote";
 
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import logo1 from "../assets/logo1.png";
@@ -73,6 +75,9 @@ export default function ResponsiveSidebar() {
           { text: "Parents", to: "/admin/parents", icon: <PeopleIcon /> },
           { text: "Teachers", to: "/admin/teachers", icon: <SchoolIcon /> },
           { text: "Students", to: "/admin/students", icon: <GroupIcon /> },
+          { text: "Departments", to: "/admin/departments", icon: <BusinessIcon /> },
+          { text: "Subjects", to: "/admin/subjects", icon: <LibraryBooksIcon /> },
+          { text: "Timetable", to: "/admin/timetable", icon: <EventNoteIcon /> },
         ].map(({ text, to, icon }) => (
           <ListItem
             button
@@ -82,7 +87,7 @@ export default function ResponsiveSidebar() {
             onClick={() => isMobile && setMobileOpen(false)}
           >
             <ListItemIcon sx={{ color: "white" }}>{icon}</ListItemIcon>
-            <ListItemText primary={text}  />
+            <ListItemText primary={text} />
           </ListItem>
         ))}
       </List>

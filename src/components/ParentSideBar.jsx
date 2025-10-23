@@ -11,18 +11,18 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import { useNavigate, useLocation } from "react-router-dom";
 
-export default function TeacherSidebar() {
+export default function ParentSidebar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const items = [
-    { label: "Home", path: "/teacher/dashboard/home" },
-    { label: "Attendance", path: "/teacher/dashboard/attendance" },
-    { label: "Classes", path: "/teacher/dashboard/classes" },
-    { label: "Subjects", path: "/teacher/dashboard/subjects" },
-    { label: "Students", path: "/teacher/dashboard/students" },
-    { label: "Profile", path: "/teacher/dashboard/profile" },
+    { label: "Home", path: "/parent/dashboard/home" },
+    { label: "Children", path: "/parent/dashboard/children" },
+    { label: "Performance", path: "/parent/dashboard/performance" },
+    { label: "Attendance Report", path: "/parent/dashboard/attendance-report" },
+    { label: "Messages", path: "/parent/dashboard/messages" },
+    { label: "Profile", path: "/parent/dashboard/profile" },
   ];
 
   const handleDrawerToggle = () => {
@@ -33,7 +33,7 @@ export default function TeacherSidebar() {
     <Box
       sx={{
         width: 220,
-        bgcolor: "#0d47a1",
+        bgcolor: "#4a148c",
         color: "white",
         minHeight: "100vh",
       }}
@@ -82,7 +82,7 @@ export default function TeacherSidebar() {
             zIndex: 2000,
           }}
         >
-          <IconButton onClick={handleDrawerToggle} sx={{ color: "#0d47a1" }}>
+          <IconButton onClick={handleDrawerToggle} sx={{ color: "#4a148c" }}>
             <MenuIcon />
           </IconButton>
         </Box>
@@ -104,7 +104,7 @@ export default function TeacherSidebar() {
           "& .MuiDrawer-paper": {
             boxSizing: "border-box",
             width: 220,
-            bgcolor: "#0d47a1",
+            bgcolor: "#4a148c",
           },
         }}
       >

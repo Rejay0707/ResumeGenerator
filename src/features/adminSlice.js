@@ -5,6 +5,9 @@ const baseUrls = {
   students: "https://www.scratchprod.in/resume-generator-backend/api/students",
   teachers: "https://www.scratchprod.in/resume-generator-backend/api/teachers",
   parents: "https://www.scratchprod.in/resume-generator-backend/api/guardians",
+  departments: "https://www.scratchprod.in/resume-generator-backend/api/departments", // New endpoint
+  subjects: "https://www.scratchprod.in/resume-generator-backend/api/subjects", // New endpoint
+  timetables: "https://www.scratchprod.in/resume-generator-backend/api/timetables",
 };
 
 // 🔹 1. Fetch entities
@@ -13,9 +16,7 @@ export const fetchEntities = createAsyncThunk(
   async (entityType, { rejectWithValue }) => {
     try {
       const res = await axios.get(baseUrls[entityType]);
-      const data = Array.isArray(res.data)
-        ? res.data
-        : res.data.data || [];
+      const data = Array.isArray(res.data) ? res.data : res.data.data || [];
       return { entityType, data };
     } catch (err) {
       return rejectWithValue(err.response?.data || "Failed to load data");
@@ -63,6 +64,7 @@ export const deleteEntity = createAsyncThunk(
     }
   }
 );
+
 
 // 🔹 Slice
 const adminSlice = createSlice({

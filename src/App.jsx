@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import ResumeBuilderPage from "./pages/ResumeBuilderPage";
 import PreviewPage from "./pages/PreviewPage";
@@ -8,6 +13,9 @@ import Dashboard from "./pages/admin/Dashboard";
 import Parents from "./pages/admin/Parents";
 import Teachers from "./pages/admin/Teachers";
 import Students from "./pages/admin/Students";
+import DepartmentsPage from "./pages/admin/DepartmentsPage";
+import SubjectsPage from "./pages/admin/SubjectsPage";
+import TimetablePage from "./pages/admin/TimeTablePage";
 
 import TeacherDashboardLayout from "./layouts/TeacherDashboardLayout";
 import TeacherHome from "./containers/TeacherHome";
@@ -16,6 +24,14 @@ import TeacherClasses from "./containers/TeacherClasses";
 import TeacherSubjects from "./containers/TeacherSubjects";
 import TeacherStudents from "./containers/TeacherStudents";
 import TeacherProfile from "./containers/TeacherProfile";
+
+import ParentDashboardContainer from "./layouts/ParentDashboardLayout";
+import ParentHome from "./containers/ParentHome";
+import ParentChildren from "./containers/ParentChlidren";
+import ParentPerformance from "./containers/ParentPerformance";
+import ParentAttendanceReport from "./containers/ParentAttendanceReport";
+import ParentMessages from "./containers/ParentMessages";
+import ParentProfile from "./containers/ParentProfile";
 
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
@@ -30,11 +46,19 @@ function RoleRedirect() {
 
   const role = user.role?.toLowerCase();
 
-  if (role === "superadmin") return <Navigate to="https://www.scratchprod.in/resume-generator-backend/" replace />;
+  if (role === "superadmin")
+    return (
+      <Navigate
+        to="https://www.scratchprod.in/resume-generator-backend/"
+        replace
+      />
+    );
   if (role === "admin") return <Navigate to="/admin/dashboard" replace />;
   if (role === "student") return <Navigate to="/home" replace />;
-  if (role === "teacher") return <Navigate to="/teacher/dashboard/home" replace />;
-  if (role === "parent") return <Navigate to="/parent/dashboard" replace />;
+  if (role === "teacher")
+    return <Navigate to="/teacher/dashboard/home" replace />;
+  if (role === "parent")
+    return <Navigate to="/parent/dashboard/home" replace />;
 
   return <Navigate to="/login" replace />;
 }
@@ -112,6 +136,9 @@ function App() {
           <Route path="parents" element={<Parents />} />
           <Route path="teachers" element={<Teachers />} />
           <Route path="students" element={<Students />} />
+          <Route path="departments" element={<DepartmentsPage />} />
+          <Route path="subjects" element={<SubjectsPage />} />
+          <Route path="timetable" element={<TimetablePage />} />
         </Route>
 
         {/* Teacher Dashboard routes */}
@@ -131,6 +158,26 @@ function App() {
           <Route path="profile" element={<TeacherProfile />} />
         </Route>
 
+        {/* Parent Dashboard routes */}
+        <Route
+          path="/parent/dashboard"
+          element={
+            <ProtectedRoute roles={["parent"]}>
+              <ParentDashboardContainer />
+            </ProtectedRoute>
+          }
+        >
+          <Route path="home" element={<ParentHome />} />
+          <Route path="children" element={<ParentChildren />} />
+          <Route path="performance" element={<ParentPerformance />} />
+          <Route
+            path="attendance-report"
+            element={<ParentAttendanceReport />}
+          />
+          <Route path="messages" element={<ParentMessages />} />
+          <Route path="profile" element={<ParentProfile />} />
+        </Route>
+
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
@@ -139,4 +186,3 @@ function App() {
 }
 
 export default App;
-

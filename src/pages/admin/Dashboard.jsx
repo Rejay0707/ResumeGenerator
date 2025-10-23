@@ -63,7 +63,7 @@ const studentDistribution = useMemo(() => {
 
   const classCounts = students.reduce((acc, student) => {
     // Use the correct backend field: class_sec
-    const classKey = student.class_sec || "Unassigned";
+    const classKey = student.year || "Unassigned";
     acc[classKey] = (acc[classKey] || 0) + 1;
     return acc;
   }, {});
@@ -150,7 +150,7 @@ const studentDistribution = useMemo(() => {
           <Grid item xs={12} md={6}>
             <Paper elevation={3} sx={{ p: '3px', borderRadius: 3, height: 400, width: "350px" }}>
               <Typography variant="h6" gutterBottom>
-                Student Distribution by Class
+                Student Distribution by Year
               </Typography>
               <ResponsiveContainer width="100%" height="80%">
                 <PieChart>

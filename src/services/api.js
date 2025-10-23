@@ -32,4 +32,25 @@ api.interceptors.response.use(
   }
 );
 
+export const getAllTimetables = () => api.get("/api/timetables");
+
+
+
+
+export const getStudentsForTeacher = (teacherId) =>
+  api.get(`/api/teacher/${encodeURIComponent(teacherId)}/students`);
+
+
+// Fetch all exam scores (or filter by teacher)
+export const getExamScores = async (teacherId) => {
+  const response = await api.get(
+    `https://www.scratchprod.in/resume-generator-backend/api/exam-scores?teacher_id=${teacherId}`
+  );
+  return response.data;
+};
+
+
+
 export default api;
+
+

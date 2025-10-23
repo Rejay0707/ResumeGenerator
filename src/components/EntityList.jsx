@@ -87,6 +87,27 @@ export default function EntityList({
 // Inside EntityList component, replace the columns definition with this:
 
 const columns =
+  entityType === "departments"
+  ? [
+      { key: "department_code", label: "Department Code" },
+      { key: "department_name", label: "Department Name" },
+    ]
+  : entityType === "subjects"
+  ? [
+      { key: "subject_code", label: "Subject Code" },
+      { key: "subject_name", label: "Subject Name" },
+      { key: "department", label: "Department" },
+      { key: "year", label: "Year" },
+    ]
+  : entityType === "timetables"
+  ? [
+      { key: "teacher_name", label: "Teacher Name" },
+      { key: "subject_name", label: "Subject" },
+      { key: "department", label: "Department" },
+      { key: "year", label: "Year" },
+      { key: "day", label: "Day" },
+      { key: "time", label: "Time" },
+    ]:
   entityType === "students"
     ? [
         { key: "admission_no", label: "Admission No" },

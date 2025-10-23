@@ -26,13 +26,40 @@ export default function EntityFormDialog({
   const fields = useMemo(() => {
     if (entityType === "students") {
       return [
-        { key: "admission_no", label: "Admission No", type: "text", required: true },
+        {
+          key: "admission_no",
+          label: "Admission No",
+          type: "text",
+          required: true,
+        },
         { key: "name", label: "Name", type: "text", required: true },
-        { key: "father_name", label: "Father Name", type: "text", required: true },
-        { key: "dob", label: "Date of Birth (YYYY-MM-DD)", type: "text", required: true },
+        {
+          key: "father_name",
+          label: "Father Name",
+          type: "text",
+          required: true,
+        },
+        {
+          key: "dob",
+          label: "Date of Birth (YYYY-MM-DD)",
+          type: "text",
+          required: true,
+        },
         { key: "year", label: "Year", type: "text", required: true },
-        { key: "department", label: "Department", type: "select", required: true, options: ['Mechanical','Electrical',' Civil','Computer Science']},
-        { key: "gender", label: "Gender", type: "select", required: true, options: ["Male", "Female", "Other"] },
+        {
+          key: "department",
+          label: "Department",
+          type: "select",
+          required: true,
+          options: ["Mechanical", "Electrical", " Civil", "Computer Science"],
+        },
+        {
+          key: "gender",
+          label: "Gender",
+          type: "select",
+          required: true,
+          options: ["Male", "Female", "Other"],
+        },
         { key: "phone", label: "Phone", type: "tel", required: false },
         { key: "email", label: "Email", type: "email", required: true },
       ];
@@ -41,19 +68,45 @@ export default function EntityFormDialog({
         { key: "name", label: "Name", type: "text", required: true },
         { key: "email", label: "Email", type: "email", required: true },
         { key: "phone", label: "Phone Number", type: "tel", required: false },
-        { key: "studentLinked", label: "Student Linked", type: "text", required: false },
+        {
+          key: "studentLinked",
+          label: "Student Linked",
+          type: "text",
+          required: false,
+        },
         { key: "address", label: "Address", type: "text", required: false },
       ];
     } else if (entityType === "teachers") {
       return [
-      { key: "name", label: "Name" },
-      { key: "email", label: "Email" },
+        { key: "name", label: "Name" },
+        { key: "email", label: "Email" },
+        { key: "department", label: "Department" },
+        { key: "subjects", label: "Subject(s) Taught" },
+        { key: "designation", label: "Designation" },
+        { key: "phone", label: "Phone Number" },
+        { key: "joining_date", label: "Joining Date" },
+      ];
+    } else if (entityType === "departments") {
+      return [
+        { key: "department_code", label: "Department Code" },
+        { key: "department_name", label: "Department Name" },
+      ];
+    } else if (entityType === "subjects") {
+      return [
+        { key: "subject_code", label: "Subject Code" },
+        { key: "subject_name", label: "Subject Name" },
+        { key: "department", label: "Department" },
+        { key: "year", label: "Year" },
+      ];
+    } else if (entityType === "timetables") {
+      return [
+        { key: "teacher_name", label: "Teacher Name" },
+      { key: "subject_name", label: "Subject" },
       { key: "department", label: "Department" },
-      { key: "subjects", label: "Subject(s) Taught" },
-      { key: "designation", label: "Designation" },
-      { key: "phone", label: "Phone Number" },
-      { key: "joining_date", label: "Joining Date" },
-    ]
+      { key: "year", label: "Year" },
+      { key: "day", label: "Day" },
+      { key: "time", label: "Time" },
+      ]
     }
     // Fallback for other entities
     return [
@@ -96,7 +149,11 @@ export default function EntityFormDialog({
       const fieldValue = form[field.key];
       if (field.required && !fieldValue?.toString().trim()) {
         newErrors[field.key] = `${field.label} is required`;
-      } else if (field.type === "email" && fieldValue && !/\S+@\S+\.\S+/.test(fieldValue)) {
+      } else if (
+        field.type === "email" &&
+        fieldValue &&
+        !/\S+@\S+\.\S+/.test(fieldValue)
+      ) {
         newErrors[field.key] = "Invalid email";
       }
     });
@@ -126,7 +183,11 @@ export default function EntityFormDialog({
         {fields.map((field) => (
           <div key={field.key} style={{ marginBottom: 16 }}>
             {field.type === "select" ? (
-              <FormControl fullWidth error={!!errors[field.key]} required={field.required}>
+              <FormControl
+                fullWidth
+                error={!!errors[field.key]}
+                required={field.required}
+              >
                 <InputLabel>{field.label}</InputLabel>
                 <Select
                   value={form[field.key] || ""}
@@ -157,7 +218,9 @@ export default function EntityFormDialog({
                 onChange={(e) => handleChange(field.key, e.target.value)}
                 required={field.required}
                 error={!!errors[field.key]}
-                helperText={errors[field.key] || (field.key === "dob" ? "YYYY-MM-DD" : "")}
+                helperText={
+                  errors[field.key] || (field.key === "dob" ? "YYYY-MM-DD" : "")
+                }
                 margin="normal"
                 inputProps={
                   field.key === "phone"
