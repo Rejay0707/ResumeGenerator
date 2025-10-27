@@ -30,7 +30,7 @@ import ParentHome from "./containers/ParentHome";
 import ParentChildren from "./containers/ParentChlidren";
 import ParentPerformance from "./containers/ParentPerformance";
 import ParentAttendanceReport from "./containers/ParentAttendanceReport";
-import ParentMessages from "./containers/ParentMessages";
+
 import ParentProfile from "./containers/ParentProfile";
 
 import LoginPage from "./pages/LoginPage";
@@ -174,7 +174,6 @@ function App() {
             path="attendance-report"
             element={<ParentAttendanceReport />}
           />
-          <Route path="messages" element={<ParentMessages />} />
           <Route path="profile" element={<ParentProfile />} />
         </Route>
 

@@ -6,6 +6,7 @@ import resumeReducer from './features/resumeSlice'
 import adminReducer from './features/adminSlice'
 import attendanceReducer from "./features/attendanceSlice";
 import examReducer from "./features/examSlice"
+import parentChildrenReducer from "./features/parentChildrenSlice"
 
 const store = configureStore({
   reducer: {
@@ -15,6 +16,7 @@ const store = configureStore({
     admin: adminReducer,
     attendance: attendanceReducer,
     exam: examReducer,
+    parentChildren: parentChildrenReducer,
   },
   
   devTools: true,

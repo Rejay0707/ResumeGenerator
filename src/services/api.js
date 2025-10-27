@@ -46,6 +46,7 @@ export const getExamScores = async (teacherId) => {
   const response = await api.get(
     `https://www.scratchprod.in/resume-generator-backend/api/exam-scores?teacher_id=${teacherId}`
   );
+  console.log(response)
   return response.data;
 };
 

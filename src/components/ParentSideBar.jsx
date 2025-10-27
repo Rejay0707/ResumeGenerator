@@ -21,7 +21,6 @@ export default function ParentSidebar() {
     { label: "Children", path: "/parent/dashboard/children" },
     { label: "Performance", path: "/parent/dashboard/performance" },
     { label: "Attendance Report", path: "/parent/dashboard/attendance-report" },
-    { label: "Messages", path: "/parent/dashboard/messages" },
     { label: "Profile", path: "/parent/dashboard/profile" },
   ];
 
