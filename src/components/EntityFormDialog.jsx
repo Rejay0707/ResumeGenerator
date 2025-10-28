@@ -45,6 +45,7 @@ export default function EntityFormDialog({
           type: "text",
           required: true,
         },
+        { key: "college", label: "College", type: "text", required: true},
         { key: "year", label: "Year", type: "text", required: true },
         {
           key: "department",

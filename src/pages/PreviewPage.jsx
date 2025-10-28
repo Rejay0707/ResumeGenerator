@@ -382,7 +382,8 @@ const PreviewPage = () => {
     }
   };
 
-  const handleDownload = async () => {
+
+const handleDownload = async () => {
   if (!resumeRef.current) return;
 
   setDownloadLoading(true);
@@ -395,9 +396,9 @@ const PreviewPage = () => {
     element.style.height = `${element.scrollHeight}px`;
     element.style.overflow = "hidden";
 
-    // Capture canvas
+    // Capture canvas with reduced scale for smaller file size
     const canvas = await html2canvas(element, {
-      scale: 2,
+      scale: 1.2, // 🔹 Reduced scale to control file size
       useCORS: true,
       backgroundColor: null,
       scrollX: 0,
@@ -430,20 +431,52 @@ const PreviewPage = () => {
       .getContext("2d")
       .drawImage(canvas, 0, 0, canvas.width, bottom + 10, 0, 0, canvas.width, bottom + 10);
 
-    const imgData = trimmedCanvas.toDataURL("image/png");
+    // Convert canvas to JPEG instead of PNG (smaller size)
+    const imgData = trimmedCanvas.toDataURL("image/jpeg", 0.8); // 🔹 Compression at 80% quality
     const imgWidth = 595.28; // A4 width
     const imgHeight = (trimmedCanvas.height * imgWidth) / trimmedCanvas.width;
 
+    // Generate PDF
     const pdf = new jsPDF("p", "pt", [imgWidth, imgHeight]);
-    pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+    pdf.addImage(imgData, "JPEG", 0, 0, imgWidth, imgHeight, undefined, "FAST");
+
+    // Convert PDF to blob and prepare for upload
+    const pdfBlob = pdf.output("blob");
+    const sizeKB = (pdfBlob.size / 1024).toFixed(2);
+    console.log(`📄 PDF size: ${sizeKB} KB`); // Check actual size
+
+    if (pdfBlob.size > 2048 * 1024) {
+      alert(`PDF too large (${sizeKB} KB). Try reducing content or image scale.`);
+      setDownloadLoading(false);
+      return;
+    }
+
+    const pdfFile = new File([pdfBlob], "resume.pdf", { type: "application/pdf" });
+    const formData = new FormData();
+    formData.append("pdf", pdfFile);
+
+    const uploadUrl = `https://www.scratchprod.in/resume-generator-backend/api/resumes/${resumeId}/upload-pdf`;
+
+    // Upload to backend
+    const response = await axios.post(uploadUrl, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    console.log("✅ Upload response:", response.data);
+
+    // Download locally
     pdf.save("resume.pdf");
+    alert("Resume saved to server and downloaded!");
   } catch (error) {
-    console.error("Failed to generate PDF:", error);
-    alert("Failed to download resume. Please try again.");
+    console.error("❌ Failed to generate/upload PDF:", error);
+    console.error("Error details:", error.response?.data);
+    alert("Failed to download/save resume. Please try again.");
   } finally {
     setDownloadLoading(false);
   }
 };
+
+
+
 
 
   if (loading) {

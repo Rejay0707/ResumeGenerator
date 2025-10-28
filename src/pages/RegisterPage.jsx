@@ -37,6 +37,7 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false); // Local loading fallback
 
   const SUPERADMIN_DASHBOARD_URL = "https://www.scratchprod.in/resume-generator-backend/"; // Copied from LoginPage
+  const RECRUITER_DASHBOARD_URL = "http://192.168.1.38:8000/recruiter/dashboard"
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -74,7 +75,9 @@ export default function RegisterPage() {
         navigate("/teacher/dashboard");
       } else if (role === "parent") {
         navigate("/parent/dashboard");
-      }  else {
+      } else if (role === "recruiter") {
+        window.location.href = RECRUITER_DASHBOARD_URL;
+      }else {
         navigate("/"); // Fallback
       }
     }
@@ -218,6 +221,7 @@ export default function RegisterPage() {
             <option value="student">Student</option>
             <option value="teacher">Teacher</option>
             <option value="parent">Parent</option>
+            <option value="recruiter">Recruiter</option>
           </TextField>
 
           <TextField

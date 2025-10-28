@@ -114,6 +114,7 @@ const columns =
         { key: "name", label: "Name" },
         { key: "father_name", label: "Father Name" },
         { key: "dob", label: "DOB" },
+        { key: "college", label: "College"},
         { key: "year", label: "Year" },
         { key: "department", label: "Department"},
         { key: "gender", label: "Gender" },
