@@ -6,16 +6,22 @@ import ParentTopbar from "../components/ParentTopbar";
 
 export default function ParentDashboardContainer() {
   return (
-    <Box sx={{ display: "flex", minHeight: "100vh" }}>
+    <Box sx={{ display: "flex", minHeight: "100vh", height: "auto" }}>
       {/* Sidebar */}
       <ParentSidebar />
 
       {/* Main Content */}
-      <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
+      <Box
+        sx={{
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          backgroundColor: "#f7f7f7",
+          minHeight: "100vh",
+        }}
+      >
         <ParentTopbar />
-        <Box sx={{ flex: 1, p: 3, backgroundColor: "#f7f7f7" }}>
-          <Outlet />
-        </Box>
+        <Box sx={{ flex: 1, p: 3 }}>{/* Content grows naturally */}<Outlet /></Box>
       </Box>
     </Box>
   );

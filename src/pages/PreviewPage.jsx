@@ -385,8 +385,8 @@ const PreviewPage = () => {
 
 const handleDownload = async () => {
   if (!resumeRef.current) return;
-
   setDownloadLoading(true);
+
   try {
     const element = resumeRef.current;
 
@@ -409,19 +409,29 @@ const handleDownload = async () => {
     element.style.height = originalHeight;
     element.style.overflow = originalOverflow;
 
-    // Trim the bottom white space
+    // ✅ Trim the bottom white space (handles even light gradients)
     const ctx = canvas.getContext("2d");
     const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
     let bottom = canvas.height;
+
     for (let y = canvas.height - 1; y >= 0; y--) {
+      let rowEmpty = true;
       for (let x = 0; x < canvas.width; x++) {
-        const alpha = pixels.data[(y * canvas.width + x) * 4 + 3];
-        if (alpha !== 0) {
-          bottom = y;
+        const index = (y * canvas.width + x) * 4;
+        const r = pixels.data[index];
+        const g = pixels.data[index + 1];
+        const b = pixels.data[index + 2];
+        const alpha = pixels.data[index + 3];
+        // If pixel is not fully white or transparent, keep it
+        if (!(r > 245 && g > 245 && b > 245) && alpha > 0) {
+          rowEmpty = false;
           break;
         }
       }
-      if (bottom !== canvas.height) break;
+      if (!rowEmpty) {
+        bottom = y;
+        break;
+      }
     }
 
     const trimmedCanvas = document.createElement("canvas");
@@ -443,8 +453,9 @@ const handleDownload = async () => {
     // Convert PDF to blob and prepare for upload
     const pdfBlob = pdf.output("blob");
     const sizeKB = (pdfBlob.size / 1024).toFixed(2);
-    console.log(`📄 PDF size: ${sizeKB} KB`); // Check actual size
+    console.log(`📄 PDF size: ${sizeKB} KB`);
 
+    // Check actual size
     if (pdfBlob.size > 2048 * 1024) {
       alert(`PDF too large (${sizeKB} KB). Try reducing content or image scale.`);
       setDownloadLoading(false);
@@ -454,7 +465,6 @@ const handleDownload = async () => {
     const pdfFile = new File([pdfBlob], "resume.pdf", { type: "application/pdf" });
     const formData = new FormData();
     formData.append("pdf", pdfFile);
-
     const uploadUrl = `https://www.scratchprod.in/resume-generator-backend/api/resumes/${resumeId}/upload-pdf`;
 
     // Upload to backend
@@ -474,6 +484,7 @@ const handleDownload = async () => {
     setDownloadLoading(false);
   }
 };
+
 
 
 

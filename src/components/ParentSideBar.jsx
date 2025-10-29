@@ -34,25 +34,31 @@ export default function ParentSidebar() {
         width: 220,
         bgcolor: "#4a148c",
         color: "white",
-        minHeight: "100vh",
+        height: "100%", // 👈 fill parent height
+        display: "flex",
+        flexDirection: "column",
+        // justifyContent: "space-between", // push logout to bottom
       }}
     >
-      <List>
-        {items.map((item) => (
-          <ListItemButton
-            key={item.label}
-            selected={location.pathname === item.path}
-            onClick={() => {
-              navigate(item.path);
-              setMobileOpen(false);
-            }}
-            sx={{ color: "white" }}
-          >
-            <ListItemText primary={item.label} />
-          </ListItemButton>
-        ))}
-      </List>
-      <Divider sx={{ bgcolor: "white" }} />
+      <Box>
+        <List>
+          {items.map((item) => (
+            <ListItemButton
+              key={item.label}
+              selected={location.pathname === item.path}
+              onClick={() => {
+                navigate(item.path);
+                setMobileOpen(false);
+              }}
+              sx={{ color: "white" }}
+            >
+              <ListItemText primary={item.label} />
+            </ListItemButton>
+          ))}
+        </List>
+        <Divider sx={{ bgcolor: "white" }} />
+      </Box>
+
       <List>
         <ListItemButton
           onClick={() => {
@@ -70,7 +76,7 @@ export default function ParentSidebar() {
 
   return (
     <>
-      {/* Hamburger icon — hidden when sidebar is open */}
+      {/* Hamburger icon for mobile */}
       {!mobileOpen && (
         <Box
           sx={{
@@ -87,17 +93,25 @@ export default function ParentSidebar() {
         </Box>
       )}
 
-      {/* Permanent sidebar for desktop */}
-      <Box sx={{ display: { xs: "none", md: "block" } }}>{sidebarContent}</Box>
+      {/* Fixed sidebar on desktop */}
+      <Box
+        sx={{
+          display: { xs: "none", md: "block" },
+          position: "sticky", // 👈 sticks to top
+          top: 0,
+          height: "100vh", // fills full screen height and grows naturally with parent
+          overflowY: "auto",
+        }}
+      >
+        {sidebarContent}
+      </Box>
 
-      {/* Drawer for mobile/tablet */}
+      {/* Drawer for mobile */}
       <Drawer
         anchor="left"
         open={mobileOpen}
         onClose={handleDrawerToggle}
-        ModalProps={{
-          keepMounted: true,
-        }}
+        ModalProps={{ keepMounted: true }}
         sx={{
           display: { xs: "block", md: "none" },
           "& .MuiDrawer-paper": {
