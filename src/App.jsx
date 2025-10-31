@@ -34,6 +34,7 @@ import ParentAttendanceReport from "./containers/ParentAttendanceReport";
 import ParentProfile from "./containers/ParentProfile";
 
 import LoginPage from "./pages/LoginPage";
+import ForgotPasswordPage from "./pages/ForgetPasswordPage";
 import RegisterPage from "./pages/RegisterPage";
 
 // --------------------------
@@ -91,6 +92,7 @@ function App() {
       <Routes>
         {/* Public Routes */}
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/register" element={<RegisterPage />} />
 
         {/* Root Route - auto redirect based on user role */}

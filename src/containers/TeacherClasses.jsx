@@ -31,14 +31,13 @@ const TeacherTimetable = () => {
         );
 
         // 🧠 Normalize teacher data safely
-        const teacherList =
-          Array.isArray(teacherResponse.data)
-            ? teacherResponse.data
-            : Array.isArray(teacherResponse.data.data)
-            ? teacherResponse.data.data
-            : Array.isArray(teacherResponse.data.teachers)
-            ? teacherResponse.data.teachers
-            : [];
+        const teacherList = Array.isArray(teacherResponse.data)
+          ? teacherResponse.data
+          : Array.isArray(teacherResponse.data.data)
+          ? teacherResponse.data.data
+          : Array.isArray(teacherResponse.data.teachers)
+          ? teacherResponse.data.teachers
+          : [];
 
         if (teacherList.length === 0) {
           console.warn("No teacher data found in API response.");
@@ -63,17 +62,15 @@ const TeacherTimetable = () => {
 
         // ✅ Fetch timetables for this verified teacher
         const timetableResponse = await getAllTimetables();
-        const timetableList =
-          Array.isArray(timetableResponse.data)
-            ? timetableResponse.data
-            : Array.isArray(timetableResponse.data.data)
-            ? timetableResponse.data.data
-            : [];
+        const timetableList = Array.isArray(timetableResponse.data)
+          ? timetableResponse.data
+          : Array.isArray(timetableResponse.data.data)
+          ? timetableResponse.data.data
+          : [];
 
         const teacherData = timetableList.filter(
           (t) =>
-            t.teacher_name?.toLowerCase() ===
-            matchedTeacher.name?.toLowerCase()
+            t.teacher_name?.toLowerCase() === matchedTeacher.name?.toLowerCase()
         );
 
         // Sort by day of the week
@@ -117,34 +114,44 @@ const TeacherTimetable = () => {
         <Typography>No timetable available for this teacher.</Typography>
       ) : (
         <Paper elevation={3} sx={{ p: 2 }}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell><strong>Class</strong></TableCell>
-                <TableCell><strong>Subject</strong></TableCell>
-                <TableCell><strong>Day</strong></TableCell>
-                <TableCell><strong>Time</strong></TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {timetables.map((row) => {
-                const isToday = row.day === today;
-                return (
-                  <TableRow
-                    key={row.id}
-                    sx={{
-                      backgroundColor: isToday ? "#E3F2FD" : "transparent",
-                    }}
-                  >
-                    <TableCell>{`${row.department} - ${row.year}`}</TableCell>
-                    <TableCell>{row.subject_name}</TableCell>
-                    <TableCell>{row.day}</TableCell>
-                    <TableCell>{row.time}</TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
+          <Box sx={{ width: "100%", overflowX: "auto" }}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>
+                    <strong>Class</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Subject</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Day</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Time</strong>
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {timetables.map((row) => {
+                  const isToday = row.day === today;
+                  return (
+                    <TableRow
+                      key={row.id}
+                      sx={{
+                        backgroundColor: isToday ? "#E3F2FD" : "transparent",
+                      }}
+                    >
+                      <TableCell>{`${row.department} - ${row.year}`}</TableCell>
+                      <TableCell>{row.subject_name}</TableCell>
+                      <TableCell>{row.day}</TableCell>
+                      <TableCell>{row.time}</TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </Box>
         </Paper>
       )}
     </Box>
@@ -152,4 +159,3 @@ const TeacherTimetable = () => {
 };
 
 export default TeacherTimetable;
-

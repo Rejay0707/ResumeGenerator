@@ -69,6 +69,7 @@ export default function EntityFormDialog({
         { key: "name", label: "Name", type: "text", required: true },
         { key: "email", label: "Email", type: "email", required: true },
         { key: "phone", label: "Phone Number", type: "tel", required: false },
+        { key: "college", label: "College", type: "text", required: true},
         {
           key: "studentLinked",
           label: "Student Linked",
@@ -81,6 +82,7 @@ export default function EntityFormDialog({
       return [
         { key: "name", label: "Name" },
         { key: "email", label: "Email" },
+        { key: "college", label: "College", type: "text", required: true},
         { key: "department", label: "Department" },
         { key: "subjects", label: "Subject(s) Taught" },
         { key: "designation", label: "Designation" },

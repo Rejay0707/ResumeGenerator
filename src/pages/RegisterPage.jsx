@@ -37,7 +37,7 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false); // Local loading fallback
 
   const SUPERADMIN_DASHBOARD_URL = "https://www.scratchprod.in/resume-generator-backend/"; // Copied from LoginPage
-  const RECRUITER_DASHBOARD_URL = "http://192.168.1.38:8000/recruiter/dashboard"
+  const RECRUITER_DASHBOARD_URL = "https://www.scratchprod.in/resume-generator-backend/recruiter/dashboard"
 
   const handleChange = (e) => {
     const { name, value } = e.target;

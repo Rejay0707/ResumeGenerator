@@ -73,6 +73,7 @@ const TeacherHomePage = () => {
     getExamScores(teacher.name)
       .then((res) => {
         const uniqueTests = new Set(res.data.map((exam) => exam.test_name));
+        console.log(uniqueTests)
         setTestCount(uniqueTests.size);
       })
       .catch((err) => console.error("Error fetching exam scores:", err));
@@ -143,7 +144,7 @@ const TeacherHomePage = () => {
       >
         👋 Welcome back, {teacher.name || "Teacher"}!
       </Typography>
-      <Typography variant="subtitle1" sx={{ mb: 3 }}>
+      <Typography variant="subtitle1" sx={{ mb: 3, color:"#1976d2" }}>
         Here’s your teaching overview for today.
       </Typography>
 

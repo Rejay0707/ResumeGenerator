@@ -1,11 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  loginAsync,
-  adminLoginAsync,
-  clearError,
-} from "../features/authSlice";
+import { loginAsync, adminLoginAsync, clearError } from "../features/authSlice";
 import {
   Box,
   Paper,
@@ -38,7 +34,10 @@ export default function LoginPage() {
   const loading = reduxAuth.loading;
   const error = reduxAuth.error;
 
-  const SUPERADMIN_DASHBOARD_URL = "https://www.scratchprod.in/resume-generator-backend/";
+  const SUPERADMIN_DASHBOARD_URL =
+    "https://www.scratchprod.in/resume-generator-backend/";
+  
+  const RECRUITER_DASHBOARD_URL = "https://www.scratchprod.in/resume-generator-backend/recruiter/dashboard"
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -74,7 +73,10 @@ export default function LoginPage() {
         );
       }
 
-      if (loginAsync.fulfilled.match(resultAction) || adminLoginAsync.fulfilled.match(resultAction)) {
+      if (
+        loginAsync.fulfilled.match(resultAction) ||
+        adminLoginAsync.fulfilled.match(resultAction)
+      ) {
         const user = resultAction.payload;
 
         // Handle nested data
@@ -97,8 +99,9 @@ export default function LoginPage() {
           navigate("/teacher/dashboard/home");
         } else if (role === "parent") {
           navigate("/parent/dashboard/home");
-        } 
-        else {
+        } else if (role === "recruiter") {
+        window.location.href = RECRUITER_DASHBOARD_URL;
+      }else {
           navigate("/");
         }
       } else {
@@ -191,7 +194,11 @@ export default function LoginPage() {
               }
               label="Remember Me"
             />
-            <Link href="#" underline="hover" sx={{ fontSize: 14 }}>
+            <Link
+              onClick={() => navigate("/forgot-password")}
+              underline="hover"
+              sx={{ fontSize: 14, cursor: "pointer" }}
+            >
               Forgot Password?
             </Link>
           </Box>
@@ -233,6 +240,7 @@ export default function LoginPage() {
             { label: "STUDENT", value: "student" },
             { label: "PARENT", value: "parent" },
             { label: "TEACHER", value: "teacher" },
+            { label: "Recruiter", value: "recruiter"}
           ].map(({ label, value }) => (
             <Button
               key={label}
@@ -265,8 +273,3 @@ export default function LoginPage() {
     </Box>
   );
 }
-
-
-
-
-

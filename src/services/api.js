@@ -42,13 +42,24 @@ export const getStudentsForTeacher = (teacherId) =>
 
 
 // Fetch all exam scores (or filter by teacher)
-export const getExamScores = async (teacherId) => {
+// export const getExamScores = async (teacherId) => {
+//   const response = await api.get(
+//     `https://www.scratchprod.in/resume-generator-backend/api/exam-scores?teacher_id=${teacherId}`
+//   );
+//   console.log(response)
+//   return response.data;
+// };
+// Fetch all exam scores for the logged-in user
+export const getExamScores = async () => {
+  const user = JSON.parse(localStorage.getItem('user'));
+  const teacherId = user.id; 
   const response = await api.get(
     `https://www.scratchprod.in/resume-generator-backend/api/exam-scores?teacher_id=${teacherId}`
   );
-  console.log(response)
+  // console.log(response);
   return response.data;
 };
+
 
 
 

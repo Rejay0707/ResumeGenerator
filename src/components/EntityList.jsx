@@ -127,12 +127,14 @@ const columns =
         { key: "email", label: "Email" },
         { key: "phone", label: "Phone Number" },
         { key: "studentLinked", label: "Student Linked" },
+        { key: "college", label: "College"},
         { key: "address", label: "Address" },
       ]
     : entityType === "teachers"
   ? [
       { key: "name", label: "Name" },
       { key: "email", label: "Email" },
+      { key: "college", label: "College"},
       { key: "department", label: "Department" },
       { key: "subjects", label: "Subject(s) Taught" },
       { key: "designation", label: "Designation" },
