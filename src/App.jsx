@@ -88,7 +88,7 @@ function ProtectedRoute({ children, roles }) {
 // --------------------------
 function App() {
   return (
-    <Router>
+    <Router >
       <Routes>
         {/* Public Routes */}
         <Route path="/login" element={<LoginPage />} />
