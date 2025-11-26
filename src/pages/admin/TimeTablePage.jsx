@@ -34,6 +34,13 @@ export default function TimetablePage() {
     setDialogOpen(false);
   };
 
+   const admin = JSON.parse(localStorage.getItem("user"));
+  const adminCollege = admin?.college;
+
+  const filteredTimeTable = items.filter(
+    (timTa) => timTa.college === adminCollege
+  );
+
   return (
     <Box
       sx={{
@@ -61,7 +68,7 @@ export default function TimetablePage() {
         Manage Timetables
       </Typography>
       <EntityList
-        items={items}
+        items={filteredTimeTable}
         loading={loading}
         error={error}
         onAdd={handleAdd}

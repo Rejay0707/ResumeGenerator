@@ -59,6 +59,13 @@ export default function Students() {
     setSearchTerm("");
   };
 
+  const admin = JSON.parse(localStorage.getItem("user"));
+  const adminCollege = admin?.college;
+
+  const filteredStudents = items.filter(
+    (s) => s.college === adminCollege
+  );
+
   return (
     <Box
       sx={{
@@ -193,7 +200,7 @@ export default function Students() {
       )}
 
       <EntityList
-        items={filteredItems}
+        items={filteredStudents}
         loading={loading}
         error={error}
         onAdd={handleAdd}

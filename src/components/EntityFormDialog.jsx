@@ -45,7 +45,7 @@ export default function EntityFormDialog({
           type: "text",
           required: true,
         },
-        { key: "college", label: "College", type: "text", required: true},
+        { key: "college", label: "College", type: "text", required: true },
         { key: "year", label: "Year", type: "text", required: true },
         {
           key: "department",
@@ -69,7 +69,7 @@ export default function EntityFormDialog({
         { key: "name", label: "Name", type: "text", required: true },
         { key: "email", label: "Email", type: "email", required: true },
         { key: "phone", label: "Phone Number", type: "tel", required: false },
-        { key: "college", label: "College", type: "text", required: true},
+        { key: "college", label: "College", type: "text", required: true },
         {
           key: "studentLinked",
           label: "Student Linked",
@@ -82,7 +82,7 @@ export default function EntityFormDialog({
       return [
         { key: "name", label: "Name" },
         { key: "email", label: "Email" },
-        { key: "college", label: "College", type: "text", required: true},
+        { key: "college", label: "College", type: "text", required: true },
         { key: "department", label: "Department" },
         { key: "subjects", label: "Subject(s) Taught" },
         { key: "designation", label: "Designation" },
@@ -93,23 +93,26 @@ export default function EntityFormDialog({
       return [
         { key: "department_code", label: "Department Code" },
         { key: "department_name", label: "Department Name" },
+        { key: "college", label: "College Name" },
       ];
     } else if (entityType === "subjects") {
       return [
         { key: "subject_code", label: "Subject Code" },
         { key: "subject_name", label: "Subject Name" },
         { key: "department", label: "Department" },
+        { key: "college", label: "College Name" },
         { key: "year", label: "Year" },
       ];
     } else if (entityType === "timetables") {
       return [
         { key: "teacher_name", label: "Teacher Name" },
-      { key: "subject_name", label: "Subject" },
-      { key: "department", label: "Department" },
-      { key: "year", label: "Year" },
-      { key: "day", label: "Day" },
-      { key: "time", label: "Time" },
-      ]
+        { key: "subject_name", label: "Subject" },
+        { key: "department", label: "Department" },
+        { key: "college", label: "College Name" },
+        { key: "year", label: "Year" },
+        { key: "day", label: "Day" },
+        { key: "time", label: "Time" },
+      ];
     }
     // Fallback for other entities
     return [

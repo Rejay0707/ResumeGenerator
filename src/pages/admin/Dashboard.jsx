@@ -24,20 +24,29 @@ export default function Dashboard() {
 
   const navigate = useNavigate();
 
+  const admin = JSON.parse(localStorage.getItem("user"));
+const adminCollege = admin?.college;
+
+// Filter results by admin's college
+const filteredStudents = students.filter((s) => s.college === adminCollege);
+const filteredParents = parents.filter((p) => p.college === adminCollege);
+const filteredTeachers = teachers.filter((t) => t.college === adminCollege);
+
+
   const stats = [
     {
       label: "Students",
-      count: students.length,
+      count: filteredStudents.length,
       gradient: "linear-gradient(135deg, #42a5f5, #478ed1)",
     },
     {
       label: "Parents",
-      count: parents.length,
+      count: filteredParents.length,
       gradient: "linear-gradient(135deg, #66bb6a, #43a047)",
     },
     {
       label: "Teachers",
-      count: teachers.length,
+      count: filteredTeachers.length,
       gradient: "linear-gradient(135deg, #ffb74d, #f57c00)",
     },
   ];
@@ -59,9 +68,9 @@ export default function Dashboard() {
   // Charts Data
   // 1. Student Distribution by Class (group students by classSec)
 const studentDistribution = useMemo(() => {
-  if (!students || students.length === 0) return [];
+  if (!filteredStudents || filteredStudents.length === 0) return [];
 
-  const classCounts = students.reduce((acc, student) => {
+  const classCounts = filteredStudents.reduce((acc, student) => {
     // Use the correct backend field: class_sec
     const classKey = student.year || "Unassigned";
     acc[classKey] = (acc[classKey] || 0) + 1;
@@ -69,7 +78,7 @@ const studentDistribution = useMemo(() => {
   }, {});
 
   return Object.entries(classCounts).map(([name, value]) => ({ name, value }));
-}, [students]);
+}, [filteredStudents]);
 
 
 
@@ -78,9 +87,9 @@ const studentDistribution = useMemo(() => {
 
   // 2. Teacher-Student Ratio (simple data for bar chart)
   const teacherStudentRatio = useMemo(() => {
-    const ratio = teachers.length > 0 ? (students.length / teachers.length).toFixed(1) : 0;
+    const ratio = filteredTeachers.length > 0 ? (filteredStudents.length / filteredTeachers.length).toFixed(1) : 0;
     return [{ category: "Students per Teacher", value: parseFloat(ratio) }];
-  }, [students.length, teachers.length]);
+  }, [filteredStudents.length, filteredTeachers.length]);
 
   return (
     <Box sx={{ width: "100%", p: { xs: 2, sm: 3, md: 5 } }}>
@@ -128,11 +137,11 @@ const studentDistribution = useMemo(() => {
                 sx={{ fontSize: { xs: "2rem", sm: "2.5rem" } }}
               >
                 {item.label === "Students"
-                  ? `Total number of students: ${students.length}`
+                  ? `Total number of students: ${filteredStudents.length}`
                   : item.label === "Parents"
-                  ? `Total number of parents: ${parents.length}`
+                  ? `Total number of parents: ${filteredParents.length}`
                   : item.label === "Teachers"
-                  ? `Total number of teachers: ${teachers.length}`
+                  ? `Total number of teachers: ${filteredTeachers.length}`
                   : item.count}
               </Typography>
             </Paper>

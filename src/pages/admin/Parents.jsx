@@ -10,6 +10,14 @@ export default function Parents() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
 
+  const admin = JSON.parse(localStorage.getItem("user"));
+  const adminCollege = admin?.college;
+
+  const filteredParents = items.filter(
+    (p) => p.college === adminCollege
+  );
+
+
   const handleAdd = () => {
     setEditingItem(null);
     setDialogOpen(true);
@@ -70,7 +78,7 @@ export default function Parents() {
         Manage Parents
       </Typography>
       <EntityList
-        items={items}
+        items={filteredParents}
         loading={loading}
         error={error}
         onAdd={handleAdd}

@@ -4,8 +4,10 @@ import api from '../services/api';
 export const loginAsync = createAsyncThunk(
   'auth/loginAsync',
   async ({ email, password }, { rejectWithValue }) => {
+    console.log("🚀 loginAsync started with:", email); 
     try {
       const response = await api.post('/api/login', { email, password });
+      console.log("🔹 Full login response:", response.data);
 
       // Save token
       if (response.data.token) {
@@ -80,10 +82,12 @@ const authSlice = createSlice({
     builder
       // SuperAdmin
       .addCase(loginAsync.pending, (state) => {
+        
         state.loading = true;
         state.error = null;
       })
       .addCase(loginAsync.fulfilled, (state, action) => {
+        console.log("🎯 Redux received user data:", action.payload);
         state.loading = false;
         state.user = action.payload;
         localStorage.setItem('user', JSON.stringify(action.payload));
@@ -113,6 +117,9 @@ const authSlice = createSlice({
 
 export const { clearError, logout, setUser } = authSlice.actions;
 export default authSlice.reducer;
+
+
+
 
 
 

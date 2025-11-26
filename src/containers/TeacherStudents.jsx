@@ -115,17 +115,26 @@ const TeacherExamScores = () => {
 
   // Fetch students on mount if verified
   useEffect(() => {
-    if (teacherVerified && teacher?.name) {
-      setLoadingStudents(true);
-      getStudentsForTeacher(teacher.name)
-        .then((response) => {
-          const studentData = response.data.students || [];
-          setStudents(studentData);
-          setLoadingStudents(false);
-        })
-        .catch((err) => console.error("Error fetching students:", err));
-    }
-  }, [teacherVerified, teacher]);
+  if (teacherVerified && teacher?.name) {
+    setLoadingStudents(true);
+    getStudentsForTeacher(teacher.name)
+      .then((response) => {
+        const studentData = response.data.students || [];
+
+        const teacherCollege = teacher.college;
+
+        const sameCollegeStudents = studentData.filter(
+          (s) =>
+            s.college?.toLowerCase() === teacherCollege?.toLowerCase()
+        );
+
+        setStudents(sameCollegeStudents);
+        setLoadingStudents(false);
+      })
+      .catch((err) => console.error("Error fetching students:", err));
+  }
+}, [teacherVerified, teacher]);
+
 
   // Update subjects when department + year changes
   useEffect(() => {

@@ -34,6 +34,13 @@ export default function Teachers() {
     setDialogOpen(false);
   };
 
+  const admin = JSON.parse(localStorage.getItem("user"));
+  const adminCollege = admin?.college;
+
+  const filteredTeachers = items.filter(
+    (t) => t.college === adminCollege
+  );
+
   return (
     <Box
       sx={{
@@ -71,7 +78,7 @@ export default function Teachers() {
         Manage Teachers
       </Typography>
       <EntityList
-        items={items}
+        items={filteredTeachers}
         loading={loading}
         error={error}
         onAdd={handleAdd}

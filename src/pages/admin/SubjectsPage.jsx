@@ -34,6 +34,13 @@ export default function SubjectsPage() {
     setDialogOpen(false);
   };
 
+   const admin = JSON.parse(localStorage.getItem("user"));
+  const adminCollege = admin?.college;
+
+  const filteredSubjects = items.filter(
+    (sub) => sub.college === adminCollege
+  );
+
   return (
     <Box
       sx={{
@@ -61,7 +68,7 @@ export default function SubjectsPage() {
         Manage Subjects
       </Typography>
       <EntityList
-        items={items}
+        items={filteredSubjects}
         loading={loading}
         error={error}
         onAdd={handleAdd}

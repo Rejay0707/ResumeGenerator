@@ -6,7 +6,7 @@ import EntityFormDialog from "../../components/EntityFormDialog";
 
 export default function Departments() {
   const { items, loading, error, addItem, updateItem, deleteItem } =
-    useAdminManagement("departments");  // Use "departments" as entityType
+    useAdminManagement("departments"); // Use "departments" as entityType
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
 
@@ -33,6 +33,13 @@ export default function Departments() {
     }
     setDialogOpen(false);
   };
+
+  const admin = JSON.parse(localStorage.getItem("user"));
+  const adminCollege = admin?.college;
+
+  const filteredDepartments = items.filter(
+    (dep) => dep.college === adminCollege
+  );
 
   return (
     <Box
@@ -61,20 +68,20 @@ export default function Departments() {
         Manage Departments
       </Typography>
       <EntityList
-        items={items}
+        items={filteredDepartments}
         loading={loading}
         error={error}
         onAdd={handleAdd}
         onEdit={handleEdit}
         onDelete={handleDelete}
-        entityType="departments"  // Pass entityType for custom configurations
+        entityType="departments" // Pass entityType for custom configurations
       />
       <EntityFormDialog
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
         onSubmit={handleSubmit}
         initialData={editingItem}
-        entityType="departments"  // Use for form fields
+        entityType="departments" // Use for form fields
       />
     </Box>
   );

@@ -84,69 +84,70 @@ export default function EntityList({
   };
 
   // Dynamic columns
-// Inside EntityList component, replace the columns definition with this:
+  // Inside EntityList component, replace the columns definition with this:
 
-const columns =
-  entityType === "departments"
-  ? [
-      { key: "department_code", label: "Department Code" },
-      { key: "department_name", label: "Department Name" },
-    ]
-  : entityType === "subjects"
-  ? [
-      { key: "subject_code", label: "Subject Code" },
-      { key: "subject_name", label: "Subject Name" },
-      { key: "department", label: "Department" },
-      { key: "year", label: "Year" },
-    ]
-  : entityType === "timetables"
-  ? [
-      { key: "teacher_name", label: "Teacher Name" },
-      { key: "subject_name", label: "Subject" },
-      { key: "department", label: "Department" },
-      { key: "year", label: "Year" },
-      { key: "day", label: "Day" },
-      { key: "time", label: "Time" },
-    ]:
-  entityType === "students"
-    ? [
-        { key: "admission_no", label: "Admission No" },
-        { key: "name", label: "Name" },
-        { key: "father_name", label: "Father Name" },
-        { key: "dob", label: "DOB" },
-        { key: "college", label: "College"},
-        { key: "year", label: "Year" },
-        { key: "department", label: "Department"},
-        { key: "gender", label: "Gender" },
-        { key: "phone", label: "Phone" },
-        { key: "email", label: "Email" },
-      ]
-    : entityType === "parents"
-    ? [
-        { key: "name", label: "Name" },
-        { key: "email", label: "Email" },
-        { key: "phone", label: "Phone Number" },
-        { key: "studentLinked", label: "Student Linked" },
-        { key: "college", label: "College"},
-        { key: "address", label: "Address" },
-      ]
-    : entityType === "teachers"
-  ? [
-      { key: "name", label: "Name" },
-      { key: "email", label: "Email" },
-      { key: "college", label: "College"},
-      { key: "department", label: "Department" },
-      { key: "subjects", label: "Subject(s) Taught" },
-      { key: "designation", label: "Designation" },
-      { key: "phone", label: "Phone Number" },
-      { key: "joining_date", label: "Joining Date" },
-    ]
-
-    : [
-        { key: "name", label: "Name" },
-        { key: "email", label: "Email" },
-      ];
-
+  const columns =
+    entityType === "departments"
+      ? [
+          { key: "department_code", label: "Department Code" },
+          { key: "department_name", label: "Department Name" },
+          { key: "college", label: "College" },
+        ]
+      : entityType === "subjects"
+      ? [
+          { key: "subject_code", label: "Subject Code" },
+          { key: "subject_name", label: "Subject Name" },
+          { key: "department", label: "Department" },
+          { key: "college", label: "College" },
+          { key: "year", label: "Year" },
+        ]
+      : entityType === "timetables"
+      ? [
+          { key: "teacher_name", label: "Teacher Name" },
+          { key: "subject_name", label: "Subject" },
+          { key: "department", label: "Department" },
+          { key: "college", label: "College" },
+          { key: "year", label: "Year" },
+          { key: "day", label: "Day" },
+          { key: "time", label: "Time" },
+        ]
+      : entityType === "students"
+      ? [
+          { key: "admission_no", label: "Admission No" },
+          { key: "name", label: "Name" },
+          { key: "father_name", label: "Father Name" },
+          { key: "dob", label: "DOB" },
+          { key: "college", label: "College" },
+          { key: "year", label: "Year" },
+          { key: "department", label: "Department" },
+          { key: "gender", label: "Gender" },
+          { key: "phone", label: "Phone" },
+          { key: "email", label: "Email" },
+        ]
+      : entityType === "parents"
+      ? [
+          { key: "name", label: "Name" },
+          { key: "email", label: "Email" },
+          { key: "phone", label: "Phone Number" },
+          { key: "studentLinked", label: "Student Linked" },
+          { key: "college", label: "College" },
+          { key: "address", label: "Address" },
+        ]
+      : entityType === "teachers"
+      ? [
+          { key: "name", label: "Name" },
+          { key: "email", label: "Email" },
+          { key: "college", label: "College" },
+          { key: "department", label: "Department" },
+          { key: "subjects", label: "Subject(s) Taught" },
+          { key: "designation", label: "Designation" },
+          { key: "phone", label: "Phone Number" },
+          { key: "joining_date", label: "Joining Date" },
+        ]
+      : [
+          { key: "name", label: "Name" },
+          { key: "email", label: "Email" },
+        ];
 
   // Add button text
   const addButtonText =
@@ -480,7 +481,7 @@ const columns =
             </div>
           </TableContainer>
 
-          {  (
+          {
             <TablePagination
               component="div"
               count={items.length}
@@ -490,7 +491,7 @@ const columns =
               rowsPerPageOptions={[]}
               sx={{ mt: 2, px: 1 }}
             />
-          )}
+          }
         </>
       )}
 

@@ -1,5 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Paper, Typography, Box, CircularProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import {
+  Paper,
+  Typography,
+  CircularProgress,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from "@mui/material";
 import axios from "axios";
 
 export default function ParentPerformance() {
@@ -11,7 +21,7 @@ export default function ParentPerformance() {
     let hasFetched = false;
 
     const fetchGuardianIdAndExamScores = async () => {
-      if (hasFetched) return; // prevent duplicate fetch
+      if (hasFetched) return;
       hasFetched = true;
 
       try {
@@ -30,6 +40,7 @@ export default function ParentPerformance() {
           const scoresRes = await axios.get(
             `https://www.scratchprod.in/resume-generator-backend/api/guardians/${guardian.id}/exam-scores`
           );
+
           setData(scoresRes.data);
         } else {
           setError("Guardian not found for logged-in user");
@@ -48,26 +59,32 @@ export default function ParentPerformance() {
   if (error) return <Typography color="error">{error}</Typography>;
   if (!data) return <Typography>No data available.</Typography>;
 
-  // Process the data to group scores by student and tests
+  // Extract students and test data
   const { linked_students, exam_scores } = data;
 
-  // Get all unique test names for columns
-  const testNames = [...new Set(exam_scores.map((es) => es.test_name))];
+  // Create unique column keys using test_name + subject
+  const uniqueTestKeys = [
+    ...new Set(
+      exam_scores.map((es) => `${es.test_name} - ${es.subject}`)
+    ),
+  ];
 
-  // Initialize a map for student scores: { studentName: { testName: score } }
+  // Prepare structure: studentScores[student][columnKey] = score
   const studentScores = {};
   linked_students.forEach((student) => {
     studentScores[student] = {};
-    testNames.forEach((test) => {
-      studentScores[student][test] = null; // Default to null if no score
+    uniqueTestKeys.forEach((key) => {
+      studentScores[student][key] = null;
     });
   });
 
-  // Populate the scores
+  // Fill the scores
   exam_scores.forEach((es) => {
+    const key = `${es.test_name} - ${es.subject}`;
+
     es.scores.forEach((score) => {
       if (studentScores[score.student_name]) {
-        studentScores[score.student_name][es.test_name] = score.score;
+        studentScores[score.student_name][key] = score.score;
       }
     });
   });
@@ -82,24 +99,29 @@ export default function ParentPerformance() {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Student Name</TableCell>
-              {testNames.map((test) => (
-                <TableCell key={test}>{test}</TableCell>
+              <TableCell><b>Student Name</b></TableCell>
+              {uniqueTestKeys.map((key) => (
+                <TableCell key={key}><b>{key}</b></TableCell>
               ))}
             </TableRow>
           </TableHead>
+
           <TableBody>
             {linked_students.map((student) => (
               <TableRow key={student}>
                 <TableCell>{student}</TableCell>
-                {testNames.map((test) => (
-                  <TableCell key={test}>
-                    {studentScores[student][test] !== null ? studentScores[student][test] : 'N/A'}
+
+                {uniqueTestKeys.map((key) => (
+                  <TableCell key={key}>
+                    {studentScores[student][key] !== null
+                      ? studentScores[student][key]
+                      : "N/A"}
                   </TableCell>
                 ))}
               </TableRow>
             ))}
           </TableBody>
+
         </Table>
       </TableContainer>
     </Paper>
