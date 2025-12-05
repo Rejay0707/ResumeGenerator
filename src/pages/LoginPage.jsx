@@ -36,8 +36,9 @@ export default function LoginPage() {
 
   const SUPERADMIN_DASHBOARD_URL =
     "https://www.scratchprod.in/resume-generator-backend/";
-  
-  const RECRUITER_DASHBOARD_URL = "https://www.scratchprod.in/resume-generator-backend/recruiter/dashboard"
+
+  const RECRUITER_DASHBOARD_URL =
+    "https://www.scratchprod.in/resume-generator-backend/recruiter/dashboard";
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -91,6 +92,8 @@ export default function LoginPage() {
         // Navigate by role
         if (role === "superadmin") {
           window.location.href = SUPERADMIN_DASHBOARD_URL;
+        }else if (role === "jobseeker") {
+          navigate("/jobseeker/dashboard");
         } else if (role === "admin") {
           navigate("/admin/dashboard");
         } else if (role === "Student") {
@@ -100,8 +103,8 @@ export default function LoginPage() {
         } else if (role === "parent") {
           navigate("/parent/dashboard/home");
         } else if (role === "recruiter") {
-        window.location.href = RECRUITER_DASHBOARD_URL;
-      }else {
+          window.location.href = RECRUITER_DASHBOARD_URL;
+        } else {
           navigate("/");
         }
       } else {
@@ -240,7 +243,8 @@ export default function LoginPage() {
             { label: "STUDENT", value: "student" },
             { label: "PARENT", value: "parent" },
             { label: "TEACHER", value: "teacher" },
-            { label: "Recruiter", value: "recruiter"}
+            { label: "Recruiter", value: "recruiter" },
+            { label: "Job Seeker", value: "jobseeker"}
           ].map(({ label, value }) => (
             <Button
               key={label}

@@ -276,10 +276,17 @@ export default function EntityList({
       </Box>
     );
 
-  if (error)
+  // Updated: Safely parse and display the error to prevent React crash
+  const displayError = error
+    ? (typeof error === "object" && error?.errors
+        ? Object.values(error.errors).join(", ")  // e.g., "Email already exists"
+        : error?.message || error.toString() || "An error occurred.")
+    : "";
+
+  if (displayError)  // Changed: Use the parsed string instead of the raw object
     return (
       <Typography color="error" mt={2}>
-        {error}
+        {displayError}
       </Typography>
     );
 

@@ -368,36 +368,119 @@ function ResumeFormContainer() {
   };
 
   // Handle submit (save to backend and navigate to preview)
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+
+  //   try {
+  //     // ✅ Post form data to backend
+  //     // Retrieve the token from localStorage
+  //     const token = localStorage.getItem("token");
+
+  //     // Log the token to the console for debugging
+  //     console.log("Retrieved token:", token);
+
+  //     // Proceed with the axios request
+  //     const response = await axios.post(
+  //       "https://www.scratchprod.in/resume-generator-backend/api/resumes",
+  //       formData,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`, // Use the retrieved token
+  //           "Content-Type": "multipart/form-data",
+  //         },
+  //       }
+  //     );
+
+  //     // Optionally, log the full request config for more details
+  //     console.log("Request headers:", {
+  //       Authorization: `Bearer ${token}`,
+  //       "Content-Type": "multipart/form-data",
+  //     });
+
+  //     console.log("Saved successfully:", response.data);
+
+  //     // ✅ Extract ID properly from response
+  //     const newResumeId = response.data?.data?.id;
+
+  //     if (newResumeId) {
+  //       // ✅ Navigate to preview page with ID
+  //       navigate("/preview", { state: { resumeId: newResumeId } });
+  //     } else {
+  //       console.error("Resume ID not found in response");
+  //       alert("Resume saved but could not retrieve the ID.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error details:", {
+  //        status: error.response?.status,
+  //        message: error.response?.data?.message || error.message,
+  //        fullResponse: error.response?.data,  // Log the entire response body
+  //      });
+
+  //     console.error("Error details:", error.response?.data, error.response?.status, error.message);
+
+  //     console.error("Error saving resume:", error);
+  //     alert("Something went wrong while saving the resume.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  e.preventDefault();
+  setLoading(true);
 
-    try {
-      // ✅ Post form data to backend
-      const response = await axios.post(
-        "https://www.scratchprod.in/resume-generator-backend/api/resumes",
-        formData
-      );
+  try {
+    const token = localStorage.getItem("token");
+    console.log("Retrieved token:", token);
 
-      console.log("Saved successfully:", response.data);
-
-      // ✅ Extract ID properly from response
-      const newResumeId = response.data?.data?.id;
-
-      if (newResumeId) {
-        // ✅ Navigate to preview page with ID
-        navigate("/preview", { state: { resumeId: newResumeId } });
-      } else {
-        console.error("Resume ID not found in response");
-        alert("Resume saved but could not retrieve the ID.");
-      }
-    } catch (error) {
-      console.error("Error saving resume:", error);
-      alert("Something went wrong while saving the resume.");
-    } finally {
-      setLoading(false);
+    if (!token) {
+      alert("No token found. Please log in.");
+      return;
     }
-  };
+
+    // Optional: Basic client-side check (not foolproof, but helpful for debugging)
+    const payload = JSON.parse(atob(token.split('.')[1]));  // Decode payload
+    const currentTime = Math.floor(Date.now() / 1000);
+    if (payload.exp < currentTime) {
+      alert("Token expired. Please log in again.");
+      return;
+    }
+    if (payload.iat > currentTime) {
+      console.warn("Token issued in future—server clock issue likely.");
+    }
+
+    const response = await axios.post(
+      "https://www.scratchprod.in/resume-generator-backend/api/resumes",
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    console.log("Saved successfully:", response.data);
+    const newResumeId = response.data?.data?.id;
+    if (newResumeId) {
+      navigate("/preview", { state: { resumeId: newResumeId } });
+    } else {
+      console.error("Resume ID not found in response");
+      alert("Resume saved but could not retrieve the ID.");
+    }
+  } catch (error) {
+    console.error("Error details:", {
+      status: error.response?.status,
+      message: error.response?.data?.message || error.message,
+      fullResponse: error.response?.data,
+    });
+    alert("Something went wrong while saving the resume.");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <Box sx={{ mx: "auto", mt: -2, px: 0, overflowX: "hidden" }}>
@@ -589,5 +672,3 @@ function ResumeFormContainer() {
 }
 
 export default ResumeFormContainer;
-
-

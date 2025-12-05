@@ -600,6 +600,7 @@ const handleDownload = async () => {
         >
           {downloadLoading ? "Generating..." : "Download PDF"}
         </Button>
+        
 
         {/* Name */}
         <Typography variant="h3" fontWeight="bold" gutterBottom>

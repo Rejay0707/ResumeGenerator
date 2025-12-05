@@ -36,6 +36,8 @@ import ParentProfile from "./containers/ParentProfile";
 import LoginPage from "./pages/LoginPage";
 import ForgotPasswordPage from "./pages/ForgetPasswordPage";
 import RegisterPage from "./pages/RegisterPage";
+import JobseekerDashboard from "./layouts/JobseekerDashboardLayout";
+import GenerateResume from "./pages/GenerateResume";
 
 // --------------------------
 // ✅ Role Redirect Component
@@ -142,6 +144,12 @@ function App() {
           <Route path="subjects" element={<SubjectsPage />} />
           <Route path="timetable" element={<TimetablePage />} />
         </Route>
+
+        {/* Job seekers dashboard */}
+        <Route path="/jobseeker/dashboard" element={<JobseekerDashboard />} />
+        <Route path="/generate-resume" element={<GenerateResume />} />
+
+
 
         {/* Teacher Dashboard routes */}
         <Route

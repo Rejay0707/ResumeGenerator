@@ -10,6 +10,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Alert,  // Added for error display
 } from "@mui/material";
 
 export default function EntityFormDialog({
@@ -18,6 +19,7 @@ export default function EntityFormDialog({
   onSubmit,
   initialData,
   entityType = "default",
+  error,  // Added: For displaying API/server errors (e.g., from 422 response)
 }) {
   const [form, setForm] = useState({});
   const [errors, setErrors] = useState({});
@@ -186,6 +188,11 @@ export default function EntityFormDialog({
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
+        {error && (  // Added: Display API/server error (e.g., "Email already exists") as an alert
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {error}
+          </Alert>
+        )}
         {fields.map((field) => (
           <div key={field.key} style={{ marginBottom: 16 }}>
             {field.type === "select" ? (
@@ -249,3 +256,4 @@ export default function EntityFormDialog({
     </Dialog>
   );
 }
+
