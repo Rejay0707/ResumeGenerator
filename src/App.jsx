@@ -38,6 +38,7 @@ import ForgotPasswordPage from "./pages/ForgetPasswordPage";
 import RegisterPage from "./pages/RegisterPage";
 import JobseekerDashboard from "./layouts/JobseekerDashboardLayout";
 import GenerateResume from "./pages/GenerateResume";
+import RoadmapPage from "./pages/RoadmapPage";
 
 // --------------------------
 // ✅ Role Redirect Component
@@ -125,6 +126,8 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        <Route path="/roadmap" element={<RoadmapPage />} />
 
         {/* Admin-only routes */}
         <Route
