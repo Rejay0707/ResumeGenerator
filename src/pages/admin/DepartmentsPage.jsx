@@ -82,6 +82,9 @@ export default function Departments() {
         onSubmit={handleSubmit}
         initialData={editingItem}
         entityType="departments" // Use for form fields
+        defaultValues={{
+          college: adminCollege,
+        }}
       />
     </Box>
   );

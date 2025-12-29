@@ -67,7 +67,7 @@ const RoadmapPage = () => {
         <Typography
           variant="h3"
           fontWeight="bold"
-          gutterBottom
+          gutterBottom1
           sx={{ textAlign: "center", mb: 5 }}
         >
           {roadmapData.title}

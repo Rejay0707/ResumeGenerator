@@ -106,6 +106,9 @@ export default function Teachers() {
         initialData={editingItem}
         entityType="teachers"
         error={formError}  // Pass the form error here
+        defaultValues={{
+          college: adminCollege,
+        }}
       />
     </Box>
   );

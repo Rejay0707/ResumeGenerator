@@ -82,6 +82,9 @@ export default function TimetablePage() {
         onSubmit={handleSubmit}
         initialData={editingItem}
         entityType="timetables"
+        defaultValues={{
+          college: adminCollege,
+        }}
       />
     </Box>
   );

@@ -684,12 +684,15 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux"
 import axios from "axios";
 
 function ResumeFormContainer() {
+  const user = useSelector((state) => state.auth.user);
+  console.log(user.email)
   const [formData, setFormData] = useState({
     name: "",
-    email: "",
+    email: user?.email || "",
     phone: "",
     github: "",
     education: { degree: "", institution: "", year: "" },
@@ -746,60 +749,137 @@ function ResumeFormContainer() {
   };
 
   // Handle submit (save to backend and navigate to preview)
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     setLoading(true);
 
-    try {
-      const token = localStorage.getItem("token");
-      console.log("Retrieved token:", token);
+//     try {
+//       const token = localStorage.getItem("token");
+//       console.log("Retrieved token:", token);
 
-      if (!token) {
-        alert("No token found. Please log in.");
-        return;
-      }
+//       if (!token) {
+//         alert("No token found. Please log in.");
+//         return;
+//       }
 
-      // Optional: Basic client-side check (not foolproof, but helpful for debugging)
-      const payload = JSON.parse(atob(token.split('.')[1]));  // Decode payload
-      const currentTime = Math.floor(Date.now() / 1000);
-      if (payload.exp < currentTime) {
-        alert("Token expired. Please log in again.");
-        return;
-      }
-      if (payload.iat > currentTime) {
-        console.warn("Token issued in future—server clock issue likely.");
-      }
+//       // Optional: Basic client-side check (not foolproof, but helpful for debugging)
+//       const payload = JSON.parse(atob(token.split('.')[1]));  // Decode payload
+//       const currentTime = Math.floor(Date.now() / 1000);
+//       if (payload.exp < currentTime) {
+//         alert("Token expired. Please log in again.");
+//         return;
+//       }
+//       if (payload.iat > currentTime) {
+//         console.warn("Token issued in future—server clock issue likely.");
+//       }
 
-      const response = await axios.post(
-        "https://www.scratchprod.in/resume-generator-backend/api/resumes",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+//       const formattedData = {
+//   ...formData,
+//   skills: formData.skills
+//     .split(",")
+//     .map((s) => s.trim())
+//     .filter((s) => s.length > 0),   // remove empty values
+// };
 
-      console.log("Saved successfully:", response.data);
-      const newResumeId = response.data?.data?.id;
-      if (newResumeId) {
-        navigate("/preview", { state: { resumeId: newResumeId } });
-      } else {
-        console.error("Resume ID not found in response");
-        alert("Resume saved but could not retrieve the ID.");
-      }
-    } catch (error) {
-      console.error("Error details:", {
-        status: error.response?.status,
-        message: error.response?.data?.message || error.message,
-        fullResponse: error.response?.data,
-      });
-      alert("Something went wrong while saving the resume.");
-    } finally {
-      setLoading(false);
+// const response = await axios.post(
+//   "https://www.scratchprod.in/resume-generator-backend/api/resumes",
+//   formattedData,
+//   {
+//     headers: {
+//       Authorization: `Bearer ${token}`,
+//       "Content-Type": "application/json",
+//     },
+//   }
+// );
+
+
+//       // const response = await axios.post(
+//       //   "https://www.scratchprod.in/resume-generator-backend/api/resumes",
+//       //   formData,
+//       //   {
+//       //     headers: {
+//       //       Authorization: `Bearer ${token}`,
+//       //       "Content-Type": "multipart/form-data",
+//       //     },
+//       //   }
+//       // );
+
+//       console.log("Saved successfully:", response.data);
+//       const newResumeId = response.data?.data?.id;
+//       if (newResumeId) {
+//         navigate("/preview", { state: { resumeId: newResumeId } });
+//       } else {
+//         console.error("Resume ID not found in response");
+//         alert("Resume saved but could not retrieve the ID.");
+//       }
+//     } catch (error) {
+//       console.error("Error details:", {
+//         status: error.response?.status,
+//         message: error.response?.data?.message || error.message,
+//         fullResponse: error.response?.data,
+//       });
+//       alert("Something went wrong while saving the resume.");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+
+  try {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      alert("No token found. Please log in.");
+      return;
     }
-  };
+
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    const currentTime = Math.floor(Date.now() / 1000);
+
+    if (payload.exp < currentTime) {
+      alert("Token expired. Please log in again.");
+      return;
+    }
+
+    // Convert skills string → array
+    const formattedData = {
+      ...formData,
+      skills: formData.skills
+        .split(",")
+        .map((s) => s.trim())
+        .filter((s) => s.length > 0),
+    };
+
+    const response = await axios.post(
+      "https://www.scratchprod.in/resume-generator-backend/api/resumes",
+      formattedData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    console.log(response.data?.id)
+
+    const newResumeId = response.data?.id;
+    console.log(newResumeId)
+    if (newResumeId) {
+      navigate("/preview", { state: { resumeId: newResumeId } });
+    } else {
+      alert("Resume saved but could not retrieve ID.");
+    }
+  } catch (error) {
+    console.error("Error saving resume:", error);
+    alert("Something went wrong while saving the resume.");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <Box sx={{ mx: "auto", mt: -2, px: 0, overflowX: "hidden" }}>
@@ -827,6 +907,9 @@ function ResumeFormContainer() {
               onChange={handleChange}
               fullWidth
               required
+              InputProps={{
+                readOnly: true, 
+              }}
             />
           </Grid>
           <Grid item xs={12} sm={6} sx={{ width: { xs: "100%", md: "340px" } }}>

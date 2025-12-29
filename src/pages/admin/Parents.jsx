@@ -92,6 +92,9 @@ export default function Parents() {
         onSubmit={handleSubmit}
         initialData={editingItem}
         entityType="parents"
+        defaultValues={{
+          college: adminCollege,
+        }}
       />
     </Box>
   );

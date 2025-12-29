@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Box, Typography, Button } from "@mui/material";
 import { Logout } from "@mui/icons-material";
 import axios from "axios";
@@ -17,8 +17,14 @@ const JobSeekerDashboard = () => {
   const [projects, setProjects] = useState([]);
   const [skills, setSkills] = useState([]);
 
-  // ========= Show Generate Resume Button state =========
-  const [showGenerate, setShowGenerate] = useState(false);
+  // const [showGenerate, setShowGenerate] = useState(false);
+
+  // ========= SECTION REFS (ADDED) =========
+  const personalRef = useRef(null);
+  const educationRef = useRef(null);
+  const experienceRef = useRef(null);
+  const projectsRef = useRef(null);
+  const skillsRef = useRef(null);
 
   // ========= Logout ==========
   const handleLogout = () => {
@@ -26,17 +32,21 @@ const JobSeekerDashboard = () => {
     window.location.href = "/login";
   };
 
-  // ========= Helper: simple validation ==========
+  // ========= Scroll Helper (ADDED) =========
+  const scrollTo = (ref) => {
+    ref?.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  // ========= Validation ==========
   const validateBeforeSend = () => {
     const missing = [];
     if (!personal?.name) missing.push("name");
     if (!personal?.email) missing.push("email");
     if (!personal?.phone) missing.push("phone");
-
     return missing;
   };
 
-  // ========= SAVE API CALL =========
+  // ========= SAVE API =========
   const handleSave = async () => {
     try {
       const missing = validateBeforeSend();
@@ -56,8 +66,6 @@ const JobSeekerDashboard = () => {
         skills: skills ?? [],
       };
 
-      console.log("Sending to API:", payload);
-
       const res = await axios.post(
         "https://www.scratchprod.in/resume-generator-backend/api/jobseekers",
         payload
@@ -66,33 +74,16 @@ const JobSeekerDashboard = () => {
       if (res?.data?.status) {
         alert("Saved Successfully!");
 
-        // ⭐ store backend resume id from response
         const resumeId = res?.data?.data?.id;
         if (resumeId) {
           localStorage.setItem("resumeId", resumeId);
-          console.log("Resume ID saved:", resumeId);
         }
 
-        setShowGenerate(true);
-      } else {
-        alert(res?.data?.message || "Save completed with warnings.");
+        window.location.href = "/generate-resume";
       }
     } catch (error) {
-      const backend = error?.response?.data;
-      console.error("Save failed:", error);
-
-      if (backend?.errors) {
-        alert(
-          "Validation error:\n" +
-            Object.entries(backend.errors)
-              .map(([k, v]) => `${k}: ${v.join(", ")}`)
-              .join("\n")
-        );
-      } else if (backend?.message) {
-        alert(backend.message);
-      } else {
-        alert("Save failed — check console for details.");
-      }
+      alert("Save failed — check console");
+      console.error(error);
     }
   };
 
@@ -122,22 +113,43 @@ const JobSeekerDashboard = () => {
             Job Portal
           </Typography>
 
-          <Typography sx={{ mb: 2, cursor: "pointer" }}>Dashboard</Typography>
-          <Typography sx={{ mb: 2, cursor: "pointer" }}>
+          <Typography
+            sx={{ mb: 2, cursor: "pointer" }}
+            onClick={() => scrollTo(personalRef)}
+          >
             Personal Info
           </Typography>
-          <Typography sx={{ mb: 2, cursor: "pointer" }}>Education</Typography>
-          <Typography sx={{ mb: 2, cursor: "pointer" }}>Experience</Typography>
-          <Typography sx={{ mb: 2, cursor: "pointer" }}>Projects</Typography>
-          <Typography sx={{ mb: 2, cursor: "pointer" }}>Skills</Typography>
-
-          {/* Navigate to resume page */}
           <Typography
+            sx={{ mb: 2, cursor: "pointer" }}
+            onClick={() => scrollTo(educationRef)}
+          >
+            Education
+          </Typography>
+          <Typography
+            sx={{ mb: 2, cursor: "pointer" }}
+            onClick={() => scrollTo(experienceRef)}
+          >
+            Experience
+          </Typography>
+          <Typography
+            sx={{ mb: 2, cursor: "pointer" }}
+            onClick={() => scrollTo(projectsRef)}
+          >
+            Projects
+          </Typography>
+          <Typography
+            sx={{ mb: 2, cursor: "pointer" }}
+            onClick={() => scrollTo(skillsRef)}
+          >
+            Skills
+          </Typography>
+
+          {/* <Typography
             sx={{ mb: 2, cursor: "pointer" }}
             onClick={() => (window.location.href = "/generate-resume")}
           >
             Generate Resume
-          </Typography>
+          </Typography> */}
         </Box>
 
         <Button
@@ -167,14 +179,26 @@ const JobSeekerDashboard = () => {
           Welcome! Please enter your details to generate your resume
         </Typography>
 
-        {/* Pass setters to child forms */}
-        <PersonalInfoForm setPersonal={setPersonal} />
-        <EducationSection setEducation={setEducation} />
-        <ExperienceDetails setExperience={setExperience} />
-        <ProjectDetails setProjects={setProjects} />
-        <SkillDetails setSkills={setSkills} />
+        <Box ref={personalRef}>
+          <PersonalInfoForm setPersonal={setPersonal} />
+        </Box>
 
-        {/* SAVE BUTTON */}
+        <Box ref={educationRef}>
+          <EducationSection setEducation={setEducation} />
+        </Box>
+
+        <Box ref={experienceRef}>
+          <ExperienceDetails setExperience={setExperience} />
+        </Box>
+
+        <Box ref={projectsRef}>
+          <ProjectDetails setProjects={setProjects} />
+        </Box>
+
+        <Box ref={skillsRef}>
+          <SkillDetails setSkills={setSkills} />
+        </Box>
+
         <Button
           variant="contained"
           sx={{ borderRadius: 2, mt: 3 }}
@@ -183,16 +207,7 @@ const JobSeekerDashboard = () => {
           Save & Continue
         </Button>
 
-        {/* 🔥 Generate Resume — same style, with gap */}
-        {showGenerate && (
-          <Button
-            variant="contained"
-            sx={{ borderRadius: 2, mt: 3, ml: 2 }} // spacing + same color
-            onClick={() => (window.location.href = "/generate-resume")}
-          >
-            Generate Resume
-          </Button>
-        )}
+      
       </Box>
     </Box>
   );

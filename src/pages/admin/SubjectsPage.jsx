@@ -26,20 +26,21 @@ export default function SubjectsPage() {
   };
 
   const handleSubmit = (formData) => {
-    if (editingItem) {
+    if (editingItem?.id) {
       updateItem(editingItem.id, formData);
     } else {
-      addItem(formData);
+      addItem({
+        ...formData,
+        college: adminCollege, // inject here
+      });
     }
     setDialogOpen(false);
   };
 
-   const admin = JSON.parse(localStorage.getItem("user"));
+  const admin = JSON.parse(localStorage.getItem("user"));
   const adminCollege = admin?.college;
 
-  const filteredSubjects = items.filter(
-    (sub) => sub.college === adminCollege
-  );
+  const filteredSubjects = items.filter((sub) => sub.college === adminCollege);
 
   return (
     <Box
@@ -82,6 +83,9 @@ export default function SubjectsPage() {
         onSubmit={handleSubmit}
         initialData={editingItem}
         entityType="subjects"
+        defaultValues={{
+          college: adminCollege,
+        }}
       />
     </Box>
   );

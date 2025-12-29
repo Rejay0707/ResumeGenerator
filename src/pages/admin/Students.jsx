@@ -43,13 +43,17 @@ export default function Students() {
   };
 
   const handleSubmit = (formData) => {
-    if (editingItem) {
-      updateItem(editingItem.id, formData);
-    } else {
-      addItem(formData);
-    }
-    setDialogOpen(false);
-  };
+  if (editingItem?.id) {
+    updateItem(editingItem.id, formData);
+  } else {
+    addItem({
+      ...formData,
+      college: adminCollege, // inject here
+    });
+  }
+  setDialogOpen(false);
+};
+
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
@@ -61,6 +65,7 @@ export default function Students() {
 
   const admin = JSON.parse(localStorage.getItem("user"));
   const adminCollege = admin?.college;
+  // console.log(adminCollege)
 
   const filteredStudents = items.filter(
     (s) => s.college === adminCollege
@@ -215,6 +220,9 @@ export default function Students() {
         onSubmit={handleSubmit}
         initialData={editingItem}
         entityType="students"
+        defaultValues={{
+          college: adminCollege,
+        }}
       />
     </Box>
   );
