@@ -96,10 +96,10 @@ export default function Students() {
         gutterBottom
         sx={{
           fontSize: {
-            xs: "1.25rem",
-            sm: "1.75rem",
-            md: "2.25rem",
-            lg: "2.75rem",
+            xs: "20px",
+            sm: "20px",
+            md: "22px",
+            lg: "24",
             xl: "24px",
           },
           fontWeight: "bold",

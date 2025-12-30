@@ -765,14 +765,14 @@ const TeacherAttendance = () => {
   const studentsForSelectedClass =
     groupedStudents[year]?.filter((s) => s.department === department) || [];
 
-  const filteredStudentsByCollege = studentsForSelectedClass.filter(function (
-    s
-  ) {
-    console.log(s.college)
-    console.log(teacher.college)
-    return s.college === teacher.college;
-  });
-  console.log(filteredStudentsByCollege)
+  // const filteredStudentsByCollege = studentsForSelectedClass.filter(function (
+  //   s
+  // ) {
+  //   console.log(s.college)
+  //   console.log(teacher.college)
+  //   return s.college === teacher.college;
+  // });
+  // console.log(filteredStudentsByCollege)
 
   return (
     <Box
@@ -985,9 +985,9 @@ const TeacherAttendance = () => {
         </Typography>
 
         <Box sx={{ maxHeight: "400px", overflowY: "auto" }}>
-          {filteredStudentsByCollege.length > 0 ? (
+          {studentsForSelectedClass.length > 0 ? (
             <List>
-              {filteredStudentsByCollege.map((s) => (
+              {studentsForSelectedClass.map((s) => (
                 <ListItem key={s.id} sx={{ borderBottom: "1px solid #eee" }}>
                   <ListItemText
                     primary={s.name}
