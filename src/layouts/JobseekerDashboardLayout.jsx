@@ -1,8 +1,9 @@
 import React, { useState, useRef } from "react";
 import { Box, Typography, Button } from "@mui/material";
 import { Logout } from "@mui/icons-material";
+import { useDispatch } from "react-redux";
 import axios from "axios";
-
+import { logout } from "../features/authSlice";
 import PersonalInfoForm from "../components/PersonalInfoForm";
 import EducationSection from "../components/EducationSection";
 import ExperienceDetails from "../components/ExperienceDetails";
@@ -11,6 +12,7 @@ import SkillDetails from "../components/SkillDetails";
 
 const JobSeekerDashboard = () => {
   // ========= Global Form States =========
+  const dispatch = useDispatch();
   const [personal, setPersonal] = useState({});
   const [education, setEducation] = useState([]);
   const [experience, setExperience] = useState([]);
@@ -28,7 +30,7 @@ const JobSeekerDashboard = () => {
 
   // ========= Logout ==========
   const handleLogout = () => {
-    localStorage.removeItem("auth");
+    dispatch(logout());
     window.location.href = "/login";
   };
 
@@ -89,7 +91,13 @@ const JobSeekerDashboard = () => {
 
   return (
     <Box
-      sx={{ display: "flex", minHeight: "100vh", backgroundColor: "#9292e2ff" }}
+      sx={{
+        display: "flex",
+        height: "100dvh",
+        maxHeight: "100vh",
+        overflowY: "auto",
+        backgroundColor: "#9292e2ff",
+      }}
     >
       {/* Sidebar */}
       <Box
@@ -98,7 +106,11 @@ const JobSeekerDashboard = () => {
           backgroundColor: "#2E3B55",
           color: "white",
           padding: { xs: "10px", sm: "20px" },
-          height: "100vh",
+
+          height: "100dvh",
+          maxHeight: "100vh",
+          overflowY: "auto",
+
           position: "fixed",
           left: 0,
           top: 0,
@@ -206,8 +218,6 @@ const JobSeekerDashboard = () => {
         >
           Save & Continue
         </Button>
-
-      
       </Box>
     </Box>
   );

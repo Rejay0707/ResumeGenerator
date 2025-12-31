@@ -121,14 +121,14 @@ const TeacherExamScores = () => {
       .then((response) => {
         const studentData = response.data.students || [];
 
-        const teacherCollege = teacher.college;
+        // const teacherCollege = teacher.college;
 
-        const sameCollegeStudents = studentData.filter(
-          (s) =>
-            s.college?.toLowerCase() === teacherCollege?.toLowerCase()
-        );
+        // const sameCollegeStudents = studentData.filter(
+        //   (s) =>
+        //     s.college?.toLowerCase() === teacherCollege?.toLowerCase()
+        // );
 
-        setStudents(sameCollegeStudents);
+        setStudents(studentData);
         setLoadingStudents(false);
       })
       .catch((err) => console.error("Error fetching students:", err));
@@ -293,7 +293,7 @@ const TeacherExamScores = () => {
         </Typography>
         <Grid container spacing={3} sx={{ alignItems: "center" }}>
           <Grid item xs={12} sm={6} md={3}>
-            <FormControl fullWidth variant="outlined" sx={{ backgroundColor: "#ffffff", border: "1px solid #ddd", borderRadius: 2, boxShadow: "0 2px 4px rgba(0,0,0,0.1)", "&:hover": { boxShadow: "0 4px 8px rgba(0,0,0,0.15)" }, minHeight: 56, width: 250 }}>
+            <FormControl fullWidth variant="outlined" sx={{ backgroundColor: "#ffffff", border: "1px solid #ddd", borderRadius: 2, boxShadow: "0 2px 4px rgba(0,0,0,0.1)", "&:hover": { boxShadow: "0 4px 8px rgba(0,0,0,0.15)" }, minHeight: 56, width: { xs: "100%", sm: 250 } }}>
               <InputLabel>Department</InputLabel>
               <Select
                 value={selectedDepartment}
@@ -314,7 +314,7 @@ const TeacherExamScores = () => {
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <FormControl fullWidth variant="outlined" sx={{ backgroundColor: "#ffffff", border: "1px solid #ddd", borderRadius: 2, boxShadow: "0 2px 4px rgba(0,0,0,0.1)", "&:hover": { boxShadow: "0 4px 8px rgba(0,0,0,0.15)" }, minHeight: 56, width: 250 }}>
+            <FormControl fullWidth variant="outlined" sx={{ backgroundColor: "#ffffff", border: "1px solid #ddd", borderRadius: 2, boxShadow: "0 2px 4px rgba(0,0,0,0.1)", "&:hover": { boxShadow: "0 4px 8px rgba(0,0,0,0.15)" }, minHeight: 56, width: { xs: "100%", sm: 250 } }}>
               <InputLabel>Year</InputLabel>
               <Select
                 value={selectedYear}
@@ -335,7 +335,7 @@ const TeacherExamScores = () => {
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <FormControl fullWidth variant="outlined" sx={{ backgroundColor: "#ffffff", border: "1px solid #ddd", borderRadius: 2, boxShadow: "0 2px 4px rgba(0,0,0,0.1)", "&:hover": { boxShadow: "0 4px 8px rgba(0,0,0,0.15)" }, minHeight: 56, width: 250 }}>
+            <FormControl fullWidth variant="outlined" sx={{ backgroundColor: "#ffffff", border: "1px solid #ddd", borderRadius: 2, boxShadow: "0 2px 4px rgba(0,0,0,0.1)", "&:hover": { boxShadow: "0 4px 8px rgba(0,0,0,0.15)" }, minHeight: 56, width: { xs: "100%", sm: 250 } }}>
               <InputLabel>Subject</InputLabel>
               <Select
                 value={selectedSubject}
@@ -364,7 +364,7 @@ const TeacherExamScores = () => {
               value={testName}
               onChange={(e) => setTestName(e.target.value)}
               variant="outlined"
-              sx={{ backgroundColor: "#f9f9f9", borderRadius: 1, minHeight: 56, width: 250 }}
+              sx={{ backgroundColor: "#f9f9f9", borderRadius: 1, minHeight: 56, width: { xs: "100%", sm: 250 }}}
               InputLabelProps={{ shrink: true }}
             />
           </Grid>

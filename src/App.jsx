@@ -149,10 +149,15 @@ function App() {
         </Route>
 
         {/* Job seekers dashboard */}
-        <Route path="/jobseeker/dashboard" element={<JobseekerDashboard />} />
+        <Route
+          path="/jobseeker/dashboard"
+          element={
+            <ProtectedRoute roles={["jobseeker"]}>
+              <JobseekerDashboard />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/generate-resume" element={<GenerateResume />} />
-
-
 
         {/* Teacher Dashboard routes */}
         <Route
