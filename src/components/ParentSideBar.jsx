@@ -7,14 +7,19 @@ import {
   Box,
   IconButton,
   Drawer,
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useNavigate, useLocation } from "react-router-dom";
+import logo1 from "../assets/logo1.png";
 
 export default function ParentSidebar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const items = [
     { label: "Home", path: "/parent/dashboard/home" },
@@ -41,6 +46,19 @@ export default function ParentSidebar() {
       }}
     >
       <Box>
+        {/* Show logo only on desktop */}
+        {!isMobile && (
+          <Box
+            sx={{
+              display: "flex",
+              // justifyContent: "center",
+              alignItems: "center",
+              mb: 2,
+            }}
+          >
+            <img src={logo1} alt="logo" style={{ width: "100%", maxWidth: "215px", height: "auto" }} />
+          </Box>
+        )}
         <List>
           {items.map((item) => (
             <ListItemButton

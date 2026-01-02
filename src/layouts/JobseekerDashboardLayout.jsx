@@ -1,6 +1,16 @@
 import React, { useState, useRef } from "react";
-import { Box, Typography, Button } from "@mui/material";
-import { Logout } from "@mui/icons-material";
+import {
+  Box,
+  Typography,
+  Button,
+  AppBar,
+  Toolbar,
+  IconButton,
+  Drawer,
+  useTheme,
+  useMediaQuery,
+} from "@mui/material";
+import { Logout, Menu as MenuIcon, Padding } from "@mui/icons-material";
 import { useDispatch } from "react-redux";
 import axios from "axios";
 import { logout } from "../features/authSlice";
@@ -9,6 +19,7 @@ import EducationSection from "../components/EducationSection";
 import ExperienceDetails from "../components/ExperienceDetails";
 import ProjectDetails from "../components/ProjectDetails";
 import SkillDetails from "../components/SkillDetails";
+import logo1 from "../assets/logo1.png";
 
 const JobSeekerDashboard = () => {
   // ========= Global Form States =========
@@ -28,6 +39,11 @@ const JobSeekerDashboard = () => {
   const projectsRef = useRef(null);
   const skillsRef = useRef(null);
 
+  // ========= Mobile Drawer State =========
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
   // ========= Logout ==========
   const handleLogout = () => {
     dispatch(logout());
@@ -37,6 +53,11 @@ const JobSeekerDashboard = () => {
   // ========= Scroll Helper (ADDED) =========
   const scrollTo = (ref) => {
     ref?.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  // ========= Drawer Toggle =========
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
   };
 
   // ========= Validation ==========
@@ -89,6 +110,115 @@ const JobSeekerDashboard = () => {
     }
   };
 
+  // ========= Drawer Content =========
+  const drawer = (
+    <Box
+      sx={{
+        // width: { xs: "160px", sm: "240px" },
+        backgroundColor: "#2E3B55",
+        color: "white",
+        // padding: { xs: "10px", sm: "20px" },
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        boxSizing: "border-box",
+      }}
+    >
+      <Box>
+        {/* Show logo only on desktop */}
+        {!isMobile && (
+          <Box
+            sx={{
+              display: "flex",
+              // justifyContent: "center",
+              alignItems: "center",
+              mb: 2,
+              
+            }}
+          >
+            <img
+              src={logo1}
+              alt="logo"
+              style={{
+                width: "100%",
+                maxWidth: "230px",
+                height: "auto",
+                
+              }}
+            />
+          </Box>
+        )}
+        <Typography variant="h5" fontWeight="bold" mb={4} >
+          Job Portal
+        </Typography>
+
+        <Typography
+          sx={{ mb: 2, cursor: "pointer",pl:"10px" }}
+          onClick={() => {
+            scrollTo(personalRef);
+            if (isMobile) setMobileOpen(false);
+          }}
+        >
+          Personal Info
+        </Typography>
+        <Typography
+          sx={{ mb: 2, cursor: "pointer",pl:"10px" }}
+          onClick={() => {
+            scrollTo(educationRef);
+            if (isMobile) setMobileOpen(false);
+          }}
+        >
+          Education
+        </Typography>
+        <Typography
+          sx={{ mb: 2, cursor: "pointer",pl:"10px" }}
+          onClick={() => {
+            scrollTo(experienceRef);
+            if (isMobile) setMobileOpen(false);
+          }}
+        >
+          Experience
+        </Typography>
+        <Typography
+          sx={{ mb: 2, cursor: "pointer",pl:"10px" }}
+          onClick={() => {
+            scrollTo(projectsRef);
+            if (isMobile) setMobileOpen(false);
+          }}
+        >
+          Projects
+        </Typography>
+        <Typography
+          sx={{ mb: 2, cursor: "pointer",pl:"10px" }}
+          onClick={() => {
+            scrollTo(skillsRef);
+            if (isMobile) setMobileOpen(false);
+          }}
+        >
+          Skills
+        </Typography>
+
+        {/* <Typography
+          sx={{ mb: 2, cursor: "pointer" }}
+          onClick={() => (window.location.href = "/generate-resume")}
+        >
+          Generate Resume
+        </Typography> */}
+      </Box>
+
+      <Button
+        variant="contained"
+        color="error"
+        startIcon={<Logout />}
+        onClick={handleLogout}
+        sx={{ textTransform: "none" }}
+      >
+        Logout
+      </Button>
+    </Box>
+  );
+
   return (
     <Box
       sx={{
@@ -99,88 +229,75 @@ const JobSeekerDashboard = () => {
         backgroundColor: "#9292e2ff",
       }}
     >
-      {/* Sidebar */}
-      <Box
-        sx={{
-          width: { xs: "160px", sm: "240px" },
-          backgroundColor: "#2E3B55",
-          color: "white",
-          padding: { xs: "10px", sm: "20px" },
+      {/* AppBar for mobile */}
+      {isMobile && (
+        <AppBar position="fixed" sx={{ zIndex: theme.zIndex.drawer + 1 }}>
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              edge="start"
+              onClick={handleDrawerToggle}
+              sx={{ mr: 2 }}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6" noWrap component="div">
+              Jobseeker Dashboard
+            </Typography>
+          </Toolbar>
+        </AppBar>
+      )}
 
-          height: "100dvh",
-          maxHeight: "100vh",
-          overflowY: "auto",
-
-          position: "fixed",
-          left: 0,
-          top: 0,
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-          boxSizing: "border-box",
-        }}
-      >
-        <Box>
-          <Typography variant="h5" fontWeight="bold" mb={4}>
-            Job Portal
-          </Typography>
-
-          <Typography
-            sx={{ mb: 2, cursor: "pointer" }}
-            onClick={() => scrollTo(personalRef)}
-          >
-            Personal Info
-          </Typography>
-          <Typography
-            sx={{ mb: 2, cursor: "pointer" }}
-            onClick={() => scrollTo(educationRef)}
-          >
-            Education
-          </Typography>
-          <Typography
-            sx={{ mb: 2, cursor: "pointer" }}
-            onClick={() => scrollTo(experienceRef)}
-          >
-            Experience
-          </Typography>
-          <Typography
-            sx={{ mb: 2, cursor: "pointer" }}
-            onClick={() => scrollTo(projectsRef)}
-          >
-            Projects
-          </Typography>
-          <Typography
-            sx={{ mb: 2, cursor: "pointer" }}
-            onClick={() => scrollTo(skillsRef)}
-          >
-            Skills
-          </Typography>
-
-          {/* <Typography
-            sx={{ mb: 2, cursor: "pointer" }}
-            onClick={() => (window.location.href = "/generate-resume")}
-          >
-            Generate Resume
-          </Typography> */}
-        </Box>
-
-        <Button
-          variant="contained"
-          color="error"
-          startIcon={<Logout />}
-          onClick={handleLogout}
-          sx={{ textTransform: "none" }}
+      {/* Drawer for desktop */}
+      {!isMobile && (
+        <Drawer
+          variant="permanent"
+          sx={{
+            width: { xs: "160px", sm: "240px" },
+            flexShrink: 0,
+            [`& .MuiDrawer-paper`]: {
+              width: { xs: "160px", sm: "240px" },
+              boxSizing: "border-box",
+              backgroundColor: "#2E3B55",
+              color: "white",
+            },
+          }}
+          open
         >
-          Logout
-        </Button>
-      </Box>
+          {drawer}
+        </Drawer>
+      )}
+
+      {/* Drawer for mobile */}
+      {isMobile && (
+        <Drawer
+          variant="temporary"
+          open={mobileOpen}
+          onClose={handleDrawerToggle}
+          ModalProps={{
+            keepMounted: true,
+          }}
+          sx={{
+            [`& .MuiDrawer-paper`]: {
+              width: { xs: "160px", sm: "240px" },
+              boxSizing: "border-box",
+              backgroundColor: "#2E3B55",
+              color: "white",
+            },
+          }}
+        >
+          {drawer}
+        </Drawer>
+      )}
 
       {/* Main Content */}
       <Box
         sx={{
           flexGrow: 1,
-          ml: { xs: "160px", sm: "240px" },
+          // ml: isMobile ? 0 : { xs: "160px", sm: "240px" },
           p: { xs: 2, sm: 3 },
+          pt: isMobile ? "80px" : { xs: 2, sm: 3 },
         }}
       >
         <Typography variant="h4" fontWeight="bold">
