@@ -59,7 +59,9 @@ const TeacherExamScores = () => {
           return;
         }
 
-        const teachersRes = await axios.get("https://www.scratchprod.in/resume-generator-backend/api/teachers");
+        const teachersRes = await axios.get(
+          "https://www.scratchprod.in/resume-generator-backend/api/teachers"
+        );
         const teachers = teachersRes.data.data || teachersRes.data;
 
         const verifiedTeacher = teachers.find(
@@ -101,9 +103,7 @@ const TeacherExamScores = () => {
           setLoadingTimetable(false);
 
           // Extract unique departments and years
-          const uniqueDepartments = [
-            ...new Set(data.map((t) => t.department)),
-          ];
+          const uniqueDepartments = [...new Set(data.map((t) => t.department))];
           setDepartments(uniqueDepartments);
 
           const uniqueYears = [...new Set(data.map((t) => t.year))];
@@ -115,34 +115,32 @@ const TeacherExamScores = () => {
 
   // Fetch students on mount if verified
   useEffect(() => {
-  if (teacherVerified && teacher?.name) {
-    setLoadingStudents(true);
-    getStudentsForTeacher(teacher.name)
-      .then((response) => {
-        const studentData = response.data.students || [];
+    if (teacherVerified && teacher?.name) {
+      setLoadingStudents(true);
+      getStudentsForTeacher(teacher.name)
+        .then((response) => {
+          const studentData = response.data.students || [];
 
-        // const teacherCollege = teacher.college;
+          // const teacherCollege = teacher.college;
 
-        // const sameCollegeStudents = studentData.filter(
-        //   (s) =>
-        //     s.college?.toLowerCase() === teacherCollege?.toLowerCase()
-        // );
+          // const sameCollegeStudents = studentData.filter(
+          //   (s) =>
+          //     s.college?.toLowerCase() === teacherCollege?.toLowerCase()
+          // );
 
-        setStudents(studentData);
-        setLoadingStudents(false);
-      })
-      .catch((err) => console.error("Error fetching students:", err));
-  }
-}, [teacherVerified, teacher]);
-
+          setStudents(studentData);
+          setLoadingStudents(false);
+        })
+        .catch((err) => console.error("Error fetching students:", err));
+    }
+  }, [teacherVerified, teacher]);
 
   // Update subjects when department + year changes
   useEffect(() => {
     if (selectedDepartment && selectedYear) {
       const relatedSubjects = timetables
         .filter(
-          (t) =>
-            t.department === selectedDepartment && t.year === selectedYear
+          (t) => t.department === selectedDepartment && t.year === selectedYear
         )
         .map((t) => t.subject_name);
       setSubjects([...new Set(relatedSubjects)]);
@@ -226,12 +224,7 @@ const TeacherExamScores = () => {
 
   // Save scores
   const handleSave = () => {
-    if (
-      !selectedDepartment ||
-      !selectedYear ||
-      !selectedSubject ||
-      !testName
-    ) {
+    if (!selectedDepartment || !selectedYear || !selectedSubject || !testName) {
       alert("Please select department, year, subject, and test name.");
       return;
     }
@@ -283,17 +276,40 @@ const TeacherExamScores = () => {
       <Typography variant="h4" gutterBottom sx={{ color: "#1976d2" }}>
         📝 Enter Exam Scores
       </Typography>
-
       {success && <Alert severity="success">Scores saved successfully!</Alert>}
       {error && <Alert severity="error">{error}</Alert>}
-
-      <Paper elevation={3} sx={{ p: 3, mb: 3, backgroundColor: "#ffffff", borderRadius: 2, boxShadow: 3 }}>
-        <Typography variant="h6" gutterBottom sx={{ color: "#1976d2", fontWeight: "bold" }}>
+      <Paper
+        elevation={3}
+        sx={{
+          p: 3,
+          mb: 3,
+          backgroundColor: "#ffffff",
+          borderRadius: 2,
+          boxShadow: 3,
+        }}
+      >
+        <Typography
+          variant="h6"
+          gutterBottom
+          sx={{ color: "#1976d2", fontWeight: "bold" }}
+        >
           Select Details
         </Typography>
         <Grid container spacing={3} sx={{ alignItems: "center" }}>
           <Grid item xs={12} sm={6} md={3}>
-            <FormControl fullWidth variant="outlined" sx={{ backgroundColor: "#ffffff", border: "1px solid #ddd", borderRadius: 2, boxShadow: "0 2px 4px rgba(0,0,0,0.1)", "&:hover": { boxShadow: "0 4px 8px rgba(0,0,0,0.15)" }, minHeight: 56, width: { xs: "100%", sm: 250 } }}>
+            <FormControl
+              fullWidth
+              variant="outlined"
+              sx={{
+                backgroundColor: "#ffffff",
+                border: "1px solid #ddd",
+                borderRadius: 2,
+                boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                "&:hover": { boxShadow: "0 4px 8px rgba(0,0,0,0.15)" },
+                minHeight: 56,
+                width: { xs: "100%", sm: 250 },
+              }}
+            >
               <InputLabel>Department</InputLabel>
               <Select
                 value={selectedDepartment}
@@ -314,7 +330,19 @@ const TeacherExamScores = () => {
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <FormControl fullWidth variant="outlined" sx={{ backgroundColor: "#ffffff", border: "1px solid #ddd", borderRadius: 2, boxShadow: "0 2px 4px rgba(0,0,0,0.1)", "&:hover": { boxShadow: "0 4px 8px rgba(0,0,0,0.15)" }, minHeight: 56, width: { xs: "100%", sm: 250 } }}>
+            <FormControl
+              fullWidth
+              variant="outlined"
+              sx={{
+                backgroundColor: "#ffffff",
+                border: "1px solid #ddd",
+                borderRadius: 2,
+                boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                "&:hover": { boxShadow: "0 4px 8px rgba(0,0,0,0.15)" },
+                minHeight: 56,
+                width: { xs: "100%", sm: 250 },
+              }}
+            >
               <InputLabel>Year</InputLabel>
               <Select
                 value={selectedYear}
@@ -335,7 +363,19 @@ const TeacherExamScores = () => {
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <FormControl fullWidth variant="outlined" sx={{ backgroundColor: "#ffffff", border: "1px solid #ddd", borderRadius: 2, boxShadow: "0 2px 4px rgba(0,0,0,0.1)", "&:hover": { boxShadow: "0 4px 8px rgba(0,0,0,0.15)" }, minHeight: 56, width: { xs: "100%", sm: 250 } }}>
+            <FormControl
+              fullWidth
+              variant="outlined"
+              sx={{
+                backgroundColor: "#ffffff",
+                border: "1px solid #ddd",
+                borderRadius: 2,
+                boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                "&:hover": { boxShadow: "0 4px 8px rgba(0,0,0,0.15)" },
+                minHeight: 56,
+                width: { xs: "100%", sm: 250 },
+              }}
+            >
               <InputLabel>Subject</InputLabel>
               <Select
                 value={selectedSubject}
@@ -364,23 +404,46 @@ const TeacherExamScores = () => {
               value={testName}
               onChange={(e) => setTestName(e.target.value)}
               variant="outlined"
-              sx={{ backgroundColor: "#f9f9f9", borderRadius: 1, minHeight: 56, width: { xs: "100%", sm: 250 }}}
+              sx={{
+                backgroundColor: "#f9f9f9",
+                borderRadius: 1,
+                minHeight: 56,
+                width: { xs: "100%", sm: 250 },
+              }}
               InputLabelProps={{ shrink: true }}
             />
           </Grid>
         </Grid>
         <Box sx={{ mt: 2 }}>
-          <Typography variant="body1"><strong>Department:</strong> {selectedDepartment || "Not selected"}</Typography>
-          <Typography variant="body1"><strong>Year:</strong> {selectedYear || "Not selected"}</Typography>
-          <Typography variant="body1"><strong>Subject:</strong> {selectedSubject || "Not selected"}</Typography>
-          <Typography variant="body1"><strong>Test Name:</strong> {testName || "Not selected"}</Typography>
+          <Typography variant="body1">
+            <strong>Department:</strong> {selectedDepartment || "Not selected"}
+          </Typography>
+          <Typography variant="body1">
+            <strong>Year:</strong> {selectedYear || "Not selected"}
+          </Typography>
+          <Typography variant="body1">
+            <strong>Subject:</strong> {selectedSubject || "Not selected"}
+          </Typography>
+          <Typography variant="body1">
+            <strong>Test Name:</strong> {testName || "Not selected"}
+          </Typography>
         </Box>
       </Paper>
-
+      // ... existing code ...
       <Paper elevation={3} sx={{ p: 3 }}>
         <Typography variant="h6" sx={{ mb: 2 }}>
           Students
         </Typography>
+        {filteredStudents.length > 0 &&
+          (!selectedDepartment ||
+            !selectedYear ||
+            !selectedSubject ||
+            !testName) && (
+            <Typography color="error" sx={{ mt: 2 }}>
+              Please fill in all required fields (Department, Year, Subject,
+              Test Name) to enter scores.
+            </Typography>
+          )}
         {filteredStudents.length === 0 ? (
           <Typography color="textSecondary">
             {selectedDepartment && selectedYear
@@ -400,6 +463,12 @@ const TeacherExamScores = () => {
                   value={scores[s.id] || ""}
                   onChange={(e) => handleScoreChange(s.id, e.target.value)}
                   sx={{ width: "100px" }}
+                  disabled={
+                    !selectedDepartment ||
+                    !selectedYear ||
+                    !selectedSubject ||
+                    !testName
+                  }
                 />
               </ListItem>
             ))}
@@ -417,21 +486,32 @@ const TeacherExamScores = () => {
           onClick={handleSave}
           disabled={loading || filteredStudents.length === 0}
         >
-          {loading ? "Saving..." : previousLoaded ? "Update Scores" : "Save Scores"}
+          {loading
+            ? "Saving..."
+            : previousLoaded
+            ? "Update Scores"
+            : "Save Scores"}
         </Button>
       </Paper>
+      // ... existing code ...
       <Paper elevation={3} sx={{ p: 3, mt: 3 }}>
         <Typography variant="h6" sx={{ mb: 2, color: "#1976d2" }}>
           📊 Existing Test Results
         </Typography>
 
         {existingScores.length === 0 ? (
-          <Typography color="textSecondary">No test results found yet.</Typography>
+          <Typography color="textSecondary">
+            No test results found yet.
+          </Typography>
         ) : (
           existingScores.map((test, idx) => (
-            <Box key={idx} sx={{ mb: 2, p: 2, border: "1px solid #ddd", borderRadius: 2 }}>
+            <Box
+              key={idx}
+              sx={{ mb: 2, p: 2, border: "1px solid #ddd", borderRadius: 2 }}
+            >
               <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
-                {test.test_name} — {test.subject} ({test.year}, {test.department})
+                {test.test_name} — {test.subject} ({test.year},{" "}
+                {test.department})
               </Typography>
               <List dense>
                 {test.scores.map((s, i) => (

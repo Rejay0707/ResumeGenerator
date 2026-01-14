@@ -18,18 +18,15 @@ export default function TeacherDashboardContainer() {
       <TeacherSidebar />
 
       {/* Main Content */}
-      <Box
-        sx={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          overflow: "auto", // Scroll only main content
-        }}
-      >
-        <Box sx={{ flexShrink: 0 }}>
+      <Box sx={{ flex: 1, overflow: "auto" }}>
+        <Box sx={{ position: "sticky", top: 0, zIndex: 1100 }}>
           <TeacherTopbar />
         </Box>
-        <Box sx={{ flex: 1, p: 3, backgroundColor: "#f7f7f7" }}>
+
+        {/* Spacer equal to header height */}
+        <Box sx={{ height: 64 }} />
+
+        <Box sx={{ p: 3 }}>
           <Outlet />
         </Box>
       </Box>

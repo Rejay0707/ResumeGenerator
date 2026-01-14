@@ -20,8 +20,13 @@ export default function ParentDashboardContainer() {
           minHeight: "100vh",
         }}
       >
-        <ParentTopbar />
-        <Box sx={{ flex: 1, p: 3 }}>{/* Content grows naturally */}<Outlet /></Box>
+        <Box sx={{ position: "sticky", top: 0, zIndex: 1 }}>
+          <ParentTopbar />
+        </Box>
+        <Box sx={{ flex: 1, p: 3 }}>
+          {/* Content grows naturally */}
+          <Outlet />
+        </Box>
       </Box>
     </Box>
   );

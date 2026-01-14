@@ -73,9 +73,9 @@ const authSlice = createSlice({
     setUser: (state, action) => {  // ✅ Fixed key name
       state.user = action.payload;
       localStorage.setItem('user', JSON.stringify(action.payload));
-      if (!localStorage.getItem('token')) {
-        localStorage.setItem('token', 'mock-student-token');
-      }
+      // if (!localStorage.getItem('token')) {
+      //   localStorage.setItem('token', 'mock-student-token');
+      // }
     },
   },
   extraReducers: (builder) => {

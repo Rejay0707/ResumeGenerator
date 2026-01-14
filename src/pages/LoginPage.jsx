@@ -1,3 +1,5 @@
+
+import api from '../api/axios';
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -35,13 +37,13 @@ export default function LoginPage() {
   const error = reduxAuth.error;
 
   const SUPERADMIN_DASHBOARD_URL =
-    "https://www.scratchprod.in/resume-generator-backend/";
+     "https://www.scratchprod.in/resume-generator-backend/";
 
   const RECRUITER_DASHBOARD_URL =
     "https://www.scratchprod.in/resume-generator-backend/recruiter/dashboard";
 
   const INSTITUTE_DASHBOARD_URL =
-    "https://www.scratchprod.in/resume-generator-backend/institution/dashboard";
+     "https://www.scratchprod.in/resume-generator-backend/institution/dashboard";
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -63,12 +65,14 @@ export default function LoginPage() {
     if (!form.email || !form.password) return;
 
     try {
+      await api.get('/sanctum/csrf-cookie');
+
       let resultAction;
 
       if (selectedRole === "admin") {
         // Admin login
         resultAction = await dispatch(
-          adminLoginAsync({ email: form.email, password: form.password })
+          loginAsync({ email: form.email, password: form.password })
         );
       } else {
         // Superadmin, student, teacher, parent, recruiter — all handled via /api/login
@@ -250,7 +254,7 @@ export default function LoginPage() {
             { label: "TEACHER", value: "teacher" },
             { label: "Recruiter", value: "recruiter" },
             { label: "Job Seeker", value: "jobseeker" },
-            { label: "Institute", value: "institute"}
+            { label: "Institute", value: "institute" }
           ].map(({ label, value }) => (
             <Button
               key={label}

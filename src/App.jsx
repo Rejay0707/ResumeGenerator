@@ -17,6 +17,12 @@ import DepartmentsPage from "./pages/admin/DepartmentsPage";
 import SubjectsPage from "./pages/admin/SubjectsPage";
 import TimetablePage from "./pages/admin/TimeTablePage";
 
+import StudentDashboardLayout from "./layouts/StudentDashboardLayout";
+import StudentDashboardHome from "./pages/StudentDashboardHome";
+import InternshipTrackerContainer from "./containers/InternshipTrackerContainer";
+import ProjectsPage from "./pages/ProjectsPage";
+import CertificateTrackerContainer from "./containers/CertificateTrackerContainer";
+
 import TeacherDashboardLayout from "./layouts/TeacherDashboardLayout";
 import TeacherHome from "./containers/TeacherHome";
 import TeacherAttendance from "./containers/TeacherAttendance";
@@ -58,7 +64,9 @@ function RoleRedirect() {
       />
     );
   if (role === "admin") return <Navigate to="/admin/dashboard" replace />;
-  if (role === "student") return <Navigate to="/home" replace />;
+  // if (role === "student") return <Navigate to="/home" replace />;
+  if (role === "student") return <Navigate to="/student/dashboard" replace />;
+
   if (role === "teacher")
     return <Navigate to="/teacher/dashboard/home" replace />;
   if (role === "parent")
@@ -90,18 +98,154 @@ function ProtectedRoute({ children, roles }) {
 // ✅ Main App Component
 // --------------------------
 function App() {
+  // return (
+  //   <Router >
+  //     <Routes>
+  //       {/* Public Routes */}
+  //       <Route path="/login" element={<LoginPage />} />
+  //       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+  //       <Route path="/register" element={<RegisterPage />} />
+
+  //       {/* Root Route - auto redirect based on user role */}
+  //       <Route path="/" element={<RoleRedirect />} />
+
+  //       {/* Student accessible pages */}
+  //       <Route
+  //         path="/home"
+  //         element={
+  //           <ProtectedRoute roles={["student", "admin"]}>
+  //             <HomePage />
+  //           </ProtectedRoute>
+  //         }
+  //       />
+  //       <Route
+  //         path="/resume-builder"
+  //         element={
+  //           <ProtectedRoute roles={["student", "admin"]}>
+  //             <ResumeBuilderPage />
+  //           </ProtectedRoute>
+  //         }
+  //       />
+  //       <Route
+  //         path="/preview"
+  //         element={
+  //           <ProtectedRoute roles={["student", "admin"]}>
+  //             <PreviewPage />
+  //           </ProtectedRoute>
+  //         }
+  //       />
+
+  //       <Route path="/roadmap" element={<RoadmapPage />} />
+
+  //       {/* Admin-only routes */}
+  //       <Route
+  //         path="/admin"
+  //         element={
+  //           <ProtectedRoute roles={["admin"]}>
+  //             <DashboardLayout />
+  //           </ProtectedRoute>
+  //         }
+  //       >
+  //         <Route index element={<Dashboard />} />
+  //         <Route path="dashboard" element={<Dashboard />} />
+  //         <Route path="parents" element={<Parents />} />
+  //         <Route path="teachers" element={<Teachers />} />
+  //         <Route path="students" element={<Students />} />
+  //         <Route path="departments" element={<DepartmentsPage />} />
+  //         <Route path="subjects" element={<SubjectsPage />} />
+  //         <Route path="timetable" element={<TimetablePage />} />
+  //       </Route>
+
+  //       {/* Job seekers dashboard */}
+  //       <Route
+  //         path="/jobseeker/dashboard"
+  //         element={
+  //           <ProtectedRoute roles={["jobseeker"]}>
+  //             <JobseekerDashboard />
+  //           </ProtectedRoute>
+  //         }
+  //       />
+  //       <Route path="/generate-resume" element={<GenerateResume />} />
+
+  //       {/* Teacher Dashboard routes */}
+  //       <Route
+  //         path="/teacher/dashboard"
+  //         element={
+  //           <ProtectedRoute roles={["teacher"]}>
+  //             <TeacherDashboardLayout />
+  //           </ProtectedRoute>
+  //         }
+  //       >
+  //         <Route path="home" element={<TeacherHome />} />
+  //         <Route path="attendance" element={<TeacherAttendance />} />
+  //         <Route path="classes" element={<TeacherClasses />} />
+  //         <Route path="subjects" element={<TeacherSubjects />} />
+  //         <Route path="students" element={<TeacherStudents />} />
+  //         <Route path="profile" element={<TeacherProfile />} />
+  //       </Route>
+
+  //       {/* Parent Dashboard routes */}
+  //       <Route
+  //         path="/parent/dashboard"
+  //         element={
+  //           <ProtectedRoute roles={["parent"]}>
+  //             <ParentDashboardContainer />
+  //           </ProtectedRoute>
+  //         }
+  //       >
+  //         <Route path="home" element={<ParentHome />} />
+  //         <Route path="children" element={<ParentChildren />} />
+  //         <Route path="performance" element={<ParentPerformance />} />
+  //         <Route
+  //           path="attendance-report"
+  //           element={<ParentAttendanceReport />}
+  //         />
+  //         <Route path="profile" element={<ParentProfile />} />
+  //       </Route>
+
+  //       {/* Fallback */}
+  //       <Route path="*" element={<Navigate to="/login" replace />} />
+  //     </Routes>
+  //   </Router>
+  // );
+
   return (
-    <Router >
+    <Router>
       <Routes>
         {/* Public Routes */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/register" element={<RegisterPage />} />
-
-        {/* Root Route - auto redirect based on user role */}
+        {/* Root Route */}
         <Route path="/" element={<RoleRedirect />} />
+        {/* ---------------- STUDENT DASHBOARD ---------------- */}
+        <Route
+          path="/student/dashboard"
+          element={
+            <ProtectedRoute roles={["student"]}>
+              <StudentDashboardLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<StudentDashboardHome />} />
 
-        {/* Student accessible pages */}
+          <Route path="internships" element={<InternshipTrackerContainer />} />
+
+          <Route path="projects" element={<ProjectsPage />} />
+
+          <Route
+            path="certificates"
+            element={<CertificateTrackerContainer />}
+          />
+
+          <Route
+            path="skills"
+            // element={<SkillsTrackerPage />} // create later
+          />
+
+          <Route path="resume" element={<ResumeBuilderPage />} />
+        </Route>
+        {/* ---------------- STUDENT PAGES (OUTSIDE DASHBOARD) ---------------- */}
         <Route
           path="/home"
           element={
@@ -126,10 +270,8 @@ function App() {
             </ProtectedRoute>
           }
         />
-
         <Route path="/roadmap" element={<RoadmapPage />} />
-
-        {/* Admin-only routes */}
+        {/* ---------------- ADMIN ROUTES ---------------- */}
         <Route
           path="/admin"
           element={
@@ -147,8 +289,7 @@ function App() {
           <Route path="subjects" element={<SubjectsPage />} />
           <Route path="timetable" element={<TimetablePage />} />
         </Route>
-
-        {/* Job seekers dashboard */}
+        {/* {Job seekers dashboard */}
         <Route
           path="/jobseeker/dashboard"
           element={
@@ -157,9 +298,8 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/generate-resume" element={<GenerateResume />} />
-
-        {/* Teacher Dashboard routes */}
+        <Route path="/generate-resume" element={<GenerateResume />} /> *
+        {/* ---------------- TEACHER ROUTES ---------------- */}
         <Route
           path="/teacher/dashboard"
           element={
@@ -175,8 +315,7 @@ function App() {
           <Route path="students" element={<TeacherStudents />} />
           <Route path="profile" element={<TeacherProfile />} />
         </Route>
-
-        {/* Parent Dashboard routes */}
+        {/* ---------------- PARENT ROUTES ---------------- */}
         <Route
           path="/parent/dashboard"
           element={
@@ -194,7 +333,6 @@ function App() {
           />
           <Route path="profile" element={<ParentProfile />} />
         </Route>
-
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>

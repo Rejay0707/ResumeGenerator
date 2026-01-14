@@ -20,18 +20,16 @@ export default function Dashboard() {
   const { items: parents } = useAdminManagement("parents");
   const { items: teachers } = useAdminManagement("teachers");
   const { items: students } = useAdminManagement("students");
-  
 
   const navigate = useNavigate();
 
   const admin = JSON.parse(localStorage.getItem("user"));
-const adminCollege = admin?.college;
+  const adminCollege = admin?.college;
 
-// Filter results by admin's college
-const filteredStudents = students.filter((s) => s.college === adminCollege);
-const filteredParents = parents.filter((p) => p.college === adminCollege);
-const filteredTeachers = teachers.filter((t) => t.college === adminCollege);
-
+  // Filter results by admin's college
+  const filteredStudents = students.filter((s) => s.college === adminCollege);
+  const filteredParents = parents.filter((p) => p.college === adminCollege);
+  const filteredTeachers = teachers.filter((t) => t.college === adminCollege);
 
   const stats = [
     {
@@ -67,27 +65,38 @@ const filteredTeachers = teachers.filter((t) => t.college === adminCollege);
 
   // Charts Data
   // 1. Student Distribution by Class (group students by classSec)
-const studentDistribution = useMemo(() => {
-  if (!filteredStudents || filteredStudents.length === 0) return [];
+  const studentDistribution = useMemo(() => {
+    if (!filteredStudents || filteredStudents.length === 0) return [];
 
-  const classCounts = filteredStudents.reduce((acc, student) => {
-    // Use the correct backend field: class_sec
-    const classKey = student.year || "Unassigned";
-    acc[classKey] = (acc[classKey] || 0) + 1;
-    return acc;
-  }, {});
+    const classCounts = filteredStudents.reduce((acc, student) => {
+      // Use the correct backend field: class_sec
+      const classKey = student.year || "Unassigned";
+      acc[classKey] = (acc[classKey] || 0) + 1;
+      return acc;
+    }, {});
 
-  return Object.entries(classCounts).map(([name, value]) => ({ name, value }));
-}, [filteredStudents]);
-
-
+    return Object.entries(classCounts).map(([name, value]) => ({
+      name,
+      value,
+    }));
+  }, [filteredStudents]);
 
   // Colors for pie chart
-  const pieColors = ["#42a5f5", "#66bb6a", "#ffb74d", "#ba68c8", "#ef5350", "#26c6da"];
+  const pieColors = [
+    "#42a5f5",
+    "#66bb6a",
+    "#ffb74d",
+    "#ba68c8",
+    "#ef5350",
+    "#26c6da",
+  ];
 
   // 2. Teacher-Student Ratio (simple data for bar chart)
   const teacherStudentRatio = useMemo(() => {
-    const ratio = filteredTeachers.length > 0 ? (filteredStudents.length / filteredTeachers.length).toFixed(1) : 0;
+    const ratio =
+      filteredTeachers.length > 0
+        ? (filteredStudents.length / filteredTeachers.length).toFixed(1)
+        : 0;
     return [{ category: "Students per Teacher", value: parseFloat(ratio) }];
   }, [filteredStudents.length, filteredTeachers.length]);
 
@@ -100,19 +109,21 @@ const studentDistribution = useMemo(() => {
       {/* Existing Stats Cards */}
       <Grid container spacing={{ xs: 2, sm: 3, md: 5 }}>
         {stats.map((item) => (
-          <Grid item xs={12} sm={6} md={3} key={item.label}>
+          <Grid item xs={12} sm={6} md={4} key={item.label}>
             <Paper
               elevation={4}
               aria-label={`${item.label} count card`}
               onClick={() => navigate(getRoute(item.label))}
               sx={{
-                p: 3,
+                // p: 3,
                 borderRadius: 3,
                 color: "white",
                 background: item.gradient,
                 textAlign: "center",
                 height: "250px",
-                width: "350px",
+                width: "100%",
+                maxWidth: "500px",
+                mx: "auto",
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "center",
@@ -150,62 +161,88 @@ const studentDistribution = useMemo(() => {
       </Grid>
 
       {/* Analytics & Charts Section */}
-      <Box sx={{ mt: 5 }}>
-        <Typography variant="h5" gutterBottom fontWeight="600">
-          Analytics & Charts
-        </Typography>
-        <Grid container spacing={3}>
-          {/* Student Distribution by Class - Pie Chart */}
-          <Grid item xs={12} md={6}>
-            <Paper elevation={3} sx={{ p: '3px', borderRadius: 3, height: 400, width: "350px" }}>
-              <Typography variant="h6" gutterBottom>
-                Student Distribution by Year
-              </Typography>
-              <ResponsiveContainer width="100%" height="80%">
-                <PieChart>
-                  <Pie
-                    data={studentDistribution}
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="value"
-                    // label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                  >
-                    {studentDistribution.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={pieColors[index % pieColors.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                  <Legend />
-                </PieChart>
-              </ResponsiveContainer>
-            </Paper>
-          </Grid>
+      
+<Box sx={{ mt: 5 }}>
+  <Typography variant="h5" gutterBottom fontWeight="600">
+    Analytics & Charts
+  </Typography>
+  <Box
+    sx={{
+      display: "flex",
+      flexDirection: { xs: "column", md: "row" },  // Stack vertically on small, horizontally on medium+
+      gap: { xs: 2, sm: 3, md: 5 },  // Spacing between charts
+      // justifyContent: "center",  // Centers the charts
+      alignItems: "center",  // Aligns them vertically if needed
+    }}
+  >
+    {/* Student Distribution by Class - Pie Chart */}
+    <Paper
+      elevation={3}
+      sx={{
+        p: 1,
+        borderRadius: 3,
+        height: 400,
+        width: { xs: "100%", md: 500 },  // 100% on small, 500px on medium+
+        // mx: "auto",  // Centers each paper
+      }}
+    >
+      <Typography variant="h6" gutterBottom>
+        Student Distribution by Year
+      </Typography>
+      <ResponsiveContainer width="100%" height="80%">
+        <PieChart>
+          <Pie
+            data={studentDistribution}
+            cx="50%"
+            cy="50%"
+            outerRadius={80}
+            fill="#8884d8"
+            dataKey="value"
+          >
+            {studentDistribution.map((entry, index) => (
+              <Cell
+                key={`cell-${index}`}
+                fill={pieColors[index % pieColors.length]}
+              />
+            ))}
+          </Pie>
+          <Tooltip />
+          <Legend />
+        </PieChart>
+      </ResponsiveContainer>
+    </Paper>
 
-          {/* Teacher-Student Ratio - Bar Chart */}
-          <Grid item xs={12} md={6}>
-            <Paper elevation={3} sx={{ p: '3px', borderRadius: 3, height: 400, width: "350px" }}>
-              <Typography variant="h6" gutterBottom>
-                Teacher-Student Ratio
-              </Typography>
-              <Typography variant="body2" gutterBottom>
-                Average students per teacher: {teacherStudentRatio[0]?.value || 0}:1
-              </Typography>
-              <ResponsiveContainer width="100%" height="80%">
-                <BarChart data={teacherStudentRatio}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="category" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="value" fill="#42a5f5" />
-                </BarChart>
-              </ResponsiveContainer>
-            </Paper>
-          </Grid>
-        </Grid>
-      </Box>
+    {/* Teacher-Student Ratio - Bar Chart */}
+    <Paper
+      elevation={3}
+      sx={{
+        p: 1,
+        borderRadius: 3,
+        height: 400,
+        width: { xs: "100%", md: 500 },  // 100% on small, 500px on medium+
+        // mx: "auto",  // Centers each paper
+      }}
+    >
+      <Typography variant="h6" gutterBottom>
+        Teacher-Student Ratio
+      </Typography>
+      <Typography variant="body2" gutterBottom>
+        Average students per teacher:{" "}
+        {teacherStudentRatio[0]?.value || 0}:1
+      </Typography>
+      <ResponsiveContainer width="100%" height="80%">
+        <BarChart data={teacherStudentRatio}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="category" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Bar dataKey="value" fill="#42a5f5" />
+        </BarChart>
+      </ResponsiveContainer>
+    </Paper>
+  </Box>
+</Box>
     </Box>
   );
 }

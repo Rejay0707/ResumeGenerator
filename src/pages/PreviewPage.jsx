@@ -31,6 +31,7 @@ const PreviewPage = () => {
   const [downloadLoading, setDownloadLoading] = useState(false);
   const [downloadComplete, setDownloadComplete] = useState(false); // Added for roadmap button
   const [roadmapLoading, setRoadmapLoading] = useState(false); // Added for roadmap
+  const [internships, setInternships] = useState([]);
   const resumeRef = useRef(null);
 
   useEffect(() => {
@@ -53,165 +54,161 @@ const PreviewPage = () => {
     }
   };
 
+  const handleDownload = async () => {
+    if (!resumeRef.current) return;
+    setDownloadLoading(true);
 
+    const element = resumeRef.current;
 
-const handleDownload = async () => {
-  if (!resumeRef.current) return;
-  setDownloadLoading(true);
+    // FIXED WIDTHS FOR PDF (CRITICAL FIX)
+    const LEFT_COL_WIDTH = 260;
+    const RIGHT_COL_WIDTH = 520;
 
-  const element = resumeRef.current;
+    // Save original element styles
+    const originalStyles = {
+      width: element.style.width,
+      height: element.style.height,
+      overflow: element.style.overflow,
+      position: element.style.position,
+      left: element.style.left,
+    };
 
-  // FIXED WIDTHS FOR PDF (CRITICAL FIX)
-  const LEFT_COL_WIDTH = 260;
-  const RIGHT_COL_WIDTH = 520;
+    const leftCol = element.querySelector('[data-pdf-column="left"]');
+    const rightCol = element.querySelector('[data-pdf-column="right"]');
 
-  // Save original element styles
-  const originalStyles = {
-    width: element.style.width,
-    height: element.style.height,
-    overflow: element.style.overflow,
-    position: element.style.position,
-    left: element.style.left,
-  };
+    try {
+      /* ===== FORCE FIXED LAYOUT FOR HTML2CANVAS ===== */
+      leftCol.style.width = `${LEFT_COL_WIDTH}px`;
+      rightCol.style.width = `${RIGHT_COL_WIDTH}px`;
+      rightCol.style.maxWidth = `${RIGHT_COL_WIDTH}px`;
+      rightCol.style.wordBreak = "break-word";
 
-  const leftCol = element.querySelector('[data-pdf-column="left"]');
-  const rightCol = element.querySelector('[data-pdf-column="right"]');
+      element.style.width = `${LEFT_COL_WIDTH + RIGHT_COL_WIDTH}px`;
+      element.style.height = `${element.scrollHeight}px`;
+      element.style.overflow = "visible";
+      element.style.position = "absolute";
+      element.style.left = "-9999px";
 
-  try {
-    /* ===== FORCE FIXED LAYOUT FOR HTML2CANVAS ===== */
-    leftCol.style.width = `${LEFT_COL_WIDTH}px`;
-    rightCol.style.width = `${RIGHT_COL_WIDTH}px`;
-    rightCol.style.maxWidth = `${RIGHT_COL_WIDTH}px`;
-    rightCol.style.wordBreak = "break-word";
+      /* ===== CAPTURE ===== */
+      const canvas = await html2canvas(element, {
+        scale: 1.2,
+        useCORS: true,
+        backgroundColor: "#ffffff",
+        width: element.scrollWidth,
+        height: element.scrollHeight,
+        windowWidth: element.scrollWidth,
+        windowHeight: element.scrollHeight,
+      });
 
-    element.style.width = `${LEFT_COL_WIDTH + RIGHT_COL_WIDTH}px`;
-    element.style.height = `${element.scrollHeight}px`;
-    element.style.overflow = "visible";
-    element.style.position = "absolute";
-    element.style.left = "-9999px";
+      /* ===== TRIM BOTTOM WHITE SPACE (YOUR ORIGINAL LOGIC) ===== */
+      const ctx = canvas.getContext("2d");
+      const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      let bottom = canvas.height;
 
-    /* ===== CAPTURE ===== */
-    const canvas = await html2canvas(element, {
-      scale: 1.2,
-      useCORS: true,
-      backgroundColor: "#ffffff",
-      width: element.scrollWidth,
-      height: element.scrollHeight,
-      windowWidth: element.scrollWidth,
-      windowHeight: element.scrollHeight,
-    });
-
-    /* ===== TRIM BOTTOM WHITE SPACE (YOUR ORIGINAL LOGIC) ===== */
-    const ctx = canvas.getContext("2d");
-    const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    let bottom = canvas.height;
-
-    for (let y = canvas.height - 1; y >= 0; y--) {
-      let rowEmpty = true;
-      for (let x = 0; x < canvas.width; x++) {
-        const index = (y * canvas.width + x) * 4;
-        const r = pixels.data[index];
-        const g = pixels.data[index + 1];
-        const b = pixels.data[index + 2];
-        const alpha = pixels.data[index + 3];
-        if (!(r > 245 && g > 245 && b > 245) && alpha > 0) {
-          rowEmpty = false;
+      for (let y = canvas.height - 1; y >= 0; y--) {
+        let rowEmpty = true;
+        for (let x = 0; x < canvas.width; x++) {
+          const index = (y * canvas.width + x) * 4;
+          const r = pixels.data[index];
+          const g = pixels.data[index + 1];
+          const b = pixels.data[index + 2];
+          const alpha = pixels.data[index + 3];
+          if (!(r > 245 && g > 245 && b > 245) && alpha > 0) {
+            rowEmpty = false;
+            break;
+          }
+        }
+        if (!rowEmpty) {
+          bottom = y;
           break;
         }
       }
-      if (!rowEmpty) {
-        bottom = y;
-        break;
+
+      const trimmedCanvas = document.createElement("canvas");
+      trimmedCanvas.width = canvas.width;
+      trimmedCanvas.height = bottom + 10;
+      trimmedCanvas
+        .getContext("2d")
+        .drawImage(
+          canvas,
+          0,
+          0,
+          canvas.width,
+          bottom + 10,
+          0,
+          0,
+          canvas.width,
+          bottom + 10
+        );
+
+      /* ===== PDF GENERATION ===== */
+      const imgData = trimmedCanvas.toDataURL("image/jpeg", 0.8);
+      const imgWidth = 585;
+      const imgHeight = (trimmedCanvas.height * imgWidth) / trimmedCanvas.width;
+
+      const pdf = new jsPDF("p", "pt", [imgWidth, imgHeight]);
+      pdf.addImage(imgData, "JPEG", 5, 0, imgWidth, imgHeight, "FAST");
+
+      const pdfBlob = pdf.output("blob");
+      const sizeKB = (pdfBlob.size / 1024).toFixed(2);
+      console.log(`📄 PDF size: ${sizeKB} KB`);
+
+      if (pdfBlob.size > 2048 * 1024) {
+        alert(`PDF too large (${sizeKB} KB). Try reducing content.`);
+        return;
       }
-    }
 
-    const trimmedCanvas = document.createElement("canvas");
-    trimmedCanvas.width = canvas.width;
-    trimmedCanvas.height = bottom + 10;
-    trimmedCanvas
-      .getContext("2d")
-      .drawImage(
-        canvas,
-        0,
-        0,
-        canvas.width,
-        bottom + 10,
-        0,
-        0,
-        canvas.width,
-        bottom + 10
-      );
-
-    /* ===== PDF GENERATION ===== */
-    const imgData = trimmedCanvas.toDataURL("image/jpeg", 0.8);
-    const imgWidth = 585;
-    const imgHeight =
-      (trimmedCanvas.height * imgWidth) / trimmedCanvas.width;
-
-    const pdf = new jsPDF("p", "pt", [imgWidth, imgHeight]);
-    pdf.addImage(imgData, "JPEG", 5, 0, imgWidth, imgHeight, "FAST");
-
-    const pdfBlob = pdf.output("blob");
-    const sizeKB = (pdfBlob.size / 1024).toFixed(2);
-    console.log(`📄 PDF size: ${sizeKB} KB`);
-
-    if (pdfBlob.size > 2048 * 1024) {
-      alert(`PDF too large (${sizeKB} KB). Try reducing content.`);
-      return;
-    }
-
-    /* ===== BACKEND UPLOAD (UNCHANGED) ===== */
-    const pdfFile = new File([pdfBlob], "resume.pdf", {
-      type: "application/pdf",
-    });
-
-    const formData = new FormData();
-    formData.append("pdf", pdfFile);
-
-    const uploadUrl = `https://www.scratchprod.in/resume-generator-backend/api/resumes/${resumeId}/upload-pdf`;
-
-    try {
-      const response = await axios.post(uploadUrl, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+      /* ===== BACKEND UPLOAD (UNCHANGED) ===== */
+      const pdfFile = new File([pdfBlob], "resume.pdf", {
+        type: "application/pdf",
       });
-      console.log("✅ Upload response:", response.data);
-    } catch (uploadError) {
-      console.error(
-        "❌ Upload failed:",
-        uploadError.response?.data || uploadError.message
-      );
-      alert(
-        `Upload failed: ${
-          uploadError.response?.data?.message ||
-          "Server error. Please try again."
-        }`
-      );
+
+      const formData = new FormData();
+      formData.append("pdf", pdfFile);
+
+      const uploadUrl = `https://www.scratchprod.in/resume-generator-backend/api/resumes/${resumeId}/upload-pdf`;
+
+      try {
+        const response = await axios.post(uploadUrl, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        console.log("✅ Upload response:", response.data);
+      } catch (uploadError) {
+        console.error(
+          "❌ Upload failed:",
+          uploadError.response?.data || uploadError.message
+        );
+        alert(
+          `Upload failed: ${
+            uploadError.response?.data?.message ||
+            "Server error. Please try again."
+          }`
+        );
+      }
+
+      /* ===== LOCAL DOWNLOAD ===== */
+      pdf.save("resume.pdf");
+      alert("PDF downloaded successfully!");
+      setDownloadComplete(true);
+    } catch (error) {
+      console.error("❌ PDF generation failed:", error);
+      alert("Failed to generate PDF. Please try again.");
+    } finally {
+      /* ===== RESTORE ORIGINAL STYLES ===== */
+      leftCol.style.width = "33%";
+      rightCol.style.width = "67%";
+      rightCol.style.maxWidth = "none";
+      rightCol.style.wordBreak = "normal";
+
+      element.style.width = originalStyles.width;
+      element.style.height = originalStyles.height;
+      element.style.overflow = originalStyles.overflow;
+      element.style.position = originalStyles.position;
+      element.style.left = originalStyles.left;
+
+      setDownloadLoading(false);
     }
-
-    /* ===== LOCAL DOWNLOAD ===== */
-    pdf.save("resume.pdf");
-    alert("PDF downloaded successfully!");
-    setDownloadComplete(true);
-  } catch (error) {
-    console.error("❌ PDF generation failed:", error);
-    alert("Failed to generate PDF. Please try again.");
-  } finally {
-    /* ===== RESTORE ORIGINAL STYLES ===== */
-    leftCol.style.width = "33%";
-    rightCol.style.width = "67%";
-    rightCol.style.maxWidth = "none";
-    rightCol.style.wordBreak = "normal";
-
-    element.style.width = originalStyles.width;
-    element.style.height = originalStyles.height;
-    element.style.overflow = originalStyles.overflow;
-    element.style.position = originalStyles.position;
-    element.style.left = originalStyles.left;
-
-    setDownloadLoading(false);
-  }
-};
-
+  };
 
   const handleGenerateRoadmap = async () => {
     setRoadmapLoading(false);
@@ -255,7 +252,7 @@ const handleDownload = async () => {
     contact,
     education,
     projects,
-    internships,
+    // internships,
     skills,
     awards,
     certifications, // Added certifications
@@ -274,29 +271,28 @@ const handleDownload = async () => {
           alignItems: "center",
         }}
       >
-        
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={handleGenerateRoadmap}
-            disabled={roadmapLoading}
-            startIcon={
-              roadmapLoading ? (
-                <CircularProgress size={20} color="inherit" />
-              ) : null
-            }
-            sx={{
-              fontWeight: "bold",
-              textTransform: "none",
-              fontSize: "1rem",
-              padding: "10px 20px",
-              minWidth: "auto",
-              whiteSpace: "nowrap",
-            }}
-          >
-            {roadmapLoading ? "Generating..." : "Generate Roadmap"}
-          </Button>
-        
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={handleGenerateRoadmap}
+          disabled={roadmapLoading}
+          startIcon={
+            roadmapLoading ? (
+              <CircularProgress size={20} color="inherit" />
+            ) : null
+          }
+          sx={{
+            fontWeight: "bold",
+            textTransform: "none",
+            fontSize: "1rem",
+            padding: "10px 20px",
+            minWidth: "auto",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {roadmapLoading ? "Generating..." : "Generate Roadmap"}
+        </Button>
+
         <Button
           variant="contained"
           onClick={handleDownload}
@@ -433,7 +429,7 @@ const handleDownload = async () => {
             </Section>
 
             <Section title="Internships" icon={<WorkIcon />}>
-              {internships?.map((i, idx) => (
+              {/* {internships?.map((i, idx) => (
                 <Box key={idx} mb={4}>
                   <Text fontWeight="bold" sx={{ color: "#1976d2" }}>
                     {i.company}
@@ -442,6 +438,19 @@ const handleDownload = async () => {
                     {i.role}
                   </Text>
                   <Text sx={{ mt: 1 }}>{i.description}</Text>
+                </Box>
+              ))} */}
+              {internships?.map((item, i) => (
+                <Box key={i}>
+                  <Typography fontWeight="bold">
+                    {item.role} — {item.company}
+                  </Typography>
+                  console.log({item.internship_type})
+                  <Typography fontWeight="bold">{item.internship_type}</Typography>
+                  <Typography variant="caption">
+                    {item.start_date} – {item.end_date}
+                  </Typography>
+                  <Typography>{item.description}</Typography>
                 </Box>
               ))}
             </Section>

@@ -1,679 +1,4 @@
-// import React, { useState } from "react";
-// import {
-//   TextField,
-//   Button,
-//   Typography,
-//   Box,
-//   Grid,
-//   Divider,
-//   CircularProgress,
-//   Paper,
-// } from "@mui/material";
-// import { generateResumePrompt } from "../utils/openai.js";
-// import ResumePreview from "../components/ResumePreview.jsx";
-// import SkillTag from "../components/SkillTag.jsx";
-// import { useNavigate } from "react-router-dom";
-
-// function ResumeFormContainer() {
-//   const [formData, setFormData] = useState({
-//     name: "",
-//     education: "",
-//     projects: [{ title: "", description: "" }],
-//     internships: [{ company: "", role: "", description: "" }],
-//   });
-
-//   const [resume] = useState("");
-//   const [skills] = useState([]);
-//   const [loading] = useState(false);
-//   const navigate = useNavigate();
-
-//   // Handle form input
-//   const handleChange = (e) => {
-//     setFormData({ ...formData, [e.target.name]: e.target.value });
-//   };
-
-//   const handleNestedChange = (e, index, type) => {
-//     const updatedArray = [...formData[type]];
-//     updatedArray[index][e.target.name] = e.target.value;
-//     setFormData({ ...formData, [type]: updatedArray });
-//   };
-
-//   const handleAdd = (type) => {
-//     const newItem =
-//       type === "projects"
-//         ? { title: "", description: "" }
-//         : { company: "", role: "", description: "" };
-//     setFormData({ ...formData, [type]: [...formData[type], newItem] });
-//   };
-
-//   // Extract skills from AI output
-//   //   const handleGenerateSkills = (aiOutput) => {
-//   //     const skillLine = aiOutput.match(/Skills[:|-]\s*(.*)/i);
-//   //     if (skillLine && skillLine[1]) {
-//   //       const extracted = skillLine[1].split(",").map((s) => s.trim());
-//   //       setSkills(extracted);
-//   //     }
-//   //   };
-
-//   // Submit form and generate resume
-//   //   const handleSubmit = async (e) => {
-//   //   e.preventDefault();
-
-//   // try {
-//   //   const aiOutput = await generateResumePrompt(formData);
-//   //   console.log(aiOutput)
-
-//   //   // extract skills
-//   //   const extractedSkills = [];
-//   //   const skillLine = aiOutput.match(/Skills[:|-]\s*(.*)/i);
-//   //   if (skillLine && skillLine[1]) {
-//   //     skillLine[1].split(",").forEach((s) => extractedSkills.push(s.trim()));
-//   //   }
-
-//   //   // navigate to preview page
-//   //   navigate("/preview", {
-//   //     state: { resumeText: aiOutput, skills: extractedSkills },
-//   //   });
-
-//   // } catch (error) {
-//   //   console.error("AI Error:", error);
-//   //   alert("Something went wrong while generating the resume. Please try again.");
-//   // }
-//   // };
-
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-
-//     try {
-//       // Mock AI output for testing
-//       const aiOutput = `John Doe
-// Education: B.Tech
-// Projects:
-// - Portfolio Website: Built a personal portfolio website using React and Tailwind CSS
-// - Chat App: Created a real-time chat app using Node.js, Express, Socket.io
-// Internships:
-// - Tech Solutions: Frontend Developer Intern, Worked on UI development using React
-// Skills: React, Node.js, MongoDB, Tailwind CSS, Socket.io`;
-
-//       console.log("AI Output (mock):", aiOutput);
-
-//       // Extract skills from AI output
-//       const extractedSkills = [];
-//       const skillLine = aiOutput.match(/Skills[:|-]\s*(.*)/i);
-//       if (skillLine && skillLine[1]) {
-//         skillLine[1].split(",").forEach((s) => extractedSkills.push(s.trim()));
-//       }
-
-//       // Navigate to PreviewPage with resume and skills
-//       navigate("/preview", {
-//         state: { resumeText: aiOutput, skills: extractedSkills },
-//       });
-//     } catch (error) {
-//       console.error("AI Error:", error);
-//       alert(
-//         "Something went wrong while generating the resume. Please check your API quota or try again later."
-//       );
-//     }
-//   };
-
-//   return (
-//     <Box sx={{ mx: "auto", mt: -2, px: 0, overflowX: "hidden" }}>
-//       {/* <Paper sx={{ p: 3,px:0,overflowX:'hidden' }}> */}
-//       <Typography variant="h6" mb={1}>
-//         Basic Details
-//       </Typography>
-//       <form onSubmit={handleSubmit}>
-//         <Grid container spacing={2} sx={{ width: "100%" }}>
-//           <Grid item xs={12} sm={6} sx={{ width: { xs: "100%", md: "340px",} }}>
-//             <TextField
-//               label="Full Name"
-//               name="name"
-//               value={formData.name}
-//               onChange={handleChange}
-//               fullWidth
-//             />
-//           </Grid>
-//           <Grid item xs={12} sm={6} sx={{ width: { xs: "100%", md: "340px" } }}>
-//             <TextField
-//               label="Education"
-//               name="education"
-//               value={formData.education}
-//               onChange={handleChange}
-//               fullWidth
-//             />
-//           </Grid>
-//         </Grid>
-
-//         <Divider sx={{ my: 3 }} />
-
-//         {/* Projects */}
-//         <Typography variant="h6" mb={1}>
-//           Projects
-//         </Typography>
-//         {formData.projects.map((project, index) => (
-//           <Grid container spacing={2} mb={2} key={index}>
-//             <Grid
-//               item
-//               xs={12}
-//               md={6}
-//               sx={{ width: { xs: "100%", md: "340px" } }}
-//             >
-//               <TextField
-//                 label="Project Title"
-//                 name="title"
-//                 value={project.title}
-//                 onChange={(e) => handleNestedChange(e, index, "projects")}
-//                 fullWidth
-//               />
-//             </Grid>
-//             <Grid
-//               item
-//               xs={12}
-//               md={6}
-//               sx={{ width: { xs: "100%", md: "340px" } }}
-//             >
-//               <TextField
-//                 label="Project Description"
-//                 name="description"
-//                 value={project.description}
-//                 onChange={(e) => handleNestedChange(e, index, "projects")}
-//                 fullWidth
-//               />
-//             </Grid>
-//           </Grid>
-//         ))}
-//         <Button
-//           variant="outlined"
-//           onClick={() => handleAdd("projects")}
-//           sx={{
-//             px: 2,
-//             py: 2,
-//             fontSize: "1rem",
-//             borderRadius: 2,
-//             mb: 3,
-//             borderLeft: "4px solid #1976d2", // example left border color
-//             // Keep border and background consistent on focus and active
-//             "&:focus": {
-//               outline: "none",
-//               backgroundColor: "transparent",
-//               borderLeft: "4px solid #1976d2",
-//             },
-//             "&:active": {
-//               backgroundColor: "transparent",
-//               borderLeft: "4px solid #1976d2",
-//             },
-//           }}
-//         >
-//           + Add Project
-//         </Button>
-
-//         <Divider sx={{ my: 3 }} />
-
-//         {/* Internships */}
-//         <Typography variant="h6" mb={1}>
-//           Internships
-//         </Typography>
-//         {formData.internships.map((internship, index) => (
-//           <Grid container spacing={2} mb={2} key={index}>
-//             <Grid
-//               item
-//               xs={12}
-//               md={6}
-//               sx={{ width: { xs: "100%", md: "340px" } }}
-//             >
-//               <TextField
-//                 label="Company"
-//                 name="company"
-//                 value={internship.company}
-//                 onChange={(e) => handleNestedChange(e, index, "internships")}
-//                 fullWidth
-//               />
-//             </Grid>
-//             <Grid
-//               item
-//               xs={12}
-//               md={6}
-//               sx={{ width: { xs: "100%", md: "340px" } }}
-//             >
-//               <TextField
-//                 label="Role"
-//                 name="role"
-//                 value={internship.role}
-//                 onChange={(e) => handleNestedChange(e, index, "internships")}
-//                 fullWidth
-//               />
-//             </Grid>
-//             <Grid
-//               item
-//               xs={12}
-//               md={12}
-//               sx={{ width: { xs: "100%", md: "700px" } }}
-//             >
-//               <TextField
-//                 label="Description"
-//                 name="description"
-//                 value={internship.description}
-//                 onChange={(e) => handleNestedChange(e, index, "internships")}
-//                 fullWidth
-//               />
-//             </Grid>
-//           </Grid>
-//         ))}
-//         <Button
-//           variant="outlined"
-//           onClick={() => handleAdd("internships")}
-//           sx={{
-//             px: 2,
-//             py: 2,
-//             fontSize: "1rem",
-//             borderRadius: 2,
-//             mb: 3,
-//             borderLeft: "4px solid #1976d2", // example left border color
-//             // Keep border and background consistent on focus and active
-//             "&:focus": {
-//               outline: "none",
-//               backgroundColor: "transparent",
-//               borderLeft: "4px solid #1976d2",
-//             },
-//             "&:active": {
-//               backgroundColor: "transparent",
-//               borderLeft: "4px solid #1976d2",
-//             },
-//           }}
-//         >
-//           + Add Internship
-//         </Button>
-
-//         {/* Submit Button */}
-//         <Box mt={2} display="flex" justifyContent="center">
-//           <Button
-//             type="submit"
-//             variant="contained"
-//             color="primary"
-//             sx={{
-//               px: 4,
-//               py: 2,
-//               borderRadius: 2,
-//               fontSize: "1rem",
-//             }}
-//           >
-//             {loading ? <CircularProgress size={24} /> : "Generate Resume"}
-//           </Button>
-//         </Box>
-//       </form>
-
-//       {/* AI Generated Resume */}
-//       {resume && (
-//         <Box mt={5}>
-//           <Typography variant="h5" mb={2}>
-//             Generated Resume
-//           </Typography>
-//           <ResumePreview resumeText={resume} />
-
-//           {/* Skills */}
-//           <Typography variant="h6" mt={3}>
-//             Extracted Skills
-//           </Typography>
-//           <SkillTag skills={skills} />
-//         </Box>
-//       )}
-//       {/* </Paper> */}
-//     </Box>
-//   );
-// }
-
-// export default ResumeFormContainer;
-
-// import React, { useState } from "react";
-// import {
-//   TextField,
-//   Button,
-//   Typography,
-//   Box,
-//   Grid,
-//   Divider,
-//   CircularProgress,
-// } from "@mui/material";
-// import { useNavigate } from "react-router-dom";
-// import axios from "axios";
-
-// function ResumeFormContainer() {
-//   const [formData, setFormData] = useState({
-//     name: "",
-//     education: "",
-//     projects: [{ title: "", description: "" }],
-//     internships: [{ company: "", role: "", description: "" }],
-//   });
-
-//   const [loading, setLoading] = useState(false);
-//   const navigate = useNavigate();
-
-//   // Handle input
-//   const handleChange = (e) => {
-//     setFormData({ ...formData, [e.target.name]: e.target.value });
-//   };
-
-//   const handleNestedChange = (e, index, type) => {
-//     const updatedArray = [...formData[type]];
-//     updatedArray[index][e.target.name] = e.target.value;
-//     setFormData({ ...formData, [type]: updatedArray });
-//   };
-
-//   const handleAdd = (type) => {
-//     const newItem =
-//       type === "projects"
-//         ? { title: "", description: "" }
-//         : { company: "", role: "", description: "" };
-//     setFormData({ ...formData, [type]: [...formData[type], newItem] });
-//   };
-
-//   // Handle submit (save to backend and navigate to preview)
-//   // const handleSubmit = async (e) => {
-//   //   e.preventDefault();
-//   //   setLoading(true);
-
-//   //   try {
-//   //     // ✅ Post form data to backend
-//   //     // Retrieve the token from localStorage
-//   //     const token = localStorage.getItem("token");
-
-//   //     // Log the token to the console for debugging
-//   //     console.log("Retrieved token:", token);
-
-//   //     // Proceed with the axios request
-//   //     const response = await axios.post(
-//   //       "https://www.scratchprod.in/resume-generator-backend/api/resumes",
-//   //       formData,
-//   //       {
-//   //         headers: {
-//   //           Authorization: `Bearer ${token}`, // Use the retrieved token
-//   //           "Content-Type": "multipart/form-data",
-//   //         },
-//   //       }
-//   //     );
-
-//   //     // Optionally, log the full request config for more details
-//   //     console.log("Request headers:", {
-//   //       Authorization: `Bearer ${token}`,
-//   //       "Content-Type": "multipart/form-data",
-//   //     });
-
-//   //     console.log("Saved successfully:", response.data);
-
-//   //     // ✅ Extract ID properly from response
-//   //     const newResumeId = response.data?.data?.id;
-
-//   //     if (newResumeId) {
-//   //       // ✅ Navigate to preview page with ID
-//   //       navigate("/preview", { state: { resumeId: newResumeId } });
-//   //     } else {
-//   //       console.error("Resume ID not found in response");
-//   //       alert("Resume saved but could not retrieve the ID.");
-//   //     }
-//   //   } catch (error) {
-//   //     console.error("Error details:", {
-//   //        status: error.response?.status,
-//   //        message: error.response?.data?.message || error.message,
-//   //        fullResponse: error.response?.data,  // Log the entire response body
-//   //      });
-
-//   //     console.error("Error details:", error.response?.data, error.response?.status, error.message);
-
-//   //     console.error("Error saving resume:", error);
-//   //     alert("Something went wrong while saving the resume.");
-//   //   } finally {
-//   //     setLoading(false);
-//   //   }
-//   // };
-
-//   const handleSubmit = async (e) => {
-//   e.preventDefault();
-//   setLoading(true);
-
-//   try {
-//     const token = localStorage.getItem("token");
-//     console.log("Retrieved token:", token);
-
-//     if (!token) {
-//       alert("No token found. Please log in.");
-//       return;
-//     }
-
-//     // Optional: Basic client-side check (not foolproof, but helpful for debugging)
-//     const payload = JSON.parse(atob(token.split('.')[1]));  // Decode payload
-//     const currentTime = Math.floor(Date.now() / 1000);
-//     if (payload.exp < currentTime) {
-//       alert("Token expired. Please log in again.");
-//       return;
-//     }
-//     if (payload.iat > currentTime) {
-//       console.warn("Token issued in future—server clock issue likely.");
-//     }
-
-//     const response = await axios.post(
-//       "https://www.scratchprod.in/resume-generator-backend/api/resumes",
-//       formData,
-//       {
-//         headers: {
-//           Authorization: `Bearer ${token}`,
-//           "Content-Type": "multipart/form-data",
-//         },
-//       }
-//     );
-
-//     console.log("Saved successfully:", response.data);
-//     const newResumeId = response.data?.data?.id;
-//     if (newResumeId) {
-//       navigate("/preview", { state: { resumeId: newResumeId } });
-//     } else {
-//       console.error("Resume ID not found in response");
-//       alert("Resume saved but could not retrieve the ID.");
-//     }
-//   } catch (error) {
-//     console.error("Error details:", {
-//       status: error.response?.status,
-//       message: error.response?.data?.message || error.message,
-//       fullResponse: error.response?.data,
-//     });
-//     alert("Something went wrong while saving the resume.");
-//   } finally {
-//     setLoading(false);
-//   }
-// };
-
-
-//   return (
-//     <Box sx={{ mx: "auto", mt: -2, px: 0, overflowX: "hidden" }}>
-//       <Typography variant="h6" mb={1}>
-//         Basic Details
-//       </Typography>
-//       <form onSubmit={handleSubmit}>
-//         <Grid container spacing={2} sx={{ width: "100%" }}>
-//           <Grid item xs={12} sm={6} sx={{ width: { xs: "100%", md: "340px" } }}>
-//             <TextField
-//               label="Full Name"
-//               name="name"
-//               value={formData.name}
-//               onChange={handleChange}
-//               fullWidth
-//               required
-//             />
-//           </Grid>
-//           <Grid item xs={12} sm={6} sx={{ width: { xs: "100%", md: "340px" } }}>
-//             <TextField
-//               label="Education"
-//               name="education"
-//               value={formData.education}
-//               onChange={handleChange}
-//               fullWidth
-//               required
-//             />
-//           </Grid>
-//         </Grid>
-
-//         <Divider sx={{ my: 3 }} />
-
-//         {/* Projects */}
-//         <Typography variant="h6" mb={1}>
-//           Projects
-//         </Typography>
-//         {formData.projects.map((project, index) => (
-//           <Grid container spacing={2} mb={2} key={index}>
-//             <Grid
-//               item
-//               xs={12}
-//               md={6}
-//               sx={{ width: { xs: "100%", md: "340px" } }}
-//             >
-//               <TextField
-//                 label="Project Title"
-//                 name="title"
-//                 value={project.title}
-//                 onChange={(e) => handleNestedChange(e, index, "projects")}
-//                 fullWidth
-//               />
-//             </Grid>
-//             <Grid
-//               item
-//               xs={12}
-//               md={6}
-//               sx={{ width: { xs: "100%", md: "340px" } }}
-//             >
-//               <TextField
-//                 label="Project Description"
-//                 name="description"
-//                 value={project.description}
-//                 onChange={(e) => handleNestedChange(e, index, "projects")}
-//                 fullWidth
-//               />
-//             </Grid>
-//           </Grid>
-//         ))}
-//         <Button
-//           variant="outlined"
-//           onClick={() => handleAdd("projects")}
-//           sx={{
-//             px: 2,
-//             py: 2,
-//             fontSize: "1rem",
-//             borderRadius: 2,
-//             mb: 3,
-//             borderLeft: "4px solid #1976d2", // example left border color
-//             // Keep border and background consistent on focus and active
-//             "&:focus": {
-//               outline: "none",
-//               backgroundColor: "transparent",
-//               borderLeft: "4px solid #1976d2",
-//             },
-//             "&:active": {
-//               backgroundColor: "transparent",
-//               borderLeft: "4px solid #1976d2",
-//             },
-//           }}
-//         >
-//           + Add Project
-//         </Button>
-
-//         <Divider sx={{ my: 3 }} />
-
-//         {/* Internships */}
-//         <Typography variant="h6" mb={1}>
-//           Internships
-//         </Typography>
-//         {formData.internships.map((internship, index) => (
-//           <Grid container spacing={2} mb={2} key={index}>
-//             <Grid
-//               item
-//               xs={12}
-//               md={6}
-//               sx={{ width: { xs: "100%", md: "340px" } }}
-//             >
-//               <TextField
-//                 label="Company"
-//                 name="company"
-//                 value={internship.company}
-//                 onChange={(e) => handleNestedChange(e, index, "internships")}
-//                 fullWidth
-//               />
-//             </Grid>
-//             <Grid
-//               item
-//               xs={12}
-//               md={6}
-//               sx={{ width: { xs: "100%", md: "340px" } }}
-//             >
-//               <TextField
-//                 label="Role"
-//                 name="role"
-//                 value={internship.role}
-//                 onChange={(e) => handleNestedChange(e, index, "internships")}
-//                 fullWidth
-//               />
-//             </Grid>
-//             <Grid
-//               item
-//               xs={12}
-//               md={12}
-//               sx={{ width: { xs: "100%", md: "700px" } }}
-//             >
-//               <TextField
-//                 label="Description"
-//                 name="description"
-//                 value={internship.description}
-//                 onChange={(e) => handleNestedChange(e, index, "internships")}
-//                 fullWidth
-//               />
-//             </Grid>
-//           </Grid>
-//         ))}
-//         <Button
-//           variant="outlined"
-//           onClick={() => handleAdd("internships")}
-//           sx={{
-//             px: 2,
-//             py: 2,
-//             fontSize: "1rem",
-//             borderRadius: 2,
-//             mb: 3,
-//             borderLeft: "4px solid #1976d2", // example left border color
-//             // Keep border and background consistent on focus and active
-//             "&:focus": {
-//               outline: "none",
-//               backgroundColor: "transparent",
-//               borderLeft: "4px solid #1976d2",
-//             },
-//             "&:active": {
-//               backgroundColor: "transparent",
-//               borderLeft: "4px solid #1976d2",
-//             },
-//           }}
-//         >
-//           + Add Internship
-//         </Button>
-
-//         <Box mt={2} display="flex" justifyContent="center">
-//           <Button
-//             type="submit"
-//             variant="contained"
-//             color="primary"
-//             sx={{
-//               px: 4,
-//               py: 2,
-//               borderRadius: 2,
-//               fontSize: "1rem",
-//             }}
-//           >
-//             {loading ? <CircularProgress size={24} /> : "Generate Resume"}
-//           </Button>
-//         </Box>
-//       </form>
-//     </Box>
-//   );
-// }
-
-// export default ResumeFormContainer;
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   TextField,
   Button,
@@ -684,12 +9,13 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux"
+import { useSelector } from "react-redux";
 import axios from "axios";
+import { getCompletedInternships } from "../services/internships.api";
 
 function ResumeFormContainer() {
   const user = useSelector((state) => state.auth.user);
-  console.log(user.email)
+  // console.log(user.email)
   const [formData, setFormData] = useState({
     name: "",
     email: user?.email || "",
@@ -697,7 +23,16 @@ function ResumeFormContainer() {
     github: "",
     education: { degree: "", institution: "", year: "" },
     projects: [{ title: "", description: "" }],
-    internships: [{ company: "", role: "", description: "" }],
+    internships: [
+      {
+        company: "",
+        role: "",
+        internship_type: "",
+        start_date: "",
+        end_date: "",
+        description: "",
+      },
+    ],
     certifications: [{ name: "", issuer: "", date: "" }],
     awards: [{ name: "", description: "" }],
     skills: "",
@@ -705,6 +40,32 @@ function ResumeFormContainer() {
 
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+  if (!user?.id) return;
+
+  getCompletedInternships(user.id).then((res) => {
+    setFormData((prev) => ({
+      ...prev,
+      internships: res.data.map((i) => ({
+        company: i.company || "",
+        role: i.role || "",
+        description: i.description || "",
+        internship_type: i.internship_type || "",
+
+        // ✅ convert to YYYY-MM-DD
+        start_date: i.start_date?.length === 7
+          ? `${i.start_date}-01`
+          : i.start_date || "",
+
+        end_date: i.end_date?.length === 7
+          ? `${i.end_date}-01`
+          : i.end_date || "",
+      })),
+    }));
+  });
+}, [user?.id]);
+
 
   // Handle input for simple fields
   const handleChange = (e) => {
@@ -734,7 +95,14 @@ function ResumeFormContainer() {
         newItem = { title: "", description: "" };
         break;
       case "internships":
-        newItem = { company: "", role: "", description: "" };
+        newItem = {
+          company: "",
+          role: "",
+          internship_type: "",
+          start_date: "",
+          end_date: "",
+          description: "",
+        };
         break;
       case "certifications":
         newItem = { name: "", issuer: "", date: "" };
@@ -749,137 +117,178 @@ function ResumeFormContainer() {
   };
 
   // Handle submit (save to backend and navigate to preview)
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     setLoading(true);
+  //   const handleSubmit = async (e) => {
+  //     e.preventDefault();
+  //     setLoading(true);
 
-//     try {
-//       const token = localStorage.getItem("token");
-//       console.log("Retrieved token:", token);
+  //     try {
+  //       const token = localStorage.getItem("token");
+  //       console.log("Retrieved token:", token);
 
-//       if (!token) {
-//         alert("No token found. Please log in.");
-//         return;
-//       }
+  //       if (!token) {
+  //         alert("No token found. Please log in.");
+  //         return;
+  //       }
 
-//       // Optional: Basic client-side check (not foolproof, but helpful for debugging)
-//       const payload = JSON.parse(atob(token.split('.')[1]));  // Decode payload
-//       const currentTime = Math.floor(Date.now() / 1000);
-//       if (payload.exp < currentTime) {
-//         alert("Token expired. Please log in again.");
-//         return;
-//       }
-//       if (payload.iat > currentTime) {
-//         console.warn("Token issued in future—server clock issue likely.");
-//       }
+  //       // Optional: Basic client-side check (not foolproof, but helpful for debugging)
+  //       const payload = JSON.parse(atob(token.split('.')[1]));  // Decode payload
+  //       const currentTime = Math.floor(Date.now() / 1000);
+  //       if (payload.exp < currentTime) {
+  //         alert("Token expired. Please log in again.");
+  //         return;
+  //       }
+  //       if (payload.iat > currentTime) {
+  //         console.warn("Token issued in future—server clock issue likely.");
+  //       }
 
-//       const formattedData = {
-//   ...formData,
-//   skills: formData.skills
-//     .split(",")
-//     .map((s) => s.trim())
-//     .filter((s) => s.length > 0),   // remove empty values
-// };
+  //       const formattedData = {
+  //   ...formData,
+  //   skills: formData.skills
+  //     .split(",")
+  //     .map((s) => s.trim())
+  //     .filter((s) => s.length > 0),   // remove empty values
+  // };
 
-// const response = await axios.post(
-//   "https://www.scratchprod.in/resume-generator-backend/api/resumes",
-//   formattedData,
-//   {
-//     headers: {
-//       Authorization: `Bearer ${token}`,
-//       "Content-Type": "application/json",
-//     },
-//   }
-// );
+  // const response = await axios.post(
+  //   "https://www.scratchprod.in/resume-generator-backend/api/resumes",
+  //   formattedData,
+  //   {
+  //     headers: {
+  //       Authorization: `Bearer ${token}`,
+  //       "Content-Type": "application/json",
+  //     },
+  //   }
+  // );
 
+  //       // const response = await axios.post(
+  //       //   "https://www.scratchprod.in/resume-generator-backend/api/resumes",
+  //       //   formData,
+  //       //   {
+  //       //     headers: {
+  //       //       Authorization: `Bearer ${token}`,
+  //       //       "Content-Type": "multipart/form-data",
+  //       //     },
+  //       //   }
+  //       // );
 
-//       // const response = await axios.post(
-//       //   "https://www.scratchprod.in/resume-generator-backend/api/resumes",
-//       //   formData,
-//       //   {
-//       //     headers: {
-//       //       Authorization: `Bearer ${token}`,
-//       //       "Content-Type": "multipart/form-data",
-//       //     },
-//       //   }
-//       // );
+  //       console.log("Saved successfully:", response.data);
+  //       const newResumeId = response.data?.data?.id;
+  //       if (newResumeId) {
+  //         navigate("/preview", { state: { resumeId: newResumeId } });
+  //       } else {
+  //         console.error("Resume ID not found in response");
+  //         alert("Resume saved but could not retrieve the ID.");
+  //       }
+  //     } catch (error) {
+  //       console.error("Error details:", {
+  //         status: error.response?.status,
+  //         message: error.response?.data?.message || error.message,
+  //         fullResponse: error.response?.data,
+  //       });
+  //       alert("Something went wrong while saving the resume.");
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
-//       console.log("Saved successfully:", response.data);
-//       const newResumeId = response.data?.data?.id;
-//       if (newResumeId) {
-//         navigate("/preview", { state: { resumeId: newResumeId } });
-//       } else {
-//         console.error("Resume ID not found in response");
-//         alert("Resume saved but could not retrieve the ID.");
-//       }
-//     } catch (error) {
-//       console.error("Error details:", {
-//         status: error.response?.status,
-//         message: error.response?.data?.message || error.message,
-//         fullResponse: error.response?.data,
-//       });
-//       alert("Something went wrong while saving the resume.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
+  //   try {
+  //     const token = localStorage.getItem("token");
 
-  try {
-    const token = localStorage.getItem("token");
+  //     if (!token) {
+  //       alert("No token found. Please log in.");
+  //       return;
+  //     }
 
-    if (!token) {
-      alert("No token found. Please log in.");
-      return;
-    }
+  //     const payload = JSON.parse(atob(token.split(".")[1]));
+  //     const currentTime = Math.floor(Date.now() / 1000);
 
-    const payload = JSON.parse(atob(token.split(".")[1]));
-    const currentTime = Math.floor(Date.now() / 1000);
+  //     if (payload.exp < currentTime) {
+  //       alert("Token expired. Please log in again.");
+  //       return;
+  //     }
 
-    if (payload.exp < currentTime) {
-      alert("Token expired. Please log in again.");
-      return;
-    }
+  //     // Convert skills string → array
+  //     const formattedData = {
+  //       ...formData,
+  //       skills: formData.skills
+  //         .split(",")
+  //         .map((s) => s.trim())
+  //         .filter((s) => s.length > 0),
+  //     };
 
-    // Convert skills string → array
-    const formattedData = {
-      ...formData,
-      skills: formData.skills
-        .split(",")
-        .map((s) => s.trim())
-        .filter((s) => s.length > 0),
-    };
+  //     const response = await axios.post(
+  //       "https://www.scratchprod.in/resume-generator-backend/api/resumes",
+  //       formattedData,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //           "Content-Type": "application/json",
+  //         },
+  //       }
+  //     );
+  //     console.log(response.data?.id)
 
-    const response = await axios.post(
-      "https://www.scratchprod.in/resume-generator-backend/api/resumes",
-      formattedData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
+  //     const newResumeId = response.data?.id;
+  //     console.log(newResumeId)
+  //     if (newResumeId) {
+  //       navigate("/preview", { state: { resumeId: newResumeId } });
+  //     } else {
+  //       alert("Resume saved but could not retrieve ID.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error saving resume:", error);
+  //     alert("Something went wrong while saving the resume.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      if (!user) {
+        alert("Please log in first.");
+        return;
       }
-    );
-    console.log(response.data?.id)
 
-    const newResumeId = response.data?.id;
-    console.log(newResumeId)
-    if (newResumeId) {
-      navigate("/preview", { state: { resumeId: newResumeId } });
-    } else {
-      alert("Resume saved but could not retrieve ID.");
+      const formattedData = {
+        ...formData,
+        skills: formData.skills
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean),
+      };
+
+      const response = await axios.post(
+        "https://www.scratchprod.in/resume-generator-backend/api/resumes",
+        formattedData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const newResumeId = response.data?.id;
+
+      if (newResumeId) {
+        navigate("/preview", { state: { resumeId: newResumeId } });
+      } else {
+        alert("Resume saved but ID not returned.");
+      }
+    } catch (error) {
+      console.error("Error saving resume:", error);
+      alert("Something went wrong while saving the resume.");
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.error("Error saving resume:", error);
-    alert("Something went wrong while saving the resume.");
-  } finally {
-    setLoading(false);
-  }
-};
-
+  };
 
   return (
     <Box sx={{ mx: "auto", mt: -2, px: 0, overflowX: "hidden" }}>
@@ -908,7 +317,7 @@ const handleSubmit = async (e) => {
               fullWidth
               required
               InputProps={{
-                readOnly: true, 
+                readOnly: true,
               }}
             />
           </Grid>
@@ -1090,6 +499,40 @@ const handleSubmit = async (e) => {
                 value={internship.role}
                 onChange={(e) => handleNestedChange(e, index, "internships")}
                 fullWidth
+              />
+            </Grid>
+            {/* <Grid item xs={12} md={6}>
+              <TextField
+                label="Internship Type"
+                name="internship_type"
+                value={internship.internship_type}
+                onChange={(e) => handleNestedChange(e, index, "internships")}
+                fullWidth
+                placeholder="e.g., Remote / Onsite / Paid / Unpaid"
+              />
+            </Grid> */}
+
+            <Grid item xs={12} md={3}>
+              <TextField
+                label="Start Date"
+                name="start_date"
+                type="date"
+                value={internship.start_date}
+                onChange={(e) => handleNestedChange(e, index, "internships")}
+                fullWidth
+                InputLabelProps={{ shrink: true }}
+              />
+            </Grid>
+
+            <Grid item xs={12} md={3}>
+              <TextField
+                label="End Date"
+                name="end_date"
+                type="date"
+                value={internship.end_date}
+                onChange={(e) => handleNestedChange(e, index, "internships")}
+                fullWidth
+                InputLabelProps={{ shrink: true }}
               />
             </Grid>
             <Grid
@@ -1292,5 +735,3 @@ const handleSubmit = async (e) => {
 }
 
 export default ResumeFormContainer;
-
-
