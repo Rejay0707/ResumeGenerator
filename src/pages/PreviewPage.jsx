@@ -259,7 +259,14 @@ const PreviewPage = () => {
   } = resumeData;
 
   return (
-    <Box sx={{ minHeight: "100vh", background: "#f4f6f8", py: 4 }}>
+    <Box
+      sx={{
+        height: "100vh",
+        background: "#f4f6f8",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
       {/* Buttons above the resume */}
       <Box
         sx={{
@@ -446,7 +453,9 @@ const PreviewPage = () => {
                     {item.role} — {item.company}
                   </Typography>
                   console.log({item.internship_type})
-                  <Typography fontWeight="bold">{item.internship_type}</Typography>
+                  <Typography fontWeight="bold">
+                    {item.internship_type}
+                  </Typography>
                   <Typography variant="caption">
                     {item.start_date} – {item.end_date}
                   </Typography>

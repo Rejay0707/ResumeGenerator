@@ -8,10 +8,12 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { useState } from "react";
+
 import ProjectsContainer from "../containers/ProjectsContainer";
 import ProjectCard from "../components/projects/ProjectCard";
 import ProjectTable from "../components/projects/ProjectTable";
 import ProjectFormDialog from "../components/projects/ProjectFormDialog";
+import ProjectFilesDialog from "../components/projects/ProjectFilesDialog";
 import ConfirmDeleteDialog from "../components/ConfirmDeleteDialog";
 
 export default function ProjectsPage() {
@@ -28,14 +30,18 @@ export default function ProjectsPage() {
   } = ProjectsContainer();
 
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
+  const isMobile = useMediaQuery("(max-width:899px)");
+  const isMedium = useMediaQuery("(min-width:900px) and (max-width:1299px)");
+  const isLarge = useMediaQuery("(min-width:1300px)");
+
+  /* ---------- LOCAL STATE ---------- */
   const [deleteId, setDeleteId] = useState(null);
+  const [filesProjectId, setFilesProjectId] = useState(null);
 
   /* ---------- HANDLERS ---------- */
-
-  const handleEdit = (data) => {
-    setEditData(data);
+  const handleEdit = (project) => {
+    setEditData(project);
     setOpenDialog(true);
   };
 
@@ -53,6 +59,15 @@ export default function ProjectsPage() {
     setDeleteId(null);
   };
 
+  const handleOpenFiles = (projectId) => {
+    setFilesProjectId(projectId);
+  };
+
+  const handleCloseFiles = () => {
+    setFilesProjectId(null);
+  };
+
+  /* ---------- UI ---------- */
   return (
     <>
       {/* HEADER */}
@@ -91,28 +106,42 @@ export default function ProjectsPage() {
           </Typography>
         </Box>
       ) : isMobile ? (
-        /* MOBILE VIEW */
+        /* < 900px → CARDS */
         <Grid container spacing={2}>
           {projects.map((project) => (
             <Grid item xs={12} key={project.id}>
               <ProjectCard
                 project={project}
                 onEdit={handleEdit}
-                onDelete={() => handleDeleteClick(project.id)}
+                onDelete={handleDeleteClick}
+                onFiles={handleOpenFiles}
               />
             </Grid>
           ))}
         </Grid>
+      ) : isMedium ? (
+        /* 900px – 1300px → TABLE WITH SCROLL */
+        <Box sx={{ overflowX: "auto" }}>
+          <Box sx={{ minWidth: 1200 }}>
+            <ProjectTable
+              data={projects}
+              onEdit={handleEdit}
+              onDelete={handleDeleteClick}
+              onFiles={handleOpenFiles}
+            />
+          </Box>
+        </Box>
       ) : (
-        /* DESKTOP VIEW */
+        /* > 1300px → FULL TABLE (NO SCROLL) */
         <ProjectTable
           data={projects}
           onEdit={handleEdit}
-          onDelete={(id) => handleDeleteClick(id)}
+          onDelete={handleDeleteClick}
+          onFiles={handleOpenFiles}
         />
       )}
 
-      {/* ADD / EDIT DIALOG */}
+      {/* ADD / EDIT PROJECT */}
       <ProjectFormDialog
         open={openDialog}
         initialData={editData}
@@ -131,6 +160,13 @@ export default function ProjectsPage() {
         onConfirm={handleConfirmDelete}
         title="Delete Project"
         description="Are you sure you want to delete this project? This action cannot be undone."
+      />
+
+      {/* PROJECT FILES */}
+      <ProjectFilesDialog
+        open={Boolean(filesProjectId)}
+        projectId={filesProjectId}
+        onClose={handleCloseFiles}
       />
     </>
   );

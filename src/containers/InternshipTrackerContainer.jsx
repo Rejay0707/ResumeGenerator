@@ -36,7 +36,7 @@ export default function InternshipTrackerContainer() {
         params: { user_id: userId },
       });
 
-      console.log("FETCH RESPONSE:", res.data);
+      // console.log("FETCH RESPONSE:", res.data);
 
       const formatted = res.data.map((item) => ({
   id: item.id,

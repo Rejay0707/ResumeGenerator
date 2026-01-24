@@ -10,7 +10,7 @@ import {
 import GitHubIcon from "@mui/icons-material/GitHub";
 import { formatDuration } from "../../utils/dateUtils";
 
-export default function ProjectCard({ project, onEdit, onDelete }) {
+export default function ProjectCard({ project, onEdit, onDelete, onFiles }) {
   return (
     <Card>
       <CardContent>
@@ -22,7 +22,12 @@ export default function ProjectCard({ project, onEdit, onDelete }) {
           {project.role}
         </Typography>
 
-        <Typography variant="caption" color="text.secondary" display="block" mb={1}>
+        <Typography
+          variant="caption"
+          color="text.secondary"
+          display="block"
+          mb={1}
+        >
           {formatDuration(project.start_date, project.end_date)}
         </Typography>
 
@@ -61,10 +66,23 @@ export default function ProjectCard({ project, onEdit, onDelete }) {
         )}
 
         {/* Actions */}
-        <Box display="flex" gap={1}>
-          <Button size="small" variant="outlined" onClick={() => onEdit(project)}>
+        <Box display="flex" gap={1} mt={1}>
+          <Button
+            size="small"
+            variant="outlined"
+            onClick={() => onEdit(project)}
+          >
             Edit
           </Button>
+
+          <Button
+            size="small"
+            variant="outlined"
+            onClick={() => onFiles(project.id)}
+          >
+            Files
+          </Button>
+
           <Button
             size="small"
             color="error"

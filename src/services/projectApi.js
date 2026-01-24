@@ -38,6 +38,9 @@ export const uploadProjectFile = (projectId, file) => {
   });
 };
 
+export const getUserProjects = (userId) =>
+  api.get(`/api/projects?user_id=${userId}`);
+
 // GET project files
 export const getProjectFiles = (projectId) =>
   api.get(`/api/projects/${projectId}/files`);

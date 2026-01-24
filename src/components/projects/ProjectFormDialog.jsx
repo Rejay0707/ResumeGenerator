@@ -27,8 +27,9 @@ export default function ProjectFormDialog({
 }) {
   const [form, setForm] = useState(emptyForm);
 
+  /* ---------- PREFILL / RESET ---------- */
   useEffect(() => {
-    if (initialData && open) {
+    if (open && initialData) {
       setForm({
         title: initialData.title || "",
         description: initialData.description || "",
@@ -39,20 +40,23 @@ export default function ProjectFormDialog({
         github_url: initialData.github_url || "",
         technologies: initialData.technologies?.join(", ") || "",
       });
-    } else if (open) {
+    }
+
+    if (open && !initialData) {
       setForm(emptyForm);
     }
   }, [initialData, open]);
 
+  /* ---------- SUBMIT ---------- */
   const handleSubmit = () => {
     onSubmit({
-      title: form.title,
-      description: form.description,
-      role: form.role,
+      title: form.title.trim(),
+      description: form.description.trim(),
+      role: form.role.trim(),
       start_date: form.start_date,
       end_date: form.end_date,
-      outcomes: form.outcomes,
-      github_url: form.github_url,
+      outcomes: form.outcomes.trim(),
+      github_url: form.github_url.trim(),
       technologies: form.technologies
         .split(",")
         .map((t) => t.trim())
@@ -79,13 +83,19 @@ export default function ProjectFormDialog({
           <TextField
             label="Title"
             value={form.title}
-            onChange={(e) => setForm({ ...form, title: e.target.value })}
+            onChange={(e) =>
+              setForm({ ...form, title: e.target.value })
+            }
+            fullWidth
           />
 
           <TextField
             label="Role"
             value={form.role}
-            onChange={(e) => setForm({ ...form, role: e.target.value })}
+            onChange={(e) =>
+              setForm({ ...form, role: e.target.value })
+            }
+            fullWidth
           />
 
           <TextField
@@ -93,7 +103,10 @@ export default function ProjectFormDialog({
             type="date"
             InputLabelProps={{ shrink: true }}
             value={form.start_date}
-            onChange={(e) => setForm({ ...form, start_date: e.target.value })}
+            onChange={(e) =>
+              setForm({ ...form, start_date: e.target.value })
+            }
+            fullWidth
           />
 
           <TextField
@@ -101,7 +114,10 @@ export default function ProjectFormDialog({
             type="date"
             InputLabelProps={{ shrink: true }}
             value={form.end_date}
-            onChange={(e) => setForm({ ...form, end_date: e.target.value })}
+            onChange={(e) =>
+              setForm({ ...form, end_date: e.target.value })
+            }
+            fullWidth
           />
 
           <TextField
@@ -112,12 +128,16 @@ export default function ProjectFormDialog({
             onChange={(e) =>
               setForm({ ...form, description: e.target.value })
             }
+            fullWidth
           />
 
           <TextField
             label="Outcomes / Achievements"
             value={form.outcomes}
-            onChange={(e) => setForm({ ...form, outcomes: e.target.value })}
+            onChange={(e) =>
+              setForm({ ...form, outcomes: e.target.value })
+            }
+            fullWidth
           />
 
           <TextField
@@ -126,6 +146,7 @@ export default function ProjectFormDialog({
             onChange={(e) =>
               setForm({ ...form, technologies: e.target.value })
             }
+            fullWidth
           />
 
           <TextField
@@ -134,9 +155,13 @@ export default function ProjectFormDialog({
             onChange={(e) =>
               setForm({ ...form, github_url: e.target.value })
             }
+            fullWidth
           />
 
-          <Button variant="contained" onClick={handleSubmit}>
+          <Button
+            variant="contained"
+            onClick={handleSubmit}
+          >
             Save
           </Button>
         </Stack>

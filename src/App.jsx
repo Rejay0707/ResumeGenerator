@@ -19,9 +19,13 @@ import TimetablePage from "./pages/admin/TimeTablePage";
 
 import StudentDashboardLayout from "./layouts/StudentDashboardLayout";
 import StudentDashboardHome from "./pages/StudentDashboardHome";
+import PersonalDetailsPage from "./pages/PersonalDetailsPage";
+import EducationPage from "./pages/EducationPage";
 import InternshipTrackerContainer from "./containers/InternshipTrackerContainer";
 import ProjectsPage from "./pages/ProjectsPage";
-import CertificateTrackerContainer from "./containers/CertificateTrackerContainer";
+import StudentCertificatesPage from "./pages/StudentCertificatesPage";
+import SkillsPage from "./pages/SkillsPage";
+import NotificationsPage from "./pages/NotificationsPage";
 
 import TeacherDashboardLayout from "./layouts/TeacherDashboardLayout";
 import TeacherHome from "./containers/TeacherHome";
@@ -229,18 +233,33 @@ function App() {
         >
           <Route index element={<StudentDashboardHome />} />
 
+          <Route
+            path="/student/dashboard/personalDetails"
+            element={<PersonalDetailsPage />}
+          />
+
+          <Route
+            path="/student/dashboard/education"
+            element={<EducationPage />}
+          />
+
           <Route path="internships" element={<InternshipTrackerContainer />} />
 
           <Route path="projects" element={<ProjectsPage />} />
 
           <Route
-            path="certificates"
-            element={<CertificateTrackerContainer />}
+            path="/student/dashboard/certificates"
+            element={<StudentCertificatesPage />}
           />
 
           <Route
-            path="skills"
-            // element={<SkillsTrackerPage />} // create later
+            path="/student/dashboard/skills"
+            element={<SkillsPage />}
+          />
+
+          <Route
+            path="/student/dashboard/notifications"
+            element={<NotificationsPage/>}
           />
 
           <Route path="resume" element={<ResumeBuilderPage />} />

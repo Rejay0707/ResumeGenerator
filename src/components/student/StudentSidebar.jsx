@@ -1,4 +1,15 @@
 import React, { useState } from "react";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import PersonIcon from "@mui/icons-material/Person";
+import SchoolIcon from "@mui/icons-material/School";
+import WorkOutlineIcon from "@mui/icons-material/WorkOutline";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+import WorkspacePremiumIcon from "@mui/icons-material/WorkspacePremium";
+import PsychologyIcon from "@mui/icons-material/Psychology";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import DescriptionIcon from "@mui/icons-material/Description";
+import LogoutIcon from "@mui/icons-material/Logout";
+
 import {
   Box,
   List,
@@ -23,12 +34,51 @@ export default function StudentSidebar() {
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const items = [
-    { label: "Dashboard", path: "/student/dashboard" },
-    { label: "Internships", path: "/student/dashboard/internships" },
-    { label :"Projects", path:"/student/dashboard/projects"},
-    { label: "Certificates", path: "/student/dashboard/certificates" },
-    { label: "Skills", path: "/student/dashboard/skills" },
-    { label: "Resume", path: "/student/dashboard/resume" },
+    {
+      label: "Dashboard",
+      path: "/student/dashboard",
+      icon: <DashboardIcon fontSize="small" />,
+    },
+    {
+      label: "Personal Details",
+      path: "/student/dashboard/personalDetails",
+      icon: <PersonIcon fontSize="small" />,
+    },
+    {
+      label: "Education",
+      path: "/student/dashboard/education",
+      icon: <SchoolIcon fontSize="small" />,
+    },
+    {
+      label: "Internships",
+      path: "/student/dashboard/internships",
+      icon: <WorkOutlineIcon fontSize="small" />,
+    },
+    {
+      label: "Projects",
+      path: "/student/dashboard/projects",
+      icon: <AssignmentIcon fontSize="small" />,
+    },
+    {
+      label: "Certificates",
+      path: "/student/dashboard/certificates",
+      icon: <WorkspacePremiumIcon fontSize="small" />,
+    },
+    {
+      label: "Skills",
+      path: "/student/dashboard/skills",
+      icon: <PsychologyIcon fontSize="small" />,
+    },
+    {
+      label: "Notifications",
+      path: "/student/dashboard/notifications",
+      icon: <NotificationsIcon fontSize="small" />,
+    },
+    {
+      label: "Resume",
+      path: "/student/dashboard/resume",
+      icon: <DescriptionIcon fontSize="small" />,
+    },
   ];
 
   const handleDrawerToggle = () => {
@@ -73,7 +123,14 @@ export default function StudentSidebar() {
               }}
               sx={{ color: "white" }}
             >
-              <ListItemText primary={item.label} />
+              <ListItemText
+                primary={
+                  <Box display="flex" alignItems="center" gap={1}>
+                    {item.icon}
+                    {item.label}
+                  </Box>
+                }
+              />
             </ListItemButton>
           ))}
         </List>
@@ -91,7 +148,14 @@ export default function StudentSidebar() {
           }}
           sx={{ color: "white" }}
         >
-          <ListItemText primary="Logout" />
+          <ListItemText
+            primary={
+              <Box display="flex" alignItems="center" gap={1}>
+                <LogoutIcon fontSize="small" />
+                Logout
+              </Box>
+            }
+          />
         </ListItemButton>
       </List>
     </Box>
@@ -124,6 +188,8 @@ export default function StudentSidebar() {
           top: 0,
           height: "100vh",
           overflowY: "auto",
+          flexShrink: 0, // ✅ CRITICAL
+          width: 220, // ✅ Explicit width
         }}
       >
         {sidebarContent}

@@ -7,11 +7,15 @@ import {
   Grid,
   Divider,
   CircularProgress,
+  MenuItem,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { getCompletedInternships } from "../services/internships.api";
+import { getProjects, getProjectFiles } from "../services/projectApi";
+import { getCertificates } from "../services/certificateApi";
+import { getUserSkills } from "../services/skillApi";
 
 function ResumeFormContainer() {
   const user = useSelector((state) => state.auth.user);
@@ -21,8 +25,28 @@ function ResumeFormContainer() {
     email: user?.email || "",
     phone: "",
     github: "",
-    education: { degree: "", institution: "", year: "" },
-    projects: [{ title: "", description: "" }],
+    linkedin: "",
+    education: {
+      level: "college", // school | college
+      institution: "",
+      board: "",
+      degree: "",
+      field_of_study: "",
+      start_year: "",
+      end_year: "",
+    },
+
+    projects: [
+      {
+        title: "",
+        description: "",
+        github_url: "",
+        start_date: "",
+        end_date: "",
+        files: [], // uploaded files (read-only from backend)
+      },
+    ],
+
     internships: [
       {
         company: "",
@@ -33,7 +57,17 @@ function ResumeFormContainer() {
         description: "",
       },
     ],
-    certifications: [{ name: "", issuer: "", date: "" }],
+    certifications: [
+      {
+        title: "",
+        issuer: "",
+        issue_date: "",
+        skills: "",
+        category: "",
+        file_url: "",
+      },
+    ],
+
     awards: [{ name: "", description: "" }],
     skills: "",
   });
@@ -42,34 +76,109 @@ function ResumeFormContainer() {
   const navigate = useNavigate();
 
   useEffect(() => {
-  if (!user?.id) return;
+    if (!user?.id) return;
 
-  getCompletedInternships(user.id).then((res) => {
-    setFormData((prev) => ({
-      ...prev,
-      internships: res.data.map((i) => ({
-        company: i.company || "",
-        role: i.role || "",
-        description: i.description || "",
-        internship_type: i.internship_type || "",
+    getCompletedInternships(user.id).then((res) => {
+      setFormData((prev) => ({
+        ...prev,
+        internships: res.data.map((i) => ({
+          company: i.company || "",
+          role: i.role || "",
+          description: i.description || "",
+          internship_type: i.internship_type || "",
 
-        // ✅ convert to YYYY-MM-DD
-        start_date: i.start_date?.length === 7
-          ? `${i.start_date}-01`
-          : i.start_date || "",
+          // ✅ convert to YYYY-MM-DD
+          start_date:
+            i.start_date?.length === 7
+              ? `${i.start_date}-01`
+              : i.start_date || "",
 
-        end_date: i.end_date?.length === 7
-          ? `${i.end_date}-01`
-          : i.end_date || "",
-      })),
-    }));
-  });
-}, [user?.id]);
+          end_date:
+            i.end_date?.length === 7 ? `${i.end_date}-01` : i.end_date || "",
+        })),
+      }));
+    });
+  }, [user?.id]);
 
+  useEffect(() => {
+    if (!user?.id) return;
+
+    getProjects(user.id).then(async (res) => {
+      const projectsWithFiles = await Promise.all(
+        res.data.map(async (project) => {
+          const filesRes = await getProjectFiles(project.id);
+
+          return {
+            title: project.title || "",
+            description: project.description || "",
+            github_url: project.github_url || "",
+            start_date: project.start_date || "",
+            end_date: project.end_date || "",
+            files: filesRes.data || [],
+          };
+        }),
+      );
+
+      setFormData((prev) => ({
+        ...prev,
+        projects: projectsWithFiles.length ? projectsWithFiles : prev.projects,
+      }));
+    });
+  }, [user?.id]);
+
+  useEffect(() => {
+    if (!user?.id) return;
+
+    getCertificates(user.id).then((res) => {
+      setFormData((prev) => ({
+        ...prev,
+        certifications:
+          res.data.length > 0
+            ? res.data.map((cert) => ({
+                name: cert.title || "",
+                issuer: cert.issuer || "",
+                date: cert.issue_date || "",
+                skills: cert.skills?.join(", ") || "",
+                category: cert.category || "",
+                file_url: cert.file_url || "",
+              }))
+            : prev.certifications,
+      }));
+    });
+  }, [user?.id]);
+
+  useEffect(() => {
+    if (!user?.id) return;
+
+    getUserSkills(user.id)
+      .then((res) => {
+        const skillsString = res.data.map((skill) => skill.skill).join(", ");
+        setFormData((prev) => ({
+          ...prev,
+          skills: skillsString,
+        }));
+      })
+      .catch((error) => {
+        console.error("Error fetching user skills:", error);
+      });
+  }, [user?.id]);
 
   // Handle input for simple fields
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleProjectFileChange = (e, index) => {
+    const files = Array.from(e.target.files);
+
+    setFormData((prev) => {
+      const updatedProjects = [...prev.projects];
+      updatedProjects[index] = {
+        ...updatedProjects[index],
+        files,
+      };
+      return { ...prev, projects: updatedProjects };
+    });
   };
 
   // Handle input for education object
@@ -78,6 +187,22 @@ function ResumeFormContainer() {
       ...formData,
       education: { ...formData.education, [e.target.name]: e.target.value },
     });
+  };
+
+  const handleEducationLevelChange = (e) => {
+    const level = e.target.value;
+
+    setFormData((prev) => ({
+      ...prev,
+      education: {
+        ...prev.education,
+        level,
+        board: level === "school" ? prev.education.board : "",
+        degree: level === "college" ? prev.education.degree : "",
+        field_of_study:
+          level === "college" ? prev.education.field_of_study : "",
+      },
+    }));
   };
 
   // Handle input for nested arrays (projects, internships, certifications, awards)
@@ -92,8 +217,16 @@ function ResumeFormContainer() {
     let newItem;
     switch (type) {
       case "projects":
-        newItem = { title: "", description: "" };
+        newItem = {
+          title: "",
+          description: "",
+          github_url: "",
+          start_date: "",
+          end_date: "",
+          files: [],
+        };
         break;
+
       case "internships":
         newItem = {
           company: "",
@@ -105,7 +238,13 @@ function ResumeFormContainer() {
         };
         break;
       case "certifications":
-        newItem = { name: "", issuer: "", date: "" };
+        newItem = {
+          title: "",
+          issuer: "",
+          issue_date: "",
+          skills: "",
+          category: "",
+        };
         break;
       case "awards":
         newItem = { name: "", description: "" };
@@ -272,7 +411,7 @@ function ResumeFormContainer() {
           headers: {
             "Content-Type": "application/json",
           },
-        }
+        },
       );
 
       const newResumeId = response.data?.id;
@@ -297,7 +436,7 @@ function ResumeFormContainer() {
       </Typography>
       <form onSubmit={handleSubmit}>
         <Grid container spacing={2} sx={{ width: "100%" }}>
-          <Grid item xs={12} sm={6} sx={{ width: { xs: "100%", md: "340px" } }}>
+          <Grid item xs={12} sm={6} sx={{ width: { xs: "100%", md: "545px" } }}>
             <TextField
               label="Full Name"
               name="name"
@@ -307,7 +446,7 @@ function ResumeFormContainer() {
               required
             />
           </Grid>
-          <Grid item xs={12} sm={6} sx={{ width: { xs: "100%", md: "340px" } }}>
+          <Grid item xs={12} sm={6} sx={{ width: { xs: "100%", md: "545px" } }}>
             <TextField
               label="Email"
               name="email"
@@ -321,7 +460,7 @@ function ResumeFormContainer() {
               }}
             />
           </Grid>
-          <Grid item xs={12} sm={6} sx={{ width: { xs: "100%", md: "340px" } }}>
+          <Grid item xs={12} sm={6} sx={{ width: { xs: "100%", md: "545px" } }}>
             <TextField
               label="Phone"
               name="phone"
@@ -331,11 +470,20 @@ function ResumeFormContainer() {
               required
             />
           </Grid>
-          <Grid item xs={12} sm={6} sx={{ width: { xs: "100%", md: "340px" } }}>
+          <Grid item xs={12} sm={6} sx={{ width: { xs: "100%", md: "545px" } }}>
             <TextField
               label="GitHub Link"
               name="github"
               value={formData.github}
+              onChange={handleChange}
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} sx={{ width: { xs: "100%", md: "1105px" } }}>
+            <TextField
+              label="LinkedIn URL"
+              name="linkedin"
+              value={formData.linkedin}
               onChange={handleChange}
               fullWidth
             />
@@ -345,21 +493,29 @@ function ResumeFormContainer() {
         <Divider sx={{ my: 3 }} />
 
         {/* Education */}
+        {/* Education */}
         <Typography variant="h6" mb={1}>
           Education
         </Typography>
+
         <Grid container spacing={2} sx={{ width: "100%" }}>
-          <Grid item xs={12} sm={6} sx={{ width: { xs: "100%", md: "340px" } }}>
+          {/* Education Level */}
+          <Grid item xs={12} sm={6} sx={{ width: { xs: "100%", md: "545px" } }}>
             <TextField
-              label="Degree"
-              name="degree"
-              value={formData.education.degree}
-              onChange={handleEducationChange}
+              select
+              label="Education Level"
+              name="level"
+              value={formData.education.level}
+              onChange={handleEducationLevelChange}
               fullWidth
-              required
-            />
+            >
+              <MenuItem value="school">School</MenuItem>
+              <MenuItem value="college">College</MenuItem>
+            </TextField>
           </Grid>
-          <Grid item xs={12} sm={6} sx={{ width: { xs: "100%", md: "340px" } }}>
+
+          {/* Institution */}
+          <Grid item xs={12} sm={6} sx={{ width: { xs: "100%", md: "545px" } }}>
             <TextField
               label="Institution"
               name="institution"
@@ -369,11 +525,74 @@ function ResumeFormContainer() {
               required
             />
           </Grid>
-          <Grid item xs={12} sm={6} sx={{ width: { xs: "100%", md: "340px" } }}>
+
+          {/* SCHOOL FIELDS */}
+          {formData.education.level === "school" && (
+            <Grid item xs={12} sx={{ width: { xs: "100%", md: "1105px" } }}>
+              <TextField
+                label="Board"
+                name="board"
+                value={formData.education.board}
+                onChange={handleEducationChange}
+                fullWidth
+                required
+              />
+            </Grid>
+          )}
+
+          {/* COLLEGE FIELDS */}
+          {formData.education.level === "college" && (
+            <>
+              <Grid
+                item
+                xs={12}
+                sm={6}
+                sx={{ width: { xs: "100%", md: "545px" } }}
+              >
+                <TextField
+                  label="Degree"
+                  name="degree"
+                  value={formData.education.degree}
+                  onChange={handleEducationChange}
+                  fullWidth
+                  required
+                />
+              </Grid>
+
+              <Grid
+                item
+                xs={12}
+                sm={6}
+                sx={{ width: { xs: "100%", md: "545px" } }}
+              >
+                <TextField
+                  label="Field of Study"
+                  name="field_of_study"
+                  value={formData.education.field_of_study}
+                  onChange={handleEducationChange}
+                  fullWidth
+                />
+              </Grid>
+            </>
+          )}
+
+          {/* YEARS */}
+          <Grid item xs={12} sm={6} sx={{ width: { xs: "100%", md: "545px" } }}>
             <TextField
-              label="Year"
-              name="year"
-              value={formData.education.year}
+              label="Start Year"
+              name="start_year"
+              value={formData.education.start_year}
+              onChange={handleEducationChange}
+              fullWidth
+              required
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={6} sx={{ width: { xs: "100%", md: "545px" } }}>
+            <TextField
+              label="End Year"
+              name="end_year"
+              value={formData.education.end_year}
               onChange={handleEducationChange}
               fullWidth
               required
@@ -388,7 +607,7 @@ function ResumeFormContainer() {
           Skills
         </Typography>
         <Grid container spacing={2} sx={{ width: "100%" }}>
-          <Grid item xs={12} sx={{ width: { xs: "100%", md: "700px" } }}>
+          <Grid item xs={12} sx={{ width: { xs: "100%", md: "1105px" } }}>
             <TextField
               label="Skills (comma-separated)"
               name="skills"
@@ -409,12 +628,13 @@ function ResumeFormContainer() {
           Projects
         </Typography>
         {formData.projects.map((project, index) => (
-          <Grid container spacing={2} mb={2} key={index}>
+          <Grid container spacing={2} mb={3} key={index}>
+            {/* Project Title - 50% */}
             <Grid
               item
               xs={12}
-              md={6}
-              sx={{ width: { xs: "100%", md: "340px" } }}
+              sm={6}
+              sx={{ width: { xs: "100%", md: "545px" } }}
             >
               <TextField
                 label="Project Title"
@@ -424,11 +644,65 @@ function ResumeFormContainer() {
                 fullWidth
               />
             </Grid>
+
+            {/* GitHub Link - 50% */}
             <Grid
               item
               xs={12}
-              md={6}
-              sx={{ width: { xs: "100%", md: "340px" } }}
+              sm={6}
+              sx={{ width: { xs: "100%", md: "545px" } }}
+            >
+              <TextField
+                label="GitHub Link"
+                name="github_url"
+                value={project.github_url}
+                onChange={(e) => handleNestedChange(e, index, "projects")}
+                fullWidth
+              />
+            </Grid>
+
+            {/* Start Date */}
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              sx={{ width: { xs: "100%", md: "545px" } }}
+            >
+              <TextField
+                label="Start Date"
+                name="start_date"
+                type="date"
+                value={project.start_date}
+                onChange={(e) => handleNestedChange(e, index, "projects")}
+                fullWidth
+                InputLabelProps={{ shrink: true }}
+              />
+            </Grid>
+
+            {/* End Date */}
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              sx={{ width: { xs: "100%", md: "545px" } }}
+            >
+              <TextField
+                label="End Date"
+                name="end_date"
+                type="date"
+                value={project.end_date}
+                onChange={(e) => handleNestedChange(e, index, "projects")}
+                fullWidth
+                InputLabelProps={{ shrink: true }}
+              />
+            </Grid>
+
+            {/* Description - FULL WIDTH */}
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              sx={{ width: { xs: "100%", md: "1105px" } }}
             >
               <TextField
                 label="Project Description"
@@ -436,10 +710,62 @@ function ResumeFormContainer() {
                 value={project.description}
                 onChange={(e) => handleNestedChange(e, index, "projects")}
                 fullWidth
+                multiline
+                rows={3}
               />
             </Grid>
+
+            {/* Upload Button */}
+            <Grid item xs={12}>
+              <Button
+                variant="outlined"
+                component="label"
+                sx={{
+                  px: 3,
+                  py: 2,
+                  borderRadius: 2,
+                  borderLeft: "4px solid #1976d2",
+                }}
+              >
+                Upload Project Files
+                <input
+                  type="file"
+                  multiple
+                  hidden
+                  onChange={(e) => handleProjectFileChange(e, index)}
+                />
+              </Button>
+            </Grid>
+
+            {/* Uploaded Files - ATTRACTIVE */}
+            {project.files?.length > 0 && (
+              <Grid item xs={12}>
+                <Typography variant="body2" mb={1}>
+                  Uploaded Files
+                </Typography>
+
+                <Box display="flex" gap={1} flexWrap="wrap">
+                  {project.files.map((file, i) => (
+                    <Button
+                      key={i}
+                      size="small"
+                      variant="outlined"
+                      href={file.file_url}
+                      target="_blank"
+                      sx={{
+                        textTransform: "none",
+                        borderRadius: 2,
+                      }}
+                    >
+                      {file.file_name}
+                    </Button>
+                  ))}
+                </Box>
+              </Grid>
+            )}
           </Grid>
         ))}
+
         <Button
           variant="outlined"
           onClick={() => handleAdd("projects")}
@@ -477,7 +803,7 @@ function ResumeFormContainer() {
               item
               xs={12}
               md={6}
-              sx={{ width: { xs: "100%", md: "340px" } }}
+              sx={{ width: { xs: "100%", md: "545px" } }}
             >
               <TextField
                 label="Company"
@@ -491,7 +817,7 @@ function ResumeFormContainer() {
               item
               xs={12}
               md={6}
-              sx={{ width: { xs: "100%", md: "340px" } }}
+              sx={{ width: { xs: "100%", md: "545px" } }}
             >
               <TextField
                 label="Role"
@@ -512,7 +838,12 @@ function ResumeFormContainer() {
               />
             </Grid> */}
 
-            <Grid item xs={12} md={3}>
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              sx={{ width: { xs: "100%", md: "545px" } }}
+            >
               <TextField
                 label="Start Date"
                 name="start_date"
@@ -524,7 +855,12 @@ function ResumeFormContainer() {
               />
             </Grid>
 
-            <Grid item xs={12} md={3}>
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              sx={{ width: { xs: "100%", md: "545px" } }}
+            >
               <TextField
                 label="End Date"
                 name="end_date"
@@ -539,7 +875,7 @@ function ResumeFormContainer() {
               item
               xs={12}
               md={12}
-              sx={{ width: { xs: "100%", md: "700px" } }}
+              sx={{ width: { xs: "100%", md: "1105px" } }}
             >
               <TextField
                 label="Description"
@@ -587,22 +923,23 @@ function ResumeFormContainer() {
             <Grid
               item
               xs={12}
-              md={6}
-              sx={{ width: { xs: "100%", md: "340px" } }}
+              sm={6}
+              sx={{ width: { xs: "100%", md: "545px" } }}
             >
               <TextField
-                label="Certification Name"
-                name="name"
+                label="Certification Tile"
+                name="title"
                 value={cert.name}
                 onChange={(e) => handleNestedChange(e, index, "certifications")}
                 fullWidth
+                InputLabelProps={{ shrink: true }}
               />
             </Grid>
             <Grid
               item
               xs={12}
-              md={6}
-              sx={{ width: { xs: "100%", md: "340px" } }}
+              sm={6}
+              sx={{ width: { xs: "100%", md: "545px" } }}
             >
               <TextField
                 label="Issuer"
@@ -615,29 +952,124 @@ function ResumeFormContainer() {
             <Grid
               item
               xs={12}
-              md={6}
-              sx={{ width: { xs: "100%", md: "340px" } }}
+              sm={6}
+              sx={{ width: { xs: "100%", md: "545px" } }}
             >
               <TextField
                 label="Date"
                 name="date"
+                type="date"
                 value={cert.date}
+                onChange={(e) => handleNestedChange(e, index, "certifications")}
+                fullWidth
+                InputLabelProps={{ shrink: true }}
+              />
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              sx={{ width: { xs: "100%", md: "545px" } }}
+            >
+              <TextField
+                label="Skills (comma-separated)"
+                name="skills"
+                value={cert.skills}
                 onChange={(e) => handleNestedChange(e, index, "certifications")}
                 fullWidth
               />
             </Grid>
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              sx={{ width: { xs: "100%", md: "1105px" } }}
+            >
+              <TextField
+                label="Category"
+                name="category"
+                value={cert.category}
+                onChange={(e) => handleNestedChange(e, index, "certifications")}
+                fullWidth
+              />
+            </Grid>
+            {/* Upload Certificate File */}
+            <Grid item xs={12}>
+              <Button
+                variant="outlined"
+                component="label"
+                sx={{
+                  px: 3,
+                  py: 2,
+                  borderRadius: 2,
+                  borderLeft: "4px solid #1976d2",
+                }}
+              >
+                Upload Certificate File
+                <input
+                  type="file"
+                  hidden
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (!file) return;
+
+                    setFormData((prev) => {
+                      const updated = [...prev.certifications];
+                      updated[index] = {
+                        ...updated[index],
+                        file, // store file locally
+                      };
+                      return { ...prev, certifications: updated };
+                    });
+                  }}
+                />
+              </Button>
+            </Grid>
+
+            {/* Already Uploaded Certificate Link */}
+            {/* Uploaded Certificates - ATTRACTIVE */}
+            {cert.file_url && (
+              <Grid item xs={12}>
+                <Typography variant="body2" mb={1}>
+                  Uploaded Certificate
+                </Typography>
+
+                <Box display="flex" gap={1} flexWrap="wrap">
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    href={cert.file_url}
+                    target="_blank"
+                    sx={{
+                      textTransform: "none",
+                      borderRadius: 2,
+                      color: "text.primary", // ✅ NOT blue
+                      borderColor: "grey.400", // subtle border
+                      "&:hover": {
+                        backgroundColor: "grey.100",
+                        borderColor: "grey.600",
+                      },
+                    }}
+                  >
+                    {cert.name || "View Certificate"}
+                  </Button>
+                </Box>
+              </Grid>
+            )}
           </Grid>
         ))}
+
         <Button
           variant="outlined"
-          onClick={() => handleAdd("certifications")}
+          onClick={() => handleAdd("internships")}
           sx={{
             px: 2,
             py: 2,
             fontSize: "1rem",
             borderRadius: 2,
             mb: 3,
-            borderLeft: "4px solid #1976d2",
+            borderLeft: "4px solid #1976d2", // example left border color
+            // Keep border and background consistent on focus and active
             "&:focus": {
               outline: "none",
               backgroundColor: "transparent",
@@ -649,7 +1081,7 @@ function ResumeFormContainer() {
             },
           }}
         >
-          + Add Certification
+          + Add Certificate
         </Button>
 
         <Divider sx={{ my: 3 }} />
@@ -664,7 +1096,7 @@ function ResumeFormContainer() {
               item
               xs={12}
               md={6}
-              sx={{ width: { xs: "100%", md: "340px" } }}
+              sx={{ width: { xs: "100%", md: "545px" } }}
             >
               <TextField
                 label="Award Name"
@@ -678,7 +1110,7 @@ function ResumeFormContainer() {
               item
               xs={12}
               md={6}
-              sx={{ width: { xs: "100%", md: "340px" } }}
+              sx={{ width: { xs: "100%", md: "545px" } }}
             >
               <TextField
                 label="Description"

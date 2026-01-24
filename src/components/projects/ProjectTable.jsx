@@ -9,14 +9,16 @@ import {
   Button,
   Chip,
   Stack,
+  Box,
 } from "@mui/material";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import { formatDuration } from "../../utils/dateUtils";
 
-export default function ProjectTable({ data, onEdit, onDelete }) {
+export default function ProjectTable({ data, onEdit, onDelete, onFiles }) {
   return (
     <TableContainer component={Paper}>
       <Table>
+        {/* ---------- HEADER ---------- */}
         <TableHead>
           <TableRow>
             <TableCell><b>Title</b></TableCell>
@@ -24,14 +26,16 @@ export default function ProjectTable({ data, onEdit, onDelete }) {
             <TableCell><b>Duration</b></TableCell>
             <TableCell><b>Technologies</b></TableCell>
             <TableCell><b>GitHub</b></TableCell>
-            <TableCell><b>Actions</b></TableCell>
+            <TableCell align="right"><b>Actions</b></TableCell>
           </TableRow>
         </TableHead>
 
+        {/* ---------- BODY ---------- */}
         <TableBody>
           {data.map((project) => (
             <TableRow key={project.id}>
               <TableCell>{project.title}</TableCell>
+
               <TableCell>{project.role}</TableCell>
 
               <TableCell>
@@ -59,21 +63,34 @@ export default function ProjectTable({ data, onEdit, onDelete }) {
                 )}
               </TableCell>
 
-              <TableCell>
-                <Button size="small" variant="outlined"
-                  onClick={() => onEdit(project)}>
-                  Edit
-                </Button>
+              {/* ---------- ACTIONS ---------- */}
+              <TableCell align="right">
+                <Box display="flex" gap={1} justifyContent="flex-end">
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    onClick={() => onEdit(project)}
+                  >
+                    Edit
+                  </Button>
 
-                <Button
-                  size="small"
-                  color="error"
-                  sx={{ ml: 1 }}
-                  variant="outlined"
-                  onClick={() => onDelete(project.id)}
-                >
-                  Delete
-                </Button>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    onClick={() => onFiles(project.id)}
+                  >
+                    Files
+                  </Button>
+
+                  <Button
+                    size="small"
+                    color="error"
+                    variant="outlined"
+                    onClick={() => onDelete(project.id)}
+                  >
+                    Delete
+                  </Button>
+                </Box>
               </TableCell>
             </TableRow>
           ))}
