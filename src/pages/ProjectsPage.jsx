@@ -71,7 +71,10 @@ export default function ProjectsPage() {
   return (
     <>
       {/* HEADER */}
-      <Box mb={2} display="flex" justifyContent="flex-end">
+      <Box display="flex" justifyContent="space-between" mb={2} color="black" padding="24px">
+              <Typography variant="h5" fontWeight="bold" color="black">
+                Project Tracker
+              </Typography>
         <Button
           variant="contained"
           onClick={() => {

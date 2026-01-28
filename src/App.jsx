@@ -233,35 +233,13 @@ function App() {
         >
           <Route index element={<StudentDashboardHome />} />
 
-          <Route
-            path="/student/dashboard/personalDetails"
-            element={<PersonalDetailsPage />}
-          />
-
-          <Route
-            path="/student/dashboard/education"
-            element={<EducationPage />}
-          />
-
+          <Route path="personalDetails" element={<PersonalDetailsPage />} />
+          <Route path="education" element={<EducationPage />} />
           <Route path="internships" element={<InternshipTrackerContainer />} />
-
           <Route path="projects" element={<ProjectsPage />} />
-
-          <Route
-            path="/student/dashboard/certificates"
-            element={<StudentCertificatesPage />}
-          />
-
-          <Route
-            path="/student/dashboard/skills"
-            element={<SkillsPage />}
-          />
-
-          <Route
-            path="/student/dashboard/notifications"
-            element={<NotificationsPage/>}
-          />
-
+          <Route path="certificates" element={<StudentCertificatesPage />} />
+          <Route path="skills" element={<SkillsPage />} />
+          <Route path="notifications" element={<NotificationsPage />} />
           <Route path="resume" element={<ResumeBuilderPage />} />
         </Route>
         {/* ---------------- STUDENT PAGES (OUTSIDE DASHBOARD) ---------------- */}

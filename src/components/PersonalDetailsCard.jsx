@@ -1,4 +1,3 @@
-// PersonalDetailsPage.jsx (No changes needed)
 import { Box, Typography, Paper } from "@mui/material";
 import PersonalDetailsContainer from "../containers/PersonalDetailsContainer";
 
@@ -9,6 +8,7 @@ export default function PersonalDetailsPage() {
         <Typography variant="h6" fontWeight="bold" mb={2}>
           Personal Details
         </Typography>
+
         <PersonalDetailsContainer />
       </Paper>
     </Box>

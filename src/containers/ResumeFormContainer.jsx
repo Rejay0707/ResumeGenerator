@@ -16,6 +16,8 @@ import { getCompletedInternships } from "../services/internships.api";
 import { getProjects, getProjectFiles } from "../services/projectApi";
 import { getCertificates } from "../services/certificateApi";
 import { getUserSkills } from "../services/skillApi";
+import { getPersonalDetails } from "../services/personalDetailsApi";
+import { getEducation } from "../services/educationApi";
 
 function ResumeFormContainer() {
   const user = useSelector((state) => state.auth.user);
@@ -26,15 +28,17 @@ function ResumeFormContainer() {
     phone: "",
     github: "",
     linkedin: "",
-    education: {
-      level: "college", // school | college
-      institution: "",
-      board: "",
-      degree: "",
-      field_of_study: "",
-      start_year: "",
-      end_year: "",
-    },
+    education: [
+      {
+        level: "college",
+        institution: "",
+        board: "",
+        degree: "",
+        field_of_study: "",
+        start_year: "",
+        end_year: "",
+      },
+    ],
 
     projects: [
       {
@@ -163,19 +167,54 @@ function ResumeFormContainer() {
       });
   }, [user?.id]);
 
+  useEffect(() => {
+    if (!user?.id) return;
+    getPersonalDetails(user.id).then((res) => {
+      if (res.data) {
+        setFormData((prev) => ({
+          ...prev,
+          name: res.data.full_name || prev.name,
+          phone: res.data.phone || prev.phone,
+          github: res.data.github_url || prev.github,
+          linkedin: res.data.linkedin_url || prev.linkedin,
+          // Email remains as user?.email (login email, not overridden)
+        }));
+      }
+    });
+  }, [user?.id]);
+
+  useEffect(() => {
+    if (!user?.id) return;
+    getEducation(user.id).then((res) => {
+      setFormData((prev) => ({
+        ...prev,
+        education: res.data.length
+          ? res.data.map((edu) => ({
+              level: edu.level || "college",
+              institution: edu.institution || "",
+              board: edu.board || "",
+              degree: edu.degree || "",
+              field_of_study: edu.field_of_study || "",
+              start_year: edu.start_year || "",
+              end_year: edu.end_year || "",
+            }))
+          : prev.education,
+      }));
+    });
+  }, [user?.id]);
+
   // Handle input for simple fields
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleProjectFileChange = (e, index) => {
-    const files = Array.from(e.target.files);
-
+    const files = Array.from(e.target.files); // Array of File objects
     setFormData((prev) => {
       const updatedProjects = [...prev.projects];
       updatedProjects[index] = {
         ...updatedProjects[index],
-        files,
+        files, // Store as array of File objects
       };
       return { ...prev, projects: updatedProjects };
     });
@@ -216,6 +255,18 @@ function ResumeFormContainer() {
   const handleAdd = (type) => {
     let newItem;
     switch (type) {
+      case "education":
+        newItem = {
+          level: "college",
+          institution: "",
+          board: "",
+          degree: "",
+          field_of_study: "",
+          start_year: "",
+          end_year: "",
+        };
+        break;
+
       case "projects":
         newItem = {
           title: "",
@@ -386,6 +437,49 @@ function ResumeFormContainer() {
   //   }
   // };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+
+  //   try {
+  //     if (!user) {
+  //       alert("Please log in first.");
+  //       return;
+  //     }
+
+  //     const formattedData = {
+  //       ...formData,
+  //       skills: formData.skills
+  //         .split(",")
+  //         .map((s) => s.trim())
+  //         .filter(Boolean),
+  //     };
+
+  //     const response = await axios.post(
+  //       "https://www.scratchprod.in/resume-generator-backend/api/resumes",
+  //       formattedData,
+  //       {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //       },
+  //     );
+
+  //     const newResumeId = response.data?.id;
+
+  //     if (newResumeId) {
+  //       navigate("/preview", { state: { resumeId: newResumeId } });
+  //     } else {
+  //       alert("Resume saved but ID not returned.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error saving resume:", error);
+  //     alert("Something went wrong while saving the resume.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -396,26 +490,156 @@ function ResumeFormContainer() {
         return;
       }
 
-      const formattedData = {
-        ...formData,
-        skills: formData.skills
-          .split(",")
-          .map((s) => s.trim())
-          .filter(Boolean),
-      };
+      const formDataToSend = new FormData();
+
+      // Basic fields
+      formDataToSend.append("student_id", user.id);
+      formDataToSend.append("name", formData.name);
+      formDataToSend.append("email", formData.email);
+      formDataToSend.append("phone", formData.phone);
+      formDataToSend.append("github", formData.github);
+      formDataToSend.append("linked_in", formData.linkedin);
+
+      // Education as indexed keys
+      formData.education.forEach((edu, index) => {
+        if (edu.level === "school") {
+          formDataToSend.append(`education[${index}][board]`, edu.board || "");
+          formDataToSend.append(`education[${index}][grade]`, edu.degree || "");
+        } else if (edu.level === "college") {
+          const startDate = new Date(edu.start_year);
+          const endDate =
+            edu.end_year === "Present" ? new Date() : new Date(edu.end_year);
+          const startMonth = startDate.getMonth() + 1;
+          const startYear = startDate.getFullYear();
+          const endMonth = endDate.getMonth() + 1;
+          const endYear = endDate.getFullYear();
+          const yearString =
+            isNaN(startYear) || isNaN(endYear)
+              ? ""
+              : `${startMonth}/${startYear}-${endMonth}/${endYear}`;
+          formDataToSend.append(
+            `education[${index}][degree]`,
+            edu.degree || "",
+          );
+          formDataToSend.append(
+            `education[${index}][college]`,
+            edu.institution || "",
+          );
+          formDataToSend.append(`education[${index}][year]`, yearString);
+        }
+      });
+
+      // Skills as indexed keys (array of strings)
+      const skillsArray = formData.skills
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
+      skillsArray.forEach((skill, index) => {
+        formDataToSend.append(`skills[${index}]`, skill);
+      });
+
+      // Certifications as indexed keys (with files)
+      formData.certifications.forEach((cert, index) => {
+        if (cert.name && cert.issuer) {
+          const certDate = new Date(cert.issue_date || cert.date);
+          const formattedDate = isNaN(certDate.getTime())
+            ? ""
+            : `${certDate.getDate().toString().padStart(2, "0")}-${(certDate.getMonth() + 1).toString().padStart(2, "0")}-${certDate.getFullYear()}`;
+          formDataToSend.append(
+            `certifications[${index}][name]`,
+            cert.title || cert.name || "",
+          );
+          formDataToSend.append(
+            `certifications[${index}][issuer]`,
+            cert.issuer || "",
+          );
+          formDataToSend.append(
+            `certifications[${index}][date]`,
+            formattedDate,
+          );
+          if (cert.file instanceof File) {
+            formDataToSend.append(`certifications[${index}][file]`, cert.file);
+          }
+        }
+      });
+
+      // Awards as indexed keys
+      formData.awards.forEach((award, index) => {
+        if (award.name) {
+          formDataToSend.append(`awards[${index}][name]`, award.name || "");
+          formDataToSend.append(
+            `awards[${index}][description]`,
+            award.description || "",
+          );
+        }
+      });
+
+      // Projects as indexed keys (with files)
+      formData.projects.forEach((proj, index) => {
+        if (proj.title) {
+          const startDate = new Date(proj.start_date);
+          const endDate = new Date(proj.end_date);
+          const startMonth = startDate.getMonth() + 1;
+          const startYear = startDate.getFullYear();
+          const endMonth = endDate.getMonth() + 1;
+          const endYear = endDate.getFullYear();
+          const dateString =
+            isNaN(startYear) || isNaN(endYear)
+              ? ""
+              : `${startMonth}/${startYear}-${endMonth}/${endYear}`;
+          formDataToSend.append(`projects[${index}][title]`, proj.title || "");
+          formDataToSend.append(
+            `projects[${index}][description]`,
+            proj.description || "",
+          );
+          formDataToSend.append(
+            `projects[${index}][technologies]`,
+            formData.skills || "",
+          );
+          formDataToSend.append(`projects[${index}][role]`, "Developer"); // Add a 'role' field to the form
+          formDataToSend.append(`projects[${index}][date]`, dateString);
+          if (proj.files && proj.files[0] instanceof File) {
+            formDataToSend.append(`projects[${index}][file]`, proj.files[0]);
+          }
+        }
+      });
+
+      // Internships as indexed keys
+      formData.internships.forEach((intern, index) => {
+        if (intern.company) {
+          const startDate = new Date(intern.start_date);
+          const endDate = new Date(intern.end_date);
+          const startMonth = startDate.getMonth() + 1;
+          const startYear = startDate.getFullYear();
+          const endMonth = endDate.getMonth() + 1;
+          const endYear = endDate.getFullYear();
+          const yearString =
+            isNaN(startYear) || isNaN(endYear)
+              ? ""
+              : `${startMonth}/${startYear} - ${endMonth}/${endYear}`;
+          formDataToSend.append(
+            `internships[${index}][company]`,
+            intern.company || "",
+          );
+          formDataToSend.append(
+            `internships[${index}][role]`,
+            intern.role || "",
+          );
+          formDataToSend.append(`internships[${index}][year]`, yearString);
+        }
+      });
 
       const response = await axios.post(
         "https://www.scratchprod.in/resume-generator-backend/api/resumes",
-        formattedData,
+        formDataToSend,
         {
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "multipart/form-data",
           },
         },
       );
 
       const newResumeId = response.data?.id;
-
       if (newResumeId) {
         navigate("/preview", { state: { resumeId: newResumeId } });
       } else {
@@ -423,6 +647,7 @@ function ResumeFormContainer() {
       }
     } catch (error) {
       console.error("Error saving resume:", error);
+      console.error("Backend validation errors:", error.response?.data);
       alert("Something went wrong while saving the resume.");
     } finally {
       setLoading(false);
@@ -479,7 +704,12 @@ function ResumeFormContainer() {
               fullWidth
             />
           </Grid>
-          <Grid item xs={12} sm={6} sx={{ width: { xs: "100%", md: "1105px" } }}>
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            sx={{ width: { xs: "100%", md: "1105px" } }}
+          >
             <TextField
               label="LinkedIn URL"
               name="linkedin"
@@ -494,111 +724,159 @@ function ResumeFormContainer() {
 
         {/* Education */}
         {/* Education */}
+        {/* Education */}
         <Typography variant="h6" mb={1}>
           Education
         </Typography>
 
-        <Grid container spacing={2} sx={{ width: "100%" }}>
-          {/* Education Level */}
-          <Grid item xs={12} sm={6} sx={{ width: { xs: "100%", md: "545px" } }}>
-            <TextField
-              select
-              label="Education Level"
-              name="level"
-              value={formData.education.level}
-              onChange={handleEducationLevelChange}
-              fullWidth
+        {formData.education.map((edu, index) => (
+          <Grid container spacing={2} mb={3} key={index} sx={{ width: "100%" }}>
+            {/* Education Level */}
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              sx={{ width: { xs: "100%", md: "545px" } }}
             >
-              <MenuItem value="school">School</MenuItem>
-              <MenuItem value="college">College</MenuItem>
-            </TextField>
-          </Grid>
-
-          {/* Institution */}
-          <Grid item xs={12} sm={6} sx={{ width: { xs: "100%", md: "545px" } }}>
-            <TextField
-              label="Institution"
-              name="institution"
-              value={formData.education.institution}
-              onChange={handleEducationChange}
-              fullWidth
-              required
-            />
-          </Grid>
-
-          {/* SCHOOL FIELDS */}
-          {formData.education.level === "school" && (
-            <Grid item xs={12} sx={{ width: { xs: "100%", md: "1105px" } }}>
               <TextField
-                label="Board"
-                name="board"
-                value={formData.education.board}
-                onChange={handleEducationChange}
+                select
+                label="Education Level"
+                name="level"
+                value={edu.level}
+                onChange={(e) => handleNestedChange(e, index, "education")}
+                fullWidth
+              >
+                <MenuItem value="school">School</MenuItem>
+                <MenuItem value="college">College</MenuItem>
+              </TextField>
+            </Grid>
+
+            {/* Institution */}
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              sx={{ width: { xs: "100%", md: "545px" } }}
+            >
+              <TextField
+                label="Institution"
+                name="institution"
+                value={edu.institution}
+                onChange={(e) => handleNestedChange(e, index, "education")}
                 fullWidth
                 required
               />
             </Grid>
-          )}
 
-          {/* COLLEGE FIELDS */}
-          {formData.education.level === "college" && (
-            <>
-              <Grid
-                item
-                xs={12}
-                sm={6}
-                sx={{ width: { xs: "100%", md: "545px" } }}
-              >
+            {/* SCHOOL FIELDS */}
+            {edu.level === "school" && (
+              <Grid item xs={12} sx={{ width: { xs: "100%", md: "1105px" } }}>
                 <TextField
-                  label="Degree"
-                  name="degree"
-                  value={formData.education.degree}
-                  onChange={handleEducationChange}
+                  label="Board"
+                  name="board"
+                  value={edu.board}
+                  onChange={(e) => handleNestedChange(e, index, "education")}
                   fullWidth
                   required
                 />
               </Grid>
+            )}
 
-              <Grid
-                item
-                xs={12}
-                sm={6}
-                sx={{ width: { xs: "100%", md: "545px" } }}
-              >
-                <TextField
-                  label="Field of Study"
-                  name="field_of_study"
-                  value={formData.education.field_of_study}
-                  onChange={handleEducationChange}
-                  fullWidth
-                />
-              </Grid>
-            </>
-          )}
+            {/* COLLEGE FIELDS */}
+            {edu.level === "college" && (
+              <>
+                <Grid
+                  item
+                  xs={12}
+                  sm={6}
+                  sx={{ width: { xs: "100%", md: "545px" } }}
+                >
+                  <TextField
+                    label="Degree"
+                    name="degree"
+                    value={edu.degree}
+                    onChange={(e) => handleNestedChange(e, index, "education")}
+                    fullWidth
+                    required
+                  />
+                </Grid>
 
-          {/* YEARS */}
-          <Grid item xs={12} sm={6} sx={{ width: { xs: "100%", md: "545px" } }}>
-            <TextField
-              label="Start Year"
-              name="start_year"
-              value={formData.education.start_year}
-              onChange={handleEducationChange}
-              fullWidth
-              required
-            />
+                <Grid
+                  item
+                  xs={12}
+                  sm={6}
+                  sx={{ width: { xs: "100%", md: "545px" } }}
+                >
+                  <TextField
+                    label="Field of Study"
+                    name="field_of_study"
+                    value={edu.field_of_study}
+                    onChange={(e) => handleNestedChange(e, index, "education")}
+                    fullWidth
+                  />
+                </Grid>
+              </>
+            )}
+
+            {/* YEARS */}
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              sx={{ width: { xs: "100%", md: "545px" } }}
+            >
+              <TextField
+                label="Start Year"
+                name="start_year"
+                value={edu.start_year}
+                onChange={(e) => handleNestedChange(e, index, "education")}
+                fullWidth
+                required
+              />
+            </Grid>
+
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              sx={{ width: { xs: "100%", md: "545px" } }}
+            >
+              <TextField
+                label="End Year"
+                name="end_year"
+                value={edu.end_year}
+                onChange={(e) => handleNestedChange(e, index, "education")}
+                fullWidth
+                required
+              />
+            </Grid>
           </Grid>
+        ))}
 
-          <Grid item xs={12} sm={6} sx={{ width: { xs: "100%", md: "545px" } }}>
-            <TextField
-              label="End Year"
-              name="end_year"
-              value={formData.education.end_year}
-              onChange={handleEducationChange}
-              fullWidth
-              required
-            />
-          </Grid>
-        </Grid>
+        {/* Add Education Button */}
+        <Button
+          variant="outlined"
+          onClick={() => handleAdd("education")}
+          sx={{
+            px: 2,
+            py: 2,
+            fontSize: "1rem",
+            borderRadius: 2,
+            mb: 3,
+            borderLeft: "4px solid #1976d2",
+            "&:focus": {
+              outline: "none",
+              backgroundColor: "transparent",
+              borderLeft: "4px solid #1976d2",
+            },
+            "&:active": {
+              backgroundColor: "transparent",
+              borderLeft: "4px solid #1976d2",
+            },
+          }}
+        >
+          + Add Education
+        </Button>
 
         <Divider sx={{ my: 3 }} />
 
@@ -927,10 +1205,10 @@ function ResumeFormContainer() {
               sx={{ width: { xs: "100%", md: "545px" } }}
             >
               <TextField
-                label="Certification Tile"
+                label="Certification Title" // Fixed typo: "Tile" -> "Title"
                 name="title"
-                value={cert.name}
-                onChange={(e) => handleNestedChange(e, index, "certifications")}
+                value={cert.title || cert.name || ""} // Use 'title' consistently
+                onChange={(e) => handleNestedChange(e, index, "certifications")} // Fixed: Use handleNestedChange
                 fullWidth
                 InputLabelProps={{ shrink: true }}
               />
