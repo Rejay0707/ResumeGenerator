@@ -1,5 +1,18 @@
 import { useEffect, useState } from "react";
-import { Box, Button, Grid } from "@mui/material";
+import {
+  Box,
+  Button,
+  Grid,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  useMediaQuery,
+  Tooltip,
+  IconButton,
+  Typography,
+} from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 import {
   getEducation,
   addEducation,
@@ -21,8 +34,8 @@ const emptyForm = {
   end_year: "",
 };
 
-
 export default function EducationContainer() {
+  const isMobile = useMediaQuery("(max-width:900px)");
   const user = JSON.parse(localStorage.getItem("user"));
   const userId = user?.id;
 
@@ -45,20 +58,19 @@ export default function EducationContainer() {
   };
 
   const handleOpenEdit = (item) => {
-  setForm({
-    id: item.id || null,
-    level: item.level || "college",
-    institution: item.institution || "",
-    degree: item.degree || "",
-    field_of_study: item.field_of_study || "",
-    board: item.board || "",
-    grade: item.grade || "",
-    start_year: item.start_year || "",
-    end_year: item.end_year || "",
-  });
-  setOpen(true);
-};
-
+    setForm({
+      id: item.id || null,
+      level: item.level || "college",
+      institution: item.institution || "",
+      degree: item.degree || "",
+      field_of_study: item.field_of_study || "",
+      board: item.board || "",
+      grade: item.grade || "",
+      start_year: item.start_year || "",
+      end_year: item.end_year || "",
+    });
+    setOpen(true);
+  };
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -73,16 +85,48 @@ export default function EducationContainer() {
     fetchEducation();
   };
 
-  const handleDelete = async (id) => {
-    await deleteEducation(id);
-    fetchEducation();
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState(null);
+
+  const confirmDelete = async () => {
+    if (itemToDelete) {
+      await deleteEducation(itemToDelete);
+      fetchEducation();
+    }
+    setDeleteDialogOpen(false);
+    setItemToDelete(null);
   };
 
   return (
-    <Box>
-      <Button variant="contained" sx={{ mb: 2 }} onClick={handleOpenAdd}>
-        Add Education
-      </Button>
+    <Box p={3}>
+      <Box display="flex" justifyContent="space-between" mb={2}>
+        <Typography variant="h5" fontWeight="bold" color="black">
+          Education
+        </Typography>
+
+        {isMobile ? (
+          <Tooltip title="Add Education" arrow placement="left">
+            <IconButton
+              onClick={handleOpenAdd}
+              sx={{
+                backgroundColor: "primary.main",
+                color: "white",
+                "&:hover": {
+                  backgroundColor: "primary.dark",
+                },
+                width: 40,
+                height: 40,
+              }}
+            >
+              <AddIcon />
+            </IconButton>
+          </Tooltip>
+        ) : (
+          <Button variant="contained" onClick={handleOpenAdd}>
+            Add Education
+          </Button>
+        )}
+      </Box>
 
       <Grid container spacing={2}>
         {list.map((item) => (
@@ -90,7 +134,10 @@ export default function EducationContainer() {
             <EducationCard
               item={item}
               onEdit={handleOpenEdit}
-              onDelete={handleDelete}
+              onDelete={() => {
+                setItemToDelete(item.id);
+                setDeleteDialogOpen(true);
+              }}
             />
           </Grid>
         ))}
@@ -103,6 +150,22 @@ export default function EducationContainer() {
         onChange={handleChange}
         onSave={handleSave}
       />
+
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+      >
+        <DialogTitle>Confirm Delete</DialogTitle>
+        <DialogContent>
+          Are you sure you want to delete this education entry?
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
+          <Button onClick={confirmDelete} color="error">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

@@ -1,10 +1,17 @@
 import React, { useEffect, useState } from "react";
+import AddIcon from "@mui/icons-material/Add";
 import {
   Box,
   Typography,
   Button,
   useMediaQuery,
   CircularProgress,
+  Tooltip,
+  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import InternshipTable from "../components/internship/InternshipTable";
 import InternshipCards from "../components/internship/InternshipCards";
@@ -21,6 +28,8 @@ export default function InternshipTrackerContainer() {
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState(null);
 
   useEffect(() => {
     if (userId) {
@@ -39,27 +48,26 @@ export default function InternshipTrackerContainer() {
       // console.log("FETCH RESPONSE:", res.data);
 
       const formatted = res.data.map((item) => ({
-  id: item.id,
-  company: item.company,
-  role: item.role,
-  internship_type: item.internship_type,
-  start_date: item.start_date,
-  end_date: item.end_date,
-  applied_date: item.applied_date,
-  status: item.status,
-  mentor_feedback: item.mentor_feedback,
-  student_learnings: item.student_learnings,
-  description: item.description,
-  notes: item.notes,
-  duration: `${item.start_date} – ${item.end_date || "Present"}`,
-}));
-
+        id: item.id,
+        company: item.company,
+        role: item.role,
+        internship_type: item.internship_type,
+        start_date: item.start_date,
+        end_date: item.end_date,
+        applied_date: item.applied_date,
+        status: item.status,
+        mentor_feedback: item.mentor_feedback,
+        student_learnings: item.student_learnings,
+        description: item.description,
+        notes: item.notes,
+        duration: `${item.start_date} – ${item.end_date || "Present"}`,
+      }));
 
       setInternships(formatted);
     } catch (error) {
       console.error(
         "Failed to fetch internships:",
-        error.response?.data || error.message
+        error.response?.data || error.message,
       );
     } finally {
       setLoading(false);
@@ -76,19 +84,25 @@ export default function InternshipTrackerContainer() {
     setOpen(true);
   };
 
-  const handleDelete = async (id) => {
-    try {
-      console.log("DELETING INTERNSHIP ID:", id);
+  const handleDelete = (id) => {
+    setItemToDelete(id);
+    setDeleteDialogOpen(true);
+  };
 
-      await api.delete(`/api/internships/tracker/${id}`);
-
-      fetchInternships(); // refresh list after delete
-    } catch (error) {
-      console.error(
-        "Failed to delete internship:",
-        error.response?.data || error.message
-      );
+  const confirmDelete = async () => {
+    if (itemToDelete) {
+      try {
+        await api.delete(`/api/internships/tracker/${itemToDelete}`);
+        fetchInternships();
+      } catch (error) {
+        console.error(
+          "Failed to delete internship:",
+          error.response?.data || error.message,
+        );
+      }
     }
+    setDeleteDialogOpen(false);
+    setItemToDelete(null);
   };
 
   const handleClose = () => {
@@ -126,7 +140,7 @@ export default function InternshipTrackerContainer() {
     } catch (error) {
       console.error(
         "Failed to save internship:",
-        error.response?.data || error.message
+        error.response?.data || error.message,
       );
     }
   };
@@ -138,9 +152,28 @@ export default function InternshipTrackerContainer() {
           Internship Tracker
         </Typography>
 
-        <Button variant="contained" onClick={handleAdd}>
-          Add Internship
-        </Button>
+        {isMobile ? (
+          <Tooltip title="Add Internship" arrow placement="left">
+            <IconButton
+              onClick={handleAdd}
+              sx={{
+                backgroundColor: "primary.main",
+                color: "white",
+                "&:hover": {
+                  backgroundColor: "primary.dark",
+                },
+                width: 40,
+                height: 40,
+              }}
+            >
+              <AddIcon />
+            </IconButton>
+          </Tooltip>
+        ) : (
+          <Button variant="contained" onClick={handleAdd}>
+            Add Internship
+          </Button>
+        )}
       </Box>
 
       {!internships.length ? (
@@ -166,6 +199,22 @@ export default function InternshipTrackerContainer() {
         readOnly={selected?.status === "completed"}
         onSave={handleSave}
       />
+
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+      >
+        <DialogTitle>Confirm Delete</DialogTitle>
+        <DialogContent>
+          Are you sure you want to delete this internship?
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
+          <Button onClick={confirmDelete} color="error">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

@@ -13,14 +13,14 @@ export const getNotifications = (userId) => {
  * MARK single notification as read
  */
 export const markNotificationRead = (notificationId) => {
-  return api.put(`/api/notifications/${notificationId}/read`);
+  return api.patch(`/api/notifications/${notificationId}/read`);
 };
 
 /**
  * MARK all notifications as read
  */
 export const markAllNotificationsRead = (userId) => {
-  return api.put(`/api/notifications/read-all`, {
+  return api.patch(`/api/notifications/read-all`, {
     user_id: userId,
   });
 };

@@ -6,7 +6,11 @@ import {
   Typography,
   useTheme,
   useMediaQuery,
+  Tooltip,
+  IconButton,
 } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+
 import { useState } from "react";
 
 import ProjectsContainer from "../containers/ProjectsContainer";
@@ -71,19 +75,48 @@ export default function ProjectsPage() {
   return (
     <>
       {/* HEADER */}
-      <Box display="flex" justifyContent="space-between" mb={2} color="black" padding="24px">
-              <Typography variant="h5" fontWeight="bold" color="black">
-                Project Tracker
-              </Typography>
-        <Button
-          variant="contained"
-          onClick={() => {
-            setEditData(null);
-            setOpenDialog(true);
-          }}
-        >
-          Add Project
-        </Button>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        mb={2}
+        color="black"
+        padding="24px"
+      >
+        <Typography variant="h5" fontWeight="bold" color="black">
+          Project Tracker
+        </Typography>
+
+        {isMobile ? (
+          <Tooltip title="Add Project" arrow placement="left">
+            <IconButton
+              onClick={() => {
+                setEditData(null);
+                setOpenDialog(true);
+              }}
+              sx={{
+                backgroundColor: "primary.main",
+                color: "white",
+                width: 40,
+                height: 40,
+                "&:hover": {
+                  backgroundColor: "primary.dark",
+                },
+              }}
+            >
+              <AddIcon />
+            </IconButton>
+          </Tooltip>
+        ) : (
+          <Button
+            variant="contained"
+            onClick={() => {
+              setEditData(null);
+              setOpenDialog(true);
+            }}
+          >
+            Add Project
+          </Button>
+        )}
       </Box>
 
       {/* CONTENT */}
@@ -150,9 +183,7 @@ export default function ProjectsPage() {
         initialData={editData}
         onClose={handleCloseDialog}
         onSubmit={(data) =>
-          editData
-            ? handleUpdate(editData.id, data)
-            : handleCreate(data)
+          editData ? handleUpdate(editData.id, data) : handleCreate(data)
         }
       />
 

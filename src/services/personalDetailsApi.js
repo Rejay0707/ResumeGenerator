@@ -11,3 +11,7 @@ export const getPersonalDetails = (userId) => {
 export const savePersonalDetails = (data) => {
   return api.post("/api/profile/personal", data);
 };
+
+export const updatePersonalDetails = (id, data) => {
+  return api.put(`/api/profile/personal/${id}`, data);  // ID in path, data without user_id
+};

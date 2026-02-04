@@ -18,7 +18,7 @@ import SubjectsPage from "./pages/admin/SubjectsPage";
 import TimetablePage from "./pages/admin/TimeTablePage";
 
 import StudentDashboardLayout from "./layouts/StudentDashboardLayout";
-import StudentDashboardHome from "./pages/StudentDashboardHome";
+import StudentDashboardPage from "./pages/StudentDashboardPage";
 import PersonalDetailsPage from "./pages/PersonalDetailsPage";
 import EducationPage from "./pages/EducationPage";
 import InternshipTrackerContainer from "./containers/InternshipTrackerContainer";
@@ -214,7 +214,7 @@ function App() {
   // );
 
   return (
-    <Router>
+    <Router >
       <Routes>
         {/* Public Routes */}
         <Route path="/login" element={<LoginPage />} />
@@ -231,7 +231,7 @@ function App() {
             </ProtectedRoute>
           }
         >
-          <Route index element={<StudentDashboardHome />} />
+          <Route index element={<StudentDashboardPage />} />
 
           <Route path="personalDetails" element={<PersonalDetailsPage />} />
           <Route path="education" element={<EducationPage />} />

@@ -6,8 +6,13 @@ import {
   TextField,
   MenuItem,
   Button,
+  Grid,
 } from "@mui/material";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { useState, useEffect } from "react";
+import { format } from "date-fns"; // Assuming date-fns is installed for formatting
 
 export default function InternshipDialog({
   open,
@@ -20,9 +25,9 @@ export default function InternshipDialog({
     company: "",
     role: "",
     internship_type: "",
-    start_date: "",
-    end_date: "",
-    applied_date: "",
+    start_date: null, // Changed to Date object
+    end_date: null, // Changed to Date object
+    applied_date: null, // Changed to Date object
     status: "applied",
     description: "",
     mentor_feedback: "",
@@ -35,9 +40,9 @@ export default function InternshipDialog({
         company: data.company || "",
         role: data.role || "",
         internship_type: data.internship_type || "",
-        start_date: data.start_date || "",
-        end_date: data.end_date || "",
-        applied_date: data.applied_date || "",
+        start_date: data.start_date ? new Date(data.start_date + "-01") : null, // Parse YYYY-MM to Date (add -01 for day)
+        end_date: data.end_date ? new Date(data.end_date + "-01") : null,
+        applied_date: data.applied_date ? new Date(data.applied_date) : null,
         status: data.status || "applied",
         description: data.description || "",
         mentor_feedback: data.mentor_feedback || "",
@@ -49,9 +54,19 @@ export default function InternshipDialog({
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
+  const handleDateChange = (name, value) => setForm({ ...form, [name]: value });
+
   const handleSave = () => {
-    console.log("SAVE CLICKED, PAYLOAD:", form);
-    onSave(form);
+    const payload = {
+      ...form,
+      start_date: form.start_date ? format(form.start_date, "yyyy-MM") : "",
+      end_date: form.end_date ? format(form.end_date, "yyyy-MM") : "",
+      applied_date: form.applied_date
+        ? format(form.applied_date, "yyyy-MM-dd")
+        : "",
+    };
+    console.log("SAVE CLICKED, PAYLOAD:", payload);
+    onSave(payload);
   };
 
   return (
@@ -60,117 +75,148 @@ export default function InternshipDialog({
         {readOnly ? "View Internship" : "Add / Edit Internship"}
       </DialogTitle>
 
-      <DialogContent>
-        <TextField
-          label="Company"
-          name="company"
-          value={form.company}
-          onChange={handleChange}
-          fullWidth
-          margin="dense"
-          disabled={readOnly}
-        />
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <DialogContent>
+          <TextField
+            label="Company"
+            name="company"
+            value={form.company}
+            onChange={handleChange}
+            fullWidth
+            margin="dense"
+            disabled={readOnly}
+          />
 
-        <TextField
-          label="Role"
-          name="role"
-          value={form.role}
-          onChange={handleChange}
-          fullWidth
-          margin="dense"
-          disabled={readOnly}
-        />
+          <TextField
+            label="Role"
+            name="role"
+            value={form.role}
+            onChange={handleChange}
+            fullWidth
+            margin="dense"
+            disabled={readOnly}
+          />
 
-        <TextField
-          label="Internship Type"
-          name="internship_type"
-          value={form.internship_type}
-          onChange={handleChange}
-          fullWidth
-          margin="dense"
-          disabled={readOnly}
-        />
+          <TextField
+            label="Internship Type"
+            name="internship_type"
+            value={form.internship_type}
+            onChange={handleChange}
+            fullWidth
+            margin="dense"
+            disabled={readOnly}
+          />
 
-        <TextField
-          label="Start Date"
-          name="start_date"
-          value={form.start_date}
-          onChange={handleChange}
-          fullWidth
-          margin="dense"
-          disabled={readOnly}
-        />
+          <Grid container spacing={2} sx={{ mt: 1 }}>
+            <Grid item xs={6}>
+              <DatePicker
+                label="Start Date"
+                value={form.start_date}
+                onChange={(value) => handleDateChange("start_date", value)}
+                views={["year", "month"]}
+                inputFormat="yyyy-MM"
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    fullWidth
+                    disabled={readOnly}
+                    sx={{
+                      "& .MuiInputBase-root": {
+                        height: 56,
+                      },
+                    }}
+                  />
+                )}
+                disabled={readOnly}
+              />
+            </Grid>
 
-        <TextField
-          label="End Date"
-          name="end_date"
-          value={form.end_date}
-          onChange={handleChange}
-          fullWidth
-          margin="dense"
-          disabled={readOnly}
-        />
+            <Grid item xs={6}>
+              <DatePicker
+                label="End Date"
+                value={form.end_date}
+                onChange={(value) => handleDateChange("end_date", value)}
+                views={["year", "month"]}
+                inputFormat="yyyy-MM"
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    fullWidth
+                    disabled={readOnly}
+                    sx={{
+                      "& .MuiInputBase-root": {
+                        height: 56,
+                      },
+                    }}
+                  />
+                )}
+                disabled={readOnly}
+              />
+            </Grid>
+          </Grid>
 
-        
+          <TextField
+            label="Applied Date"
+            name="applied_date"
+            type="date"
+            value={form.applied_date}
+            onChange={handleChange}
+            fullWidth
+            margin="dense"
+            disabled={readOnly}
+            InputLabelProps={{ shrink: true }}
+          />
 
-        <TextField
-          label="Applied Date"
-          name="applied_date"
-          value={form.applied_date}
-          onChange={handleChange}
-          fullWidth
-          margin="dense"
-          disabled={readOnly}
-        />
+          <TextField
+            label="Mentor Feedback"
+            name="mentor_feedback"
+            value={form.mentor_feedback}
+            onChange={handleChange}
+            fullWidth
+            margin="dense"
+            multiline
+            rows={2}
+            disabled={readOnly}
+          />
 
-        <TextField
-          label="Mentor Feedback"
-          name="mentor_feedback"
-          value={form.mentor_feedback}
-          onChange={handleChange}
-          fullWidth
-          margin="dense"
-          multiline
-          rows={2}
-          disabled={readOnly}
-        />
+          <TextField
+            label="Student Learnings"
+            name="student_learnings"
+            value={form.student_learnings}
+            onChange={handleChange}
+            fullWidth
+            margin="dense"
+            multiline
+            rows={2}
+            disabled={readOnly}
+          />
 
-        <TextField
-          label="Student Learnings"
-          name="student_learnings"
-          value={form.student_learnings}
-          onChange={handleChange}
-          fullWidth
-          margin="dense"
-          multiline
-          rows={2}
-          disabled={readOnly}
-        />
+          <TextField
+            label="Description"
+            name="description"
+            value={form.description}
+            onChange={handleChange}
+            fullWidth
+            margin="dense"
+            disabled={readOnly}
+          />
 
-        <TextField
-          label="Description"
-          name="description"
-          value={form.description}
-          onChange={handleChange}
-          fullWidth
-          margin="dense"
-          disabled={readOnly}
-        />
-
-        <TextField
-          select
-          name="status"
-          label="Status"
-          value={form.status}
-          onChange={handleChange}
-          fullWidth
-          margin="dense"
-          disabled={false}
-        >
-          <MenuItem value="ongoing">Ongoing</MenuItem>
-          <MenuItem value="completed">Completed</MenuItem>
-        </TextField>
-      </DialogContent>
+          <TextField
+            select
+            name="status"
+            label="Status"
+            value={form.status}
+            onChange={handleChange}
+            fullWidth
+            margin="dense"
+            disabled={readOnly}
+          >
+            <MenuItem value="applied">Applied</MenuItem>
+            <MenuItem value="ongoing">Ongoing</MenuItem>
+            <MenuItem value="completed">Completed</MenuItem>
+          </TextField>
+        </DialogContent>
+      </LocalizationProvider>
 
       <DialogActions>
         <Button onClick={onClose}>Close</Button>

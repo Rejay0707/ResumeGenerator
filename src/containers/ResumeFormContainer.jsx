@@ -35,6 +35,7 @@ function ResumeFormContainer() {
         board: "",
         degree: "",
         field_of_study: "",
+        grade: "",
         start_year: "",
         end_year: "",
       },
@@ -195,6 +196,7 @@ function ResumeFormContainer() {
               board: edu.board || "",
               degree: edu.degree || "",
               field_of_study: edu.field_of_study || "",
+              grade: edu.grade || "",
               start_year: edu.start_year || "",
               end_year: edu.end_year || "",
             }))
@@ -262,6 +264,7 @@ function ResumeFormContainer() {
           board: "",
           degree: "",
           field_of_study: "",
+          grade: "", // Added
           start_year: "",
           end_year: "",
         };
@@ -504,6 +507,7 @@ function ResumeFormContainer() {
       formData.education.forEach((edu, index) => {
         if (edu.level === "school") {
           formDataToSend.append(`education[${index}][board]`, edu.board || "");
+          formDataToSend.append(`education[${index}][grade]`, edu.grade || "");
           formDataToSend.append(`education[${index}][grade]`, edu.degree || "");
         } else if (edu.level === "college") {
           const startDate = new Date(edu.start_year);
@@ -526,6 +530,7 @@ function ResumeFormContainer() {
             edu.institution || "",
           );
           formDataToSend.append(`education[${index}][year]`, yearString);
+          formDataToSend.append(`education[${index}][grade]`, edu.grade || "");
         }
       });
 
@@ -770,16 +775,28 @@ function ResumeFormContainer() {
 
             {/* SCHOOL FIELDS */}
             {edu.level === "school" && (
-              <Grid item xs={12} sx={{ width: { xs: "100%", md: "1105px" } }}>
-                <TextField
-                  label="Board"
-                  name="board"
-                  value={edu.board}
-                  onChange={(e) => handleNestedChange(e, index, "education")}
-                  fullWidth
-                  required
-                />
-              </Grid>
+              <>
+                <Grid item xs={12} sx={{ width: { xs: "100%", md: "545px" } }}>
+                  <TextField
+                    label="Board"
+                    name="board"
+                    value={edu.board}
+                    onChange={(e) => handleNestedChange(e, index, "education")}
+                    fullWidth
+                    required
+                  />
+                </Grid>
+                <Grid item xs={12} sx={{ width: { xs: "100%", md: "545px" } }}>
+                  <TextField
+                    label="Grade"
+                    name="grade"
+                    value={edu.grade}
+                    onChange={(e) => handleNestedChange(e, index, "education")}
+                    fullWidth
+                    required
+                  />
+                </Grid>
+              </>
             )}
 
             {/* COLLEGE FIELDS */}
@@ -811,6 +828,21 @@ function ResumeFormContainer() {
                     label="Field of Study"
                     name="field_of_study"
                     value={edu.field_of_study}
+                    onChange={(e) => handleNestedChange(e, index, "education")}
+                    fullWidth
+                  />
+                </Grid>
+
+                <Grid
+                  item
+                  xs={12}
+                  sm={6}
+                  sx={{ width: { xs: "100%", md: "545px" } }}
+                >
+                  <TextField
+                    label="Grade"
+                    name="grade"
+                    value={edu.grade}
                     onChange={(e) => handleNestedChange(e, index, "education")}
                     fullWidth
                   />

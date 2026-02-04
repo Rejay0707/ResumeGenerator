@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PersonIcon from "@mui/icons-material/Person";
 import SchoolIcon from "@mui/icons-material/School";
@@ -22,6 +22,7 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
+import { Badge } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
 import logo1 from "../../assets/logo1.png";
 
@@ -29,6 +30,25 @@ export default function StudentSidebar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const [unreadCount, setUnreadCount] = useState(
+    JSON.parse(localStorage.getItem("unread_notification_count")) || 0
+  );
+
+  useEffect(() => {
+    const handleNotificationUpdate = () => {
+      setUnreadCount(
+        JSON.parse(localStorage.getItem("unread_notification_count")) || 0
+      );
+    };
+
+    window.addEventListener('notificationCountUpdated', handleNotificationUpdate);
+
+    return () => {
+      window.removeEventListener('notificationCountUpdated', handleNotificationUpdate);
+    };
+  }, [])
+
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
@@ -72,7 +92,15 @@ export default function StudentSidebar() {
     {
       label: "Notifications",
       path: "/student/dashboard/notifications",
-      icon: <NotificationsIcon fontSize="small" />,
+      icon: (
+        <Badge
+          badgeContent={unreadCount}
+          color="error"
+          invisible={unreadCount === 0}
+        >
+          <NotificationsIcon fontSize="small" />
+        </Badge>
+      ),
     },
     {
       label: "Resume",

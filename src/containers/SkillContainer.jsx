@@ -71,7 +71,7 @@ export default function SkillContainer() {
 
       {/* Added key to force re-render when formData changes */}
       <SkillForm
-        key={JSON.stringify(formData)}  // Forces re-render on formData update
+        // key={JSON.stringify(formData)}  // Forces re-render on formData update
         formData={formData}
         setFormData={setFormData}
         onAdd={handleAddSkill}
