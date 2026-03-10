@@ -2,16 +2,17 @@ import { Box, Chip, Typography, LinearProgress } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 
-export default function SectionStatus({
-  title,
-  completedCount,
-  totalCount,
-}) {
+export default function SectionStatus({ title, completedCount, totalCount }) {
   const percentage =
-    totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+    totalCount > 0
+      ? Math.min(Math.round((completedCount / totalCount) * 100), 100)
+      : 0;
 
   const isCompleted = percentage === 100;
   const color = isCompleted ? "success.main" : "warning.main";
+
+  const safeCompleted = Math.min(completedCount, totalCount);
+  const remaining = Math.max(totalCount - completedCount, 0);
 
   return (
     <Box
@@ -51,7 +52,7 @@ export default function SectionStatus({
           sx={{ height: 6, borderRadius: 5 }}
         />
         <Typography variant="caption" color="text.secondary">
-          {completedCount} completed · {totalCount - completedCount} remaining
+          {safeCompleted} completed · {remaining} remaining
         </Typography>
       </Box>
     </Box>

@@ -24,30 +24,41 @@ export default function ProjectsContainer() {
   };
 
   useEffect(() => {
-    fetchProjects();
-  }, []);
+    if (user?.id) {
+      fetchProjects();
+    }
+  }, [user]);
 
   const handleCreate = async (data) => {
-  try {
-    await createProject(user.id, data); // ✅ PASS user.id
-    fetchProjects();
-    setOpenDialog(false);
-  } catch (err) {
-    console.error("Create project failed:", err.response?.data || err.message);
-  }
-};
+    try {
+      await createProject(user.id, data);
+      fetchProjects();
+      setOpenDialog(false);
 
+      // 🔔 Dispatch event after a short delay
+      setTimeout(() => {
+        window.dispatchEvent(new Event("notificationCountUpdated"));
+      }, 1500);
+    } catch (err) {
+      console.error(
+        "Create project failed:",
+        err.response?.data || err.message,
+      );
+    }
+  };
 
   const handleUpdate = async (id, data) => {
-  try {
-    await updateProject(id, { ...data, user_id: user.id });
-    fetchProjects();
-    setEditData(null);
-  } catch (err) {
-    console.error("Update project failed:", err.response?.data || err.message);
-  }
-};
-
+    try {
+      await updateProject(id, { ...data, user_id: user.id });
+      fetchProjects();
+      setEditData(null);
+    } catch (err) {
+      console.error(
+        "Update project failed:",
+        err.response?.data || err.message,
+      );
+    }
+  };
 
   const handleDelete = async (id) => {
     await deleteProject(id);
@@ -64,5 +75,6 @@ export default function ProjectsContainer() {
     handleCreate,
     handleUpdate,
     handleDelete,
+    fetchProjects
   };
 }

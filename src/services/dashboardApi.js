@@ -8,3 +8,8 @@ export const getStudentDashboard = (userId) => {
     params: { user_id: userId },
   });
 };
+
+
+// ✅ NEW — Recent Activity
+export const getRecentActivity = () =>
+  api.get("/api/student/dashboard/recent-activity");

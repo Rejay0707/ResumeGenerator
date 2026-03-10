@@ -6,7 +6,6 @@ const API_BASE_URL = "https://www.scratchprod.in/resume-generator-backend/";
 const api = axios.create({
   baseURL: API_BASE_URL,
   withCredentials: true,
-  
 });
 
 api.interceptors.request.use((config) => {
@@ -35,8 +34,34 @@ api.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
+
+// Add these to your src/services/api.js
+
+// 📧 Email Verification APIs
+export const registerUser = (userData) => {
+  return api.post("/api/register", userData);
+};
+
+// src/services/api.js (add these functions)
+
+export const verifyEmail = (userId, otp) => {
+  return api.post("/api/verify-email", {
+    user_id: userId,
+    otp: otp,
+  });
+};
+
+export const resendOtp = (userId) => {
+  return api.post("/api/resend-otp", { user_id: userId });
+};
+
+export const checkVerificationStatus = (userId) => {
+  return api.get("/api/verification-status", {
+    params: { user_id: userId },
+  });
+};
 
 export const getAllTimetables = () => api.get("/api/timetables");
 
@@ -56,7 +81,7 @@ export const getExamScores = async () => {
   const user = JSON.parse(localStorage.getItem("user"));
   const teacherId = user.id;
   const response = await api.get(
-    `https://www.scratchprod.in/resume-generator-backend/api/exam-scores?teacher_id=${teacherId}`
+    `https://www.scratchprod.in/resume-generator-backend/api/exam-scores?teacher_id=${teacherId}`,
   );
   // console.log(response);
   return response.data;

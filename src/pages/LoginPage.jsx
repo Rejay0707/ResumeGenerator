@@ -1,9 +1,8 @@
-
-import api from '../api/axios';
+import api from "../api/axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { loginAsync, adminLoginAsync, clearError } from "../features/authSlice";
+import { loginAsync, clearError, logout } from "../features/authSlice";
 import {
   Box,
   Paper,
@@ -37,73 +36,145 @@ export default function LoginPage() {
   const error = reduxAuth.error;
 
   const SUPERADMIN_DASHBOARD_URL =
-     "https://www.scratchprod.in/resume-generator-backend/";
+    "https://www.scratchprod.in/resume-generator-backend/";
 
   const RECRUITER_DASHBOARD_URL =
     "https://www.scratchprod.in/resume-generator-backend/recruiter/dashboard";
 
   const INSTITUTE_DASHBOARD_URL =
-     "https://www.scratchprod.in/resume-generator-backend/institution/dashboard";
+    "https://www.scratchprod.in/resume-generator-backend/institution/dashboard";
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+
     setForm((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
-    if (error) dispatch(clearError());
+
+    // Clear error ONLY when user edits credentials
+    if (error && (name === "email" || name === "password")) {
+      dispatch(clearError());
+    }
   };
 
   const handleRoleClick = (roleLabel, roleValue) => {
     setSelectedRole(roleValue);
     setForm((prev) => ({ ...prev, password: "" }));
-    if (error) dispatch(clearError());
   };
+
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   if (!form.email || !form.password) return;
+
+  //   try {
+  //     await api.get('/sanctum/csrf-cookie');
+
+  //     let resultAction;
+
+  //     if (selectedRole === "admin") {
+  //       // Admin login
+  //       resultAction = await dispatch(
+  //         loginAsync({ email: form.email, password: form.password })
+  //       );
+  //     } else {
+  //       // Superadmin, student, teacher, parent, recruiter — all handled via /api/login
+  //       resultAction = await dispatch(
+  //         loginAsync({ email: form.email, password: form.password })
+  //       );
+  //     }
+
+  //     if (
+  //       loginAsync.fulfilled.match(resultAction) ||
+  //       adminLoginAsync.fulfilled.match(resultAction)
+  //     ) {
+  //       const user = resultAction.payload;
+
+  //       // Handle nested data
+  //       const role =
+  //         user?.role?.toLowerCase() ||
+  //         user?.admin?.role?.toLowerCase() ||
+  //         user?.user?.role?.toLowerCase() ||
+  //         "";
+
+  //       console.log("✅ Login success:", role);
+
+  //       // Navigate by role
+  //       if (role === "superadmin") {
+  //         window.location.href = SUPERADMIN_DASHBOARD_URL;
+  //       } else if (role === "jobseeker") {
+  //         navigate("/jobseeker/dashboard");
+  //       } else if (role === "admin") {
+  //         navigate("/admin/dashboard");
+  //       } else if (role === "Student") {
+  //         navigate("/");
+  //       } else if (role === "teacher") {
+  //         navigate("/teacher/dashboard/home");
+  //       } else if (role === "parent") {
+  //         navigate("/parent/dashboard/home");
+  //       } else if (role === "recruiter") {
+  //         window.location.href = RECRUITER_DASHBOARD_URL;
+  //       } else if (role === "institute") {
+  //         window.location.href = INSTITUTE_DASHBOARD_URL;
+  //       } else {
+  //         navigate("/");
+  //       }
+  //     } else {
+  //       console.log("❌ Login failed:", resultAction.payload);
+  //     }
+  //   } catch (err) {
+  //     console.error("❌ Login error:", err);
+  //   }
+  // };
+
+  // Inside your LoginPage.jsx - handleSubmit function
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.email || !form.password) return;
 
     try {
-      await api.get('/sanctum/csrf-cookie');
+      await api.get("/sanctum/csrf-cookie");
 
       let resultAction;
 
       if (selectedRole === "admin") {
-        // Admin login
         resultAction = await dispatch(
-          loginAsync({ email: form.email, password: form.password })
+          loginAsync({ email: form.email, password: form.password }),
         );
       } else {
-        // Superadmin, student, teacher, parent, recruiter — all handled via /api/login
         resultAction = await dispatch(
-          loginAsync({ email: form.email, password: form.password })
+          loginAsync({ email: form.email, password: form.password }),
         );
       }
 
-      if (
-        loginAsync.fulfilled.match(resultAction) ||
-        adminLoginAsync.fulfilled.match(resultAction)
-      ) {
-        const user = resultAction.payload;
+      if (loginAsync.fulfilled.match(resultAction)) {
+        // const payload = resultAction.payload;
+        const loggedUser = resultAction.payload.user;
 
-        // Handle nested data
-        const role =
-          user?.role?.toLowerCase() ||
-          user?.admin?.role?.toLowerCase() ||
-          user?.user?.role?.toLowerCase() ||
-          "";
+        console.log("Logged user:", loggedUser);
 
-        console.log("✅ Login success:", role);
+        if (!loggedUser?.email_verified_at) {
+          dispatch(logout());
+          alert("Please verify your email first!");
 
-        // Navigate by role
+          navigate("/verify-email", {
+            state: { userId: loggedUser?.id, email: form.email },
+          });
+          return;
+        }
+
+        const role = loggedUser?.role?.toLowerCase() || "";
+        console.log("Redirecting role:", role);
+
         if (role === "superadmin") {
           window.location.href = SUPERADMIN_DASHBOARD_URL;
         } else if (role === "jobseeker") {
           navigate("/jobseeker/dashboard");
         } else if (role === "admin") {
           navigate("/admin/dashboard");
-        } else if (role === "Student") {
+        } else if (role === "Student" || role === "student") {
+          console.log("Auth state before navigate:", reduxAuth);
           navigate("/");
         } else if (role === "teacher") {
           navigate("/teacher/dashboard/home");
@@ -116,11 +187,9 @@ export default function LoginPage() {
         } else {
           navigate("/");
         }
-      } else {
-        console.log("❌ Login failed:", resultAction.payload);
       }
     } catch (err) {
-      console.error("❌ Login error:", err);
+      console.error("Login error:", err);
     }
   };
 
@@ -254,7 +323,7 @@ export default function LoginPage() {
             { label: "TEACHER", value: "teacher" },
             { label: "Recruiter", value: "recruiter" },
             { label: "Job Seeker", value: "jobseeker" },
-            { label: "Institute", value: "institute" }
+            { label: "Institute", value: "institute" },
           ].map(({ label, value }) => (
             <Button
               key={label}

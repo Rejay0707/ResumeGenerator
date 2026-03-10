@@ -223,7 +223,7 @@ export default function PersonalDetailsContainer() {
           <strong>LinkedIn URL:</strong> {form.linkedin_url || "Not provided"}
         </Typography>
       </Box>
-      ```
+      
       <Box display="flex" gap={2}>
         <Button variant="contained" onClick={handleEdit}>
           Edit

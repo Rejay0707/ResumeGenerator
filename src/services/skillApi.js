@@ -19,3 +19,11 @@ export const getAISkillSuggestions = (userId) => {
   return api.get(`/api/skills/ai-suggest?user_id=${userId}`);
 };
 
+export const getDepartmentSkillAnalytics = () => {
+  return api.get("/api/admin/skills/department-analytics");
+};
+
+export const getYearSkillAnalytics = () => {
+  return api.get("/api/admin/skills/year-analytics");
+};
+

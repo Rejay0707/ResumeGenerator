@@ -60,6 +60,9 @@ export default function InternshipTrackerContainer() {
         student_learnings: item.student_learnings,
         description: item.description,
         notes: item.notes,
+        approval_status: item.approval_status,
+        admin_notes: item.admin_notes,
+        reviewed_at: item.reviewed_at,
         duration: `${item.start_date} – ${item.end_date || "Present"}`,
       }));
 
@@ -91,6 +94,14 @@ export default function InternshipTrackerContainer() {
 
   const confirmDelete = async () => {
     if (itemToDelete) {
+      const item = internships.find((i) => i.id === itemToDelete);
+
+      if (item?.approval_status !== "pending") {
+        alert("Cannot delete reviewed internship");
+        setDeleteDialogOpen(false);
+        return;
+      }
+
       try {
         await api.delete(`/api/internships/tracker/${itemToDelete}`);
         fetchInternships();
@@ -101,6 +112,7 @@ export default function InternshipTrackerContainer() {
         );
       }
     }
+
     setDeleteDialogOpen(false);
     setItemToDelete(null);
   };
@@ -176,8 +188,27 @@ export default function InternshipTrackerContainer() {
         )}
       </Box>
 
-      {!internships.length ? (
-        <Typography color="black">No internships found.</Typography>
+      {loading ? (
+        <CircularProgress />
+      ) : internships.length === 0 ? (
+        /* EMPTY STATE */
+        <Box
+          sx={{
+            mt: 4,
+            p: 4,
+            textAlign: "center",
+            border: "1px dashed #ccc",
+            borderRadius: 2,
+            color: "text.secondary",
+          }}
+        >
+          <Typography variant="h6" gutterBottom>
+            No Internships Available
+          </Typography>
+          <Typography variant="body2">
+            Click <b>Add Internship</b> to showcase your experience.
+          </Typography>
+        </Box>
       ) : isMobile ? (
         <InternshipCards
           data={internships}
@@ -196,7 +227,8 @@ export default function InternshipTrackerContainer() {
         open={open}
         onClose={handleClose}
         data={selected}
-        readOnly={selected?.status === "completed"}
+        // readOnly={selected?.status === "completed"}
+        readOnly={selected && selected.approval_status !== "pending"}
         onSave={handleSave}
       />
 

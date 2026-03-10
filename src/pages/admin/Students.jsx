@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import {
   Typography,
@@ -6,8 +7,17 @@ import {
   TextField,
   InputAdornment,
   IconButton,
+  Button,
   Alert,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Snackbar,
 } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { resetStudentPassword } from "../../features/adminSlice";
+import LockResetIcon from "@mui/icons-material/LockReset";
 import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
 import useAdminManagement from "../../containers/AdminManagement";
@@ -23,8 +33,46 @@ export default function Students() {
   const [editingItem, setEditingItem] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredItems = items.filter((item) =>
-    item.name?.toLowerCase().includes(searchTerm.toLowerCase())
+  const dispatch = useDispatch();
+
+  const { resetPasswordLoading, resetPasswordSuccess, resetPasswordError } =
+    useSelector((state) => state.admin);
+
+  const [resetDialogOpen, setResetDialogOpen] = useState(false);
+  const [selectedStudent, setSelectedStudent] = useState(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+
+  const handleResetClick = (student) => {
+    setSelectedStudent(student);
+    setResetDialogOpen(true);
+  };
+
+  const confirmResetPassword = async () => {
+    if (!selectedStudent) return;
+
+    console.log("Resetting student ID:", selectedStudent?.id);
+
+    await dispatch(resetStudentPassword(selectedStudent.id)).unwrap();
+
+    setResetDialogOpen(false);
+    setSnackbarOpen(true);
+  };
+
+  // 1. Get Admin College
+  const admin = JSON.parse(localStorage.getItem("user"));
+  const adminCollege = admin?.college;
+
+  // 2. Combine Filters: Filter by College AND Search Term
+  // This ensures the list updates when you type AND respects the admin's college
+  const filteredItems = items
+    .filter((item) => item.college === adminCollege) // Filter by college first
+    .filter(
+      (item) => item.name?.toLowerCase().includes(searchTerm.toLowerCase()), // Then by search
+    );
+
+  // Calculate total students for this college (for the "X of Y" count)
+  const totalStudentsInCollege = items.filter(
+    (item) => item.college === adminCollege,
   );
 
   const handleAdd = () => {
@@ -43,17 +91,16 @@ export default function Students() {
   };
 
   const handleSubmit = (formData) => {
+  formData.append("college", adminCollege); // add college properly
+
   if (editingItem?.id) {
     updateItem(editingItem.id, formData);
   } else {
-    addItem({
-      ...formData,
-      college: adminCollege, // inject here
-    });
+    addItem(formData);
   }
+
   setDialogOpen(false);
 };
-
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
@@ -62,14 +109,6 @@ export default function Students() {
   const handleClearSearch = () => {
     setSearchTerm("");
   };
-
-  const admin = JSON.parse(localStorage.getItem("user"));
-  const adminCollege = admin?.college;
-  // console.log(adminCollege)
-
-  const filteredStudents = items.filter(
-    (s) => s.college === adminCollege
-  );
 
   return (
     <Box
@@ -99,7 +138,7 @@ export default function Students() {
             xs: "20px",
             sm: "20px",
             md: "22px",
-            lg: "24",
+            lg: "24px",
             xl: "24px",
           },
           fontWeight: "bold",
@@ -172,6 +211,7 @@ export default function Students() {
             />
           </Box>
 
+          {/* Updated count to reflect the unified filtering */}
           <Typography
             variant="body2"
             color="text.secondary"
@@ -184,7 +224,7 @@ export default function Students() {
               flexShrink: 0,
             }}
           >
-            {filteredItems.length} of {items.length} students
+            {filteredItems.length} of {totalStudentsInCollege.length} students
           </Typography>
         </Box>
       </Paper>
@@ -204,13 +244,15 @@ export default function Students() {
         </Alert>
       )}
 
+      {/* Pass the correctly filtered list here */}
       <EntityList
-        items={filteredStudents}
+        items={filteredItems}
         loading={loading}
         error={error}
         onAdd={handleAdd}
         onEdit={handleEdit}
         onDelete={handleDelete}
+        onResetPassword={handleResetClick}
         entityType="students"
       />
 
@@ -223,6 +265,41 @@ export default function Students() {
         defaultValues={{
           college: adminCollege,
         }}
+      />
+
+      <Dialog open={resetDialogOpen} onClose={() => setResetDialogOpen(false)}>
+        <DialogTitle>Reset Password</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Are you sure you want to reset password for{" "}
+            <strong>{selectedStudent?.name}</strong>?
+          </Typography>
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={() => setResetDialogOpen(false)}>Cancel</Button>
+
+          <Button
+            variant="contained"
+            color="warning"
+            onClick={confirmResetPassword}
+          >
+            Reset
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={4000}
+        onClose={() => setSnackbarOpen(false)}
+        message={
+          resetPasswordError
+            ? "Password reset failed"
+            : resetPasswordSuccess
+              ? `Password reset successful. New Password: ${resetPasswordSuccess.temporary_password}`
+              : ""
+        }
       />
     </Box>
   );

@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PersonIcon from "@mui/icons-material/Person";
 import SchoolIcon from "@mui/icons-material/School";
@@ -8,8 +8,10 @@ import WorkspacePremiumIcon from "@mui/icons-material/WorkspacePremium";
 import PsychologyIcon from "@mui/icons-material/Psychology";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import DescriptionIcon from "@mui/icons-material/Description";
+import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import LogoutIcon from "@mui/icons-material/Logout";
-
+import { getNotifications } from "../../services/notificationApi";
+import { getPlacementScore } from "../../services/placementApi";
 import {
   Box,
   List,
@@ -25,6 +27,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { Badge } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
 import logo1 from "../../assets/logo1.png";
+import WorkIcon from "@mui/icons-material/Work";
 
 export default function StudentSidebar() {
   const navigate = useNavigate();
@@ -32,23 +35,100 @@ export default function StudentSidebar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const [unreadCount, setUnreadCount] = useState(
-    JSON.parse(localStorage.getItem("unread_notification_count")) || 0
+    JSON.parse(localStorage.getItem("unread_notification_count")) || 0,
   );
 
+  const [placementScore, setPlacementScore] = useState(null);
+  const [placementStatus, setPlacementStatus] = useState("");
+
+  const fetchPlacementScore = async () => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    const studentId = user?.id;
+
+    if (!studentId) return;
+
+    try {
+      const res = await getPlacementScore(studentId);
+      console.log(studentId)
+
+      setPlacementScore(res.data.placement_score);
+      setPlacementStatus(res.data.status);
+    } catch (error) {
+      console.log("Placement score not available");
+    }
+  };
+
   useEffect(() => {
-    const handleNotificationUpdate = () => {
-      setUnreadCount(
-        JSON.parse(localStorage.getItem("unread_notification_count")) || 0
-      );
+    fetchPlacementScore();
+  }, []);
+
+  // useEffect(() => {
+  //   const handleNotificationUpdate = () => {
+  //     setUnreadCount(
+  //       JSON.parse(localStorage.getItem("unread_notification_count")) || 0
+  //     );
+  //   };
+
+  //   window.addEventListener('notificationCountUpdated', handleNotificationUpdate);
+
+  //   return () => {
+  //     window.removeEventListener('notificationCountUpdated', handleNotificationUpdate);
+  //   };
+  // }, [])
+
+  useEffect(() => {
+    const fetchUnreadCount = async () => {
+      const user = JSON.parse(localStorage.getItem("user"));
+      const userId = user?.id;
+      if (userId) {
+        try {
+          const res = await getNotifications(userId);
+          const count = res.data.unread_count || 0;
+          setUnreadCount(count);
+          localStorage.setItem("unread_notification_count", count);
+        } catch (error) {
+          console.error("Error fetching unread count:", error);
+        }
+      }
     };
 
-    window.addEventListener('notificationCountUpdated', handleNotificationUpdate);
+    fetchUnreadCount(); // Fetch on mount
+
+    // Existing event listener
+    const handleNotificationUpdate = async () => {
+      console.log("Log E: notificationCountUpdated event received in sidebar"); // Confirm event is caught
+      const user = JSON.parse(localStorage.getItem("user"));
+      const userId = user?.id;
+
+      if (!userId) {
+        console.log("Log F: No userId found, skipping fetch");
+        return;
+      }
+
+      try {
+        console.log("Log G: Fetching notifications for userId:", userId); // Confirm fetch starts
+        const res = await getNotifications(userId);
+        const count = res.data.unread_count || 0;
+        console.log("Log H: Fetched unread count:", count); // Check the actual count returned
+        setUnreadCount(count);
+        localStorage.setItem("unread_notification_count", count);
+      } catch (err) {
+        console.error("Log I: Notification refresh failed:", err); // Check for fetch errors
+      }
+    };
+
+    window.addEventListener(
+      "notificationCountUpdated",
+      handleNotificationUpdate,
+    );
 
     return () => {
-      window.removeEventListener('notificationCountUpdated', handleNotificationUpdate);
+      window.removeEventListener(
+        "notificationCountUpdated",
+        handleNotificationUpdate,
+      );
     };
-  }, [])
-
+  }, []);
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
@@ -73,6 +153,26 @@ export default function StudentSidebar() {
       label: "Internships",
       path: "/student/dashboard/internships",
       icon: <WorkOutlineIcon fontSize="small" />,
+    },
+    {
+      label: "Browse Internships",
+      path: "/student/dashboard/browse-internships",
+      icon: <WorkOutlineIcon fontSize="small" />,
+    },
+    {
+      label: "Jobs",
+      path: "/student/dashboard/jobs",
+      icon: <WorkIcon fontSize="small" />,
+    },
+    {
+      label: "My Job Applications",
+      path: "/student/dashboard/job-applications",
+      icon: <AssignmentIcon fontSize="small" />,
+    },
+    {
+      label: "My Applications",
+      path: "/student/dashboard/my-applications",
+      icon: <AssignmentIcon fontSize="small" />,
     },
     {
       label: "Projects",
@@ -164,6 +264,34 @@ export default function StudentSidebar() {
         </List>
 
         <Divider sx={{ bgcolor: "white" }} />
+      </Box>
+      <Box sx={{ p: 2 }}>
+        {placementScore && (
+          <Box
+            sx={{
+              background: "#1f4d75",
+              borderRadius: 2,
+              p: 0.2,
+              textAlign: "center",
+            }}
+          >
+            <Box display="flex" justifyContent="center" mb={1}>
+              <TrendingUpIcon />
+            </Box>
+
+            <Box fontSize="12px" sx={{ opacity: 0.8 }}>
+              Placement Score
+            </Box>
+
+            <Box fontSize="22px" fontWeight="bold">
+              {placementScore}%
+            </Box>
+
+            <Box fontSize="11px" sx={{ opacity: 0.8 }}>
+              {placementStatus}
+            </Box>
+          </Box>
+        )}
       </Box>
 
       {/* Logout */}

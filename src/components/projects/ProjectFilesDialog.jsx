@@ -18,6 +18,7 @@ export default function ProjectFilesDialog({
   open,
   onClose,
   projectId,
+  refreshProjects
 }) {
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -50,6 +51,7 @@ export default function ProjectFilesDialog({
       setUploading(true);
       await uploadProjectFile(projectId, file);
       fetchFiles(); // refresh list
+      refreshProjects()
     } catch (err) {
       console.error("Upload failed", err);
     } finally {

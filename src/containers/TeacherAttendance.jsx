@@ -33,7 +33,7 @@ const TeacherAttendance = () => {
   console.log(teacher);
   const dispatch = useDispatch();
   const { loading, success, error, records } = useSelector(
-    (state) => state.attendance
+    (state) => state.attendance,
   );
 
   const [students, setStudents] = useState([]);
@@ -44,7 +44,7 @@ const TeacherAttendance = () => {
   const [subject, setSubject] = useState("");
   const [time, setTime] = useState("");
   const [selectedDate, setSelectedDate] = useState(
-    new Date().toISOString().split("T")[0]
+    new Date().toISOString().split("T")[0],
   );
   const [timetables, setTimetables] = useState([]);
   const [subjects, setSubjects] = useState([]);
@@ -117,7 +117,7 @@ const TeacherAttendance = () => {
           const teacherData = data.filter(
             (t) =>
               t.teacher_name &&
-              t.teacher_name.toLowerCase() === teacher.name.toLowerCase()
+              t.teacher_name.toLowerCase() === teacher.name.toLowerCase(),
           );
           setTimetables(teacherData);
         })
@@ -151,7 +151,7 @@ const TeacherAttendance = () => {
             t.department === department &&
             t.year === year &&
             t.subject_name === subject &&
-            t.day === day
+            t.day === day,
         )
         .map((t) => t.time);
       setTimes([...new Set(relatedTimes)].sort((a, b) => a.localeCompare(b)));
@@ -165,7 +165,7 @@ const TeacherAttendance = () => {
     if (teacherVerified && selectedClass && subject && time && selectedDate) {
       const [department, year] = selectedClass.split(" - ");
       const filteredStudents = students.filter(
-        (s) => s.department === department && s.year === year
+        (s) => s.department === department && s.year === year,
       );
       const initialAttendance = {};
       filteredStudents.forEach((s) => {
@@ -180,7 +180,7 @@ const TeacherAttendance = () => {
           subject,
           time,
           date: selectedDate,
-        })
+        }),
       );
     } else {
       setAttendance({});
@@ -206,7 +206,7 @@ const TeacherAttendance = () => {
           r.year === year &&
           r.subject === subject &&
           r.time === time &&
-          r.date === selectedDate
+          r.date === selectedDate,
       );
       setAttendance((prev) => {
         const updatedAttendance = { ...prev };
@@ -229,7 +229,7 @@ const TeacherAttendance = () => {
 
     const [department, year] = selectedClass.split(" - ");
     const filteredStudents = students.filter(
-      (s) => s.department === department && s.year === year
+      (s) => s.department === department && s.year === year,
     );
 
     const formattedAttendance = filteredStudents.map((s) => ({
@@ -263,7 +263,7 @@ const TeacherAttendance = () => {
           subject,
           time,
           date: selectedDate,
-        })
+        }),
       );
     }
     if (success || error) {
@@ -304,7 +304,7 @@ const TeacherAttendance = () => {
       r.year === year &&
       r.subject === subject &&
       r.time === time &&
-      r.date === selectedDate
+      r.date === selectedDate,
   );
   const attendanceExists = filteredRecords.length > 0;
 
@@ -394,7 +394,11 @@ const TeacherAttendance = () => {
                 boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
                 "&:hover": { boxShadow: "0 4px 8px rgba(0,0,0,0.15)" },
                 minHeight: 56,
-                width: 250,
+                width: {
+                  xs: "100%",
+                  sm: "100%",
+                  md: 250,
+                },
               }}
             >
               <InputLabel>Class</InputLabel>
@@ -422,7 +426,11 @@ const TeacherAttendance = () => {
                 boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
                 "&:hover": { boxShadow: "0 4px 8px rgba(0,0,0,0.15)" },
                 minHeight: 56,
-                width: 250,
+                width: {
+                  xs: "100%",
+                  sm: "100%",
+                  md: 250,
+                },
               }}
             >
               <InputLabel>Subject</InputLabel>
@@ -454,7 +462,11 @@ const TeacherAttendance = () => {
                 boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
                 "&:hover": { boxShadow: "0 4px 8px rgba(0,0,0,0.15)" },
                 minHeight: 56,
-                width: 250,
+                width: {
+                  xs: "100%",
+                  sm: "100%",
+                  md: 250,
+                },
               }}
             >
               <InputLabel>Time</InputLabel>
@@ -487,7 +499,11 @@ const TeacherAttendance = () => {
                 backgroundColor: "#f9f9f9",
                 borderRadius: 1,
                 minHeight: 56,
-                width: 250,
+                width: {
+                  xs: "100%",
+                  sm: "100%",
+                  md: 250,
+                },
               }}
               InputLabelProps={{ shrink: true }}
             />

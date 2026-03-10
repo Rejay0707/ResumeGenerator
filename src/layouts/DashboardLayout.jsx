@@ -25,7 +25,10 @@ import GroupIcon from "@mui/icons-material/Group";
 import BusinessIcon from "@mui/icons-material/Business";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import EventNoteIcon from "@mui/icons-material/EventNote";
-
+import WorkIcon from "@mui/icons-material/Work"; //
+import GavelIcon from "@mui/icons-material/Gavel"; //
+import SettingsIcon from "@mui/icons-material/Settings";
+import AssessmentIcon from "@mui/icons-material/Assessment";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import logo1 from "../assets/logo1.png";
 import useAuth from "../containers/AuthContainer";
@@ -75,9 +78,49 @@ export default function ResponsiveSidebar() {
           { text: "Parents", to: "/admin/parents", icon: <PeopleIcon /> },
           { text: "Teachers", to: "/admin/teachers", icon: <SchoolIcon /> },
           { text: "Students", to: "/admin/students", icon: <GroupIcon /> },
-          { text: "Departments", to: "/admin/departments", icon: <BusinessIcon /> },
-          { text: "Subjects", to: "/admin/subjects", icon: <LibraryBooksIcon /> },
-          { text: "Timetable", to: "/admin/timetable", icon: <EventNoteIcon /> },
+          {
+            text: "Departments",
+            to: "/admin/departments",
+            icon: <BusinessIcon />,
+          },
+          {
+            text: "Subjects",
+            to: "/admin/subjects",
+            icon: <LibraryBooksIcon />,
+          },
+          {
+            text: "Timetable",
+            to: "/admin/timetable",
+            icon: <EventNoteIcon />,
+          },
+          { text: "Internships", to: "/admin/internships", icon: <WorkIcon /> },
+          { text: "Moderation", to: "/admin/moderation", icon: <GavelIcon /> },
+          {
+            text: "Internship Management",
+            to: "/admin/internship-management",
+            icon: <WorkIcon />,
+          },
+          {
+            text: "Skill Analytics",
+            to: "/admin/skills-analytics",
+            icon: <AssessmentIcon />,
+          },
+          {
+            text: "Job Approvals",
+            to: "/admin/job-approvals",
+            icon: <WorkIcon />,
+          },
+          {
+            text: "Resume Verification",
+            to: "/admin/resume-verification",
+            icon: <GavelIcon />,
+          },
+          // ✅ NEW PAGE
+          {
+            text: "College Settings",
+            to: "/admin/settings",
+            icon: <SettingsIcon />,
+          },
         ].map(({ text, to, icon }) => (
           <ListItem
             button

@@ -12,14 +12,14 @@ export default function CertificateUpload({ onFileSelect, uploading }) {
   const handleChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      onFileSelect(file);        // send file to parent
-      e.target.value = "";       // allow re-selecting same file
+      onFileSelect(file); // send file to parent
+      e.target.value = ""; // allow re-selecting same file
     }
   };
 
   return (
     <Box mb={3}>
-      <Typography variant="h6" mb={1}>
+      <Typography variant="h6" mb={1} color="black">
         Upload Certificate
       </Typography>
 
@@ -41,7 +41,7 @@ export default function CertificateUpload({ onFileSelect, uploading }) {
         disabled={uploading}
         sx={{ cursor: "pointer", textTransform: "none" }}
       >
-        Choose File
+        {uploading ? "Uploading..." : "Choose File"}
       </Button>
     </Box>
   );

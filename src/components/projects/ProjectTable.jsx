@@ -11,6 +11,7 @@ import {
   Stack,
   Box,
 } from "@mui/material";
+import StatusChip from "../internship/StatusChip";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import { formatDuration } from "../../utils/dateUtils";
 
@@ -21,79 +22,109 @@ export default function ProjectTable({ data, onEdit, onDelete, onFiles }) {
         {/* ---------- HEADER ---------- */}
         <TableHead>
           <TableRow>
-            <TableCell><b>Title</b></TableCell>
-            <TableCell><b>Role</b></TableCell>
-            <TableCell><b>Duration</b></TableCell>
-            <TableCell><b>Technologies</b></TableCell>
-            <TableCell><b>GitHub</b></TableCell>
-            <TableCell align="right"><b>Actions</b></TableCell>
+            <TableCell>
+              <b>Title</b>
+            </TableCell>
+            <TableCell>
+              <b>Role</b>
+            </TableCell>
+            <TableCell>
+              <b>Duration</b>
+            </TableCell>
+            <TableCell>
+              <b>Description</b>
+            </TableCell>
+            <TableCell>
+              <b>Technologies</b>
+            </TableCell>
+            <TableCell>
+              <b>GitHub</b>
+            </TableCell>
+            <TableCell>
+              <b>Status</b>
+            </TableCell>
+            <TableCell align="right">
+              <b>Actions</b>
+            </TableCell>
           </TableRow>
         </TableHead>
 
         {/* ---------- BODY ---------- */}
         <TableBody>
-          {data.map((project) => (
-            <TableRow key={project.id}>
-              <TableCell>{project.title}</TableCell>
+          {data.map((project) => {
+            const isApproved = project.approve_status === "approved";
 
-              <TableCell>{project.role}</TableCell>
+            return (
+              <TableRow key={project.id}>
+                <TableCell>{project.title}</TableCell>
 
-              <TableCell>
-                {formatDuration(project.start_date, project.end_date)}
-              </TableCell>
+                <TableCell>{project.role}</TableCell>
 
-              <TableCell>
-                <Stack direction="row" spacing={1} flexWrap="wrap">
-                  {project.technologies?.map((tech, idx) => (
-                    <Chip key={idx} label={tech} size="small" />
-                  ))}
-                </Stack>
-              </TableCell>
+                <TableCell>
+                  {formatDuration(project.start_date, project.end_date)}
+                </TableCell>
 
-              <TableCell>
-                {project.github_url && (
-                  <Button
-                    size="small"
-                    startIcon={<GitHubIcon />}
-                    href={project.github_url}
-                    target="_blank"
-                  >
-                    View
-                  </Button>
-                )}
-              </TableCell>
+                <TableCell>{project.description}</TableCell>
 
-              {/* ---------- ACTIONS ---------- */}
-              <TableCell align="right">
-                <Box display="flex" gap={1} justifyContent="flex-end">
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    onClick={() => onEdit(project)}
-                  >
-                    Edit
-                  </Button>
+                <TableCell>
+                  <Stack direction="row" spacing={1} flexWrap="wrap">
+                    {project.technologies?.map((tech, idx) => (
+                      <Chip key={idx} label={tech} size="small" />
+                    ))}
+                  </Stack>
+                </TableCell>
 
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    onClick={() => onFiles(project.id)}
-                  >
-                    Files
-                  </Button>
+                <TableCell>
+                  {project.github_url && (
+                    <Button
+                      size="small"
+                      startIcon={<GitHubIcon />}
+                      href={project.github_url}
+                      target="_blank"
+                    >
+                      View
+                    </Button>
+                  )}
+                </TableCell>
 
-                  <Button
-                    size="small"
-                    color="error"
-                    variant="outlined"
-                    onClick={() => onDelete(project.id)}
-                  >
-                    Delete
-                  </Button>
-                </Box>
-              </TableCell>
-            </TableRow>
-          ))}
+                <TableCell>
+                  <StatusChip status={project.approve_status} />
+                </TableCell>
+
+                {/* ---------- ACTIONS ---------- */}
+                <TableCell align="right">
+                  <Box display="flex" gap={1} justifyContent="flex-end">
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      disabled={isApproved}
+                      onClick={() => onEdit(project)}
+                    >
+                      Edit
+                    </Button>
+
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      onClick={() => onFiles(project.id)}
+                    >
+                      Files
+                    </Button>
+
+                    <Button
+                      size="small"
+                      color="error"
+                      variant="outlined"
+                      disabled={isApproved}
+                      onClick={() => onDelete(project.id)}
+                    >
+                      Delete
+                    </Button>
+                  </Box>
+                </TableCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
     </TableContainer>

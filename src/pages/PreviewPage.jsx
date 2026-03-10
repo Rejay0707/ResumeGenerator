@@ -12,6 +12,7 @@ import DownloadIcon from "@mui/icons-material/Download";
 import EmailIcon from "@mui/icons-material/Email";
 import PhoneIcon from "@mui/icons-material/Phone";
 import GitHubIcon from "@mui/icons-material/GitHub";
+import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import SchoolIcon from "@mui/icons-material/School";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import WorkIcon from "@mui/icons-material/Work";
@@ -31,7 +32,7 @@ const PreviewPage = () => {
   const [downloadLoading, setDownloadLoading] = useState(false);
   const [downloadComplete, setDownloadComplete] = useState(false); // Added for roadmap button
   const [roadmapLoading, setRoadmapLoading] = useState(false); // Added for roadmap
-  const [internships, setInternships] = useState([]);
+  // const [internships, setInternships] = useState([]);
   const resumeRef = useRef(null);
 
   useEffect(() => {
@@ -42,7 +43,7 @@ const PreviewPage = () => {
   const fetchResume = async () => {
     try {
       const res = await axios.post(
-        `https://www.scratchprod.in/resume-generator-backend/api/resumes/${resumeId}/ai-format`
+        `https://www.scratchprod.in/resume-generator-backend/api/resumes/${resumeId}/ai-format`,
       );
 
       console.log("Fetched resume:", res.data);
@@ -75,6 +76,11 @@ const PreviewPage = () => {
 
     const leftCol = element.querySelector('[data-pdf-column="left"]');
     const rightCol = element.querySelector('[data-pdf-column="right"]');
+    const container = element.querySelector('[data-pdf-layout="row"]');
+    const originalFlex = container?.style.flexDirection;
+      if (container) {
+        container.style.flexDirection = "row"; // FORCE DESKTOP
+      }
 
     try {
       /* ===== FORCE FIXED LAYOUT FOR HTML2CANVAS ===== */
@@ -88,6 +94,8 @@ const PreviewPage = () => {
       element.style.overflow = "visible";
       element.style.position = "absolute";
       element.style.left = "-9999px";
+
+      
 
       /* ===== CAPTURE ===== */
       const canvas = await html2canvas(element, {
@@ -138,7 +146,7 @@ const PreviewPage = () => {
           0,
           0,
           canvas.width,
-          bottom + 10
+          bottom + 10,
         );
 
       /* ===== PDF GENERATION ===== */
@@ -176,13 +184,13 @@ const PreviewPage = () => {
       } catch (uploadError) {
         console.error(
           "❌ Upload failed:",
-          uploadError.response?.data || uploadError.message
+          uploadError.response?.data || uploadError.message,
         );
         alert(
           `Upload failed: ${
             uploadError.response?.data?.message ||
             "Server error. Please try again."
-          }`
+          }`,
         );
       }
 
@@ -195,6 +203,10 @@ const PreviewPage = () => {
       alert("Failed to generate PDF. Please try again.");
     } finally {
       /* ===== RESTORE ORIGINAL STYLES ===== */
+      if (container) {
+        container.style.flexDirection = originalFlex || "";
+      }
+
       leftCol.style.width = "33%";
       rightCol.style.width = "67%";
       rightCol.style.maxWidth = "none";
@@ -214,7 +226,7 @@ const PreviewPage = () => {
     setRoadmapLoading(false);
     try {
       const response = await axios.post(
-        `https://www.scratchprod.in/resume-generator-backend/api/resumes/${resumeId}/roadmaps/generate`
+        `https://www.scratchprod.in/resume-generator-backend/api/resumes/${resumeId}/roadmaps/generate`,
       );
       console.log("Roadmap generated:", response.data);
       // Navigate to roadmap page with data
@@ -252,7 +264,7 @@ const PreviewPage = () => {
     contact,
     education,
     projects,
-    // internships,
+    internships,
     skills,
     awards,
     certifications, // Added certifications
@@ -261,9 +273,9 @@ const PreviewPage = () => {
   return (
     <Box
       sx={{
-        height: "100vh",
+        // height: "100vh",
         background: "#f4f6f8",
-        display: "flex",
+        // display: "flex",
         flexDirection: "column",
       }}
     >
@@ -274,8 +286,10 @@ const PreviewPage = () => {
           mx: "auto",
           mb: 2,
           display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
+          flexDirection: { xs: "column", sm: "row" }, // ✅ stack on mobile
+          gap: 1,
+          alignItems: { xs: "stretch", sm: "center" },
+          paddingTop: "10px",
         }}
       >
         <Button
@@ -285,16 +299,18 @@ const PreviewPage = () => {
           disabled={roadmapLoading}
           startIcon={
             roadmapLoading ? (
-              <CircularProgress size={20} color="inherit" />
+              <CircularProgress size={18} color="inherit" />
             ) : null
           }
           sx={{
             fontWeight: "bold",
             textTransform: "none",
-            fontSize: "1rem",
-            padding: "10px 20px",
+            // fontSize: "1rem",
+            padding: "6px 16px",
             minWidth: "auto",
             whiteSpace: "nowrap",
+            mr: "auto",
+            marginLeft: "auto",
           }}
         >
           {roadmapLoading ? "Generating..." : "Generate Roadmap"}
@@ -311,7 +327,7 @@ const PreviewPage = () => {
               <DownloadIcon />
             )
           }
-          sx={{ ml: "auto" }}
+          sx={{ mr: "auto", marginLeft: "auto" }}
         >
           Download PDF
         </Button>
@@ -352,10 +368,15 @@ const PreviewPage = () => {
         <Divider sx={{ my: 3, borderColor: "#1976d2" }} />
 
         {/* Two Column Layout */}
-        <Box display="flex" gap={4}>
+        <Box
+          display="flex"
+          flexDirection={{ xs: "column", md: "row" }} // ✅ responsive
+          gap={4}
+          data-pdf-layout="row"
+        >
           {/* LEFT COLUMN - One third space, green background */}
           <Box
-            width="33%"
+            width={{ xs: "100%", md: "33%" }}
             data-pdf-column="left"
             sx={{
               backgroundColor: "#e8f5e8", // Light green background
@@ -377,13 +398,35 @@ const PreviewPage = () => {
                 <GitHubIcon sx={{ mr: 1, fontSize: "1rem" }} />
                 <Text>{contact?.github}</Text>
               </Box>
+              {contact?.linked_in && (
+                <Box display="flex" alignItems="center" mt={2}>
+                  <LinkedInIcon sx={{ mr: 1, fontSize: "1rem" }} />
+                  <Text>{contact.linked_in}</Text>
+                </Box>
+              )}
             </Section>
 
             <Section title="Education" icon={<SchoolIcon />}>
               {education?.map((edu, i) => (
                 <Box key={i} mb={3}>
                   <Text fontWeight="bold">{edu.degree}</Text>
+
+                  {/* NEW: Level */}
+                  {edu.level && (
+                    <Text sx={{ fontSize: "0.8rem", color: "#1976d2" }}>
+                      {edu.level}
+                    </Text>
+                  )}
+
                   <Text>{edu.institution}</Text>
+
+                  {/* NEW: Grade */}
+                  {edu.grade && (
+                    <Text sx={{ fontSize: "0.8rem", color: "#444" }}>
+                      Grade: {edu.grade}
+                    </Text>
+                  )}
+
                   <Text variant="caption" sx={{ color: "#666" }}>
                     {edu.year}
                   </Text>
@@ -391,39 +434,35 @@ const PreviewPage = () => {
               ))}
             </Section>
 
-            <Section title="Awards" icon={<EmojiEventsIcon />}>
-              {awards?.length ? (
-                awards.map((a, i) => (
+            {awards?.length > 0 && (
+              <Section title="Awards" icon={<EmojiEventsIcon />}>
+                {awards.map((a, i) => (
                   <Box key={i} mb={2}>
                     <Text fontWeight="bold">• {a.name}</Text>
                     <Text sx={{ fontSize: "0.8rem", color: "#666" }}>
                       {a.description}
                     </Text>
                   </Box>
-                ))
-              ) : (
-                <Text>No awards listed</Text>
-              )}
-            </Section>
+                ))}
+              </Section>
+            )}
 
-            <Section title="Certifications" icon={<VerifiedIcon />}>
-              {certifications?.length ? (
-                certifications.map((c, i) => (
+            {certifications?.length > 0 && (
+              <Section title="Certifications" icon={<VerifiedIcon />}>
+                {certifications.map((c, i) => (
                   <Box key={i} mb={2}>
                     <Text fontWeight="bold">• {c.name}</Text>
                     <Text sx={{ fontSize: "0.8rem", color: "#666" }}>
                       {c.description}
                     </Text>
                   </Box>
-                ))
-              ) : (
-                <Text>No certifications listed</Text>
-              )}
-            </Section>
+                ))}
+              </Section>
+            )}
           </Box>
 
           {/* RIGHT COLUMN - Remaining two thirds */}
-          <Box width="67%" data-pdf-column="right">
+          <Box width={{ xs: "100%", md: "67%" }} data-pdf-column="right">
             <Section title="Projects" icon={<WorkIcon />}>
               {projects?.map((p, i) => (
                 <Box key={i} mb={4}>
@@ -435,34 +474,23 @@ const PreviewPage = () => {
               ))}
             </Section>
 
-            <Section title="Internships" icon={<WorkIcon />}>
-              {/* {internships?.map((i, idx) => (
-                <Box key={idx} mb={4}>
-                  <Text fontWeight="bold" sx={{ color: "#1976d2" }}>
-                    {i.company}
-                  </Text>
-                  <Text fontStyle="italic" sx={{ color: "#666" }}>
-                    {i.role}
-                  </Text>
-                  <Text sx={{ mt: 1 }}>{i.description}</Text>
-                </Box>
-              ))} */}
-              {internships?.map((item, i) => (
-                <Box key={i}>
-                  <Typography fontWeight="bold">
-                    {item.role} — {item.company}
-                  </Typography>
-                  console.log({item.internship_type})
-                  <Typography fontWeight="bold">
-                    {item.internship_type}
-                  </Typography>
-                  <Typography variant="caption">
-                    {item.start_date} – {item.end_date}
-                  </Typography>
-                  <Typography>{item.description}</Typography>
-                </Box>
-              ))}
-            </Section>
+            {internships?.length > 0 && (
+              <Section title="Internships" icon={<WorkIcon />}>
+                {internships.map((item, i) => (
+                  <Box key={i} mb={4}>
+                    <Typography fontWeight="bold" sx={{ color: "#1976d2" }}>
+                      {item.role} — {item.company}
+                    </Typography>
+                    <Typography fontStyle="italic" sx={{ color: "#666" }}>
+                      {item.internship_type}
+                    </Typography>
+                    <Typography variant="caption">{item.year}</Typography>
+
+                    <Typography sx={{ mt: 1 }}>{item.description}</Typography>
+                  </Box>
+                ))}
+              </Section>
+            )}
 
             <Section title="Skills" icon={<BuildIcon />}>
               <Box display="flex" flexWrap="wrap" gap={1}>

@@ -8,6 +8,7 @@ import {
   useMediaQuery,
   Tooltip,
   IconButton,
+  Alert,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 
@@ -31,6 +32,7 @@ export default function ProjectsPage() {
     handleCreate,
     handleUpdate,
     handleDelete,
+    fetchProjects,
   } = ProjectsContainer();
 
   const theme = useTheme();
@@ -74,6 +76,10 @@ export default function ProjectsPage() {
   /* ---------- UI ---------- */
   return (
     <>
+      <Alert severity="info" sx={{ mb: 2 }}>
+        Projects can be published only after adding a GitHub link and uploading
+        at least one file.
+      </Alert>
       {/* HEADER */}
       <Box
         display="flex"
@@ -201,6 +207,7 @@ export default function ProjectsPage() {
         open={Boolean(filesProjectId)}
         projectId={filesProjectId}
         onClose={handleCloseFiles}
+        refreshProjects={fetchProjects}
       />
     </>
   );

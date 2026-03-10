@@ -11,3 +11,7 @@ export const getCertificates = (userId) =>
 // Delete certificate
 export const deleteCertificate = (certificateId) =>
   api.delete(`/api/certificates/${certificateId}`);
+
+// ✅ NEW: Edit certificate (metadata + optional file)
+export const editCertificate = (certificateId, formData) =>
+  api.put(`/api/certificates/${certificateId}`, formData);

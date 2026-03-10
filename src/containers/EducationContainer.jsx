@@ -128,20 +128,40 @@ export default function EducationContainer() {
         )}
       </Box>
 
-      <Grid container spacing={2}>
-        {list.map((item) => (
-          <Grid item xs={12} md={6} key={item.id}>
-            <EducationCard
-              item={item}
-              onEdit={handleOpenEdit}
-              onDelete={() => {
-                setItemToDelete(item.id);
-                setDeleteDialogOpen(true);
-              }}
-            />
-          </Grid>
-        ))}
-      </Grid>
+      {list.length === 0 ? (
+        <Box
+          sx={{
+            mt: 4,
+            p: 4,
+            textAlign: "center",
+            border: "1px dashed #ccc",
+            borderRadius: 2,
+            color: "text.secondary",
+          }}
+        >
+          <Typography variant="h6" gutterBottom>
+            No Education Records Available
+          </Typography>
+          <Typography variant="body2">
+            Click <b>Add Education</b> to add your academic background.
+          </Typography>
+        </Box>
+      ) : (
+        <Grid container spacing={2}>
+          {list.map((item) => (
+            <Grid item xs={12} md={6} key={item.id}>
+              <EducationCard
+                item={item}
+                onEdit={handleOpenEdit}
+                onDelete={() => {
+                  setItemToDelete(item.id);
+                  setDeleteDialogOpen(true);
+                }}
+              />
+            </Grid>
+          ))}
+        </Grid>
+      )}
 
       <EducationForm
         open={open}

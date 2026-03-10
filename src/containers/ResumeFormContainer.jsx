@@ -18,9 +18,13 @@ import { getCertificates } from "../services/certificateApi";
 import { getUserSkills } from "../services/skillApi";
 import { getPersonalDetails } from "../services/personalDetailsApi";
 import { getEducation } from "../services/educationApi";
+import ResumeProgressTracker from "../components/ResumeProgressTracker";
 
 function ResumeFormContainer() {
-  const user = useSelector((state) => state.auth.user);
+  const reduxUser = useSelector((state) => state.auth.user);
+  const localUser = JSON.parse(localStorage.getItem("user"));
+  const user = reduxUser || localUser;
+
   // console.log(user.email)
   const [formData, setFormData] = useState({
     name: "",
@@ -79,6 +83,29 @@ function ResumeFormContainer() {
 
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  const isBasicDetailsValid =
+    formData.name?.trim() && formData.email?.trim() && formData.phone?.trim();
+
+  const isEducationValid =
+    formData.education?.length > 0 &&
+    formData.education.some(
+      (edu) =>
+        edu.institution?.trim() &&
+        edu.start_year?.trim() &&
+        edu.end_year?.trim(),
+    );
+
+  const isProjectsValid =
+    formData.projects?.length > 0 &&
+    formData.projects.some(
+      (proj) => proj.title?.trim() && proj.description?.trim(),
+    );
+
+  const isSkillsValid = formData.skills?.trim().length > 0;
+
+  const isResumeReady =
+    isBasicDetailsValid && isEducationValid && isProjectsValid && isSkillsValid;
 
   useEffect(() => {
     if (!user?.id) return;
@@ -492,6 +519,12 @@ function ResumeFormContainer() {
         alert("Please log in first.");
         return;
       }
+      if (!isResumeReady) {
+        alert(
+          "Please complete Basic Details, Education, at least 1 Project and 1 Skill before generating resume.",
+        );
+        return;
+      }
 
       const formDataToSend = new FormData();
 
@@ -505,31 +538,66 @@ function ResumeFormContainer() {
 
       // Education as indexed keys
       formData.education.forEach((edu, index) => {
+        // Always send level
+        formDataToSend.append(`education[${index}][level]`, edu.level || "");
+
         if (edu.level === "school") {
+          formDataToSend.append(
+            `education[${index}][institution]`,
+            edu.institution || "",
+          );
+
           formDataToSend.append(`education[${index}][board]`, edu.board || "");
+
           formDataToSend.append(`education[${index}][grade]`, edu.grade || "");
-          formDataToSend.append(`education[${index}][grade]`, edu.degree || "");
+
+          formDataToSend.append(
+            `education[${index}][year]`,
+            edu.start_year && edu.end_year
+              ? `${edu.start_year} - ${edu.end_year}`
+              : "",
+          );
         } else if (edu.level === "college") {
-          const startDate = new Date(edu.start_year);
+          const startDate = edu.start_year ? new Date(edu.start_year) : null;
           const endDate =
-            edu.end_year === "Present" ? new Date() : new Date(edu.end_year);
-          const startMonth = startDate.getMonth() + 1;
-          const startYear = startDate.getFullYear();
-          const endMonth = endDate.getMonth() + 1;
-          const endYear = endDate.getFullYear();
-          const yearString =
-            isNaN(startYear) || isNaN(endYear)
-              ? ""
-              : `${startMonth}/${startYear}-${endMonth}/${endYear}`;
+            edu.end_year === "Present"
+              ? null
+              : edu.end_year
+                ? new Date(edu.end_year)
+                : null;
+
+          let yearString = "";
+
+          if (startDate && !isNaN(startDate)) {
+            const startMonth = startDate.getMonth() + 1;
+            const startYear = startDate.getFullYear();
+
+            if (edu.end_year === "Present") {
+              yearString = `${startMonth}/${startYear} - Present`;
+            } else if (endDate && !isNaN(endDate)) {
+              const endMonth = endDate.getMonth() + 1;
+              const endYear = endDate.getFullYear();
+              yearString = `${startMonth}/${startYear} - ${endMonth}/${endYear}`;
+            }
+          }
+
+          formDataToSend.append(
+            `education[${index}][institution]`,
+            edu.institution || "",
+          );
+
           formDataToSend.append(
             `education[${index}][degree]`,
             edu.degree || "",
           );
+
           formDataToSend.append(
-            `education[${index}][college]`,
-            edu.institution || "",
+            `education[${index}][field_of_study]`,
+            edu.field_of_study || "",
           );
+
           formDataToSend.append(`education[${index}][year]`, yearString);
+
           formDataToSend.append(`education[${index}][grade]`, edu.grade || "");
         }
       });
@@ -661,6 +729,7 @@ function ResumeFormContainer() {
 
   return (
     <Box sx={{ mx: "auto", mt: -2, px: 0, overflowX: "hidden" }}>
+      <ResumeProgressTracker formData={formData} />
       <Typography variant="h6" mb={1}>
         Basic Details
       </Typography>
@@ -1461,6 +1530,7 @@ function ResumeFormContainer() {
             type="submit"
             variant="contained"
             color="primary"
+            disabled={!isResumeReady || loading}
             sx={{
               px: 4,
               py: 2,
@@ -1471,6 +1541,14 @@ function ResumeFormContainer() {
             {loading ? <CircularProgress size={24} /> : "Generate Resume"}
           </Button>
         </Box>
+
+        {/* Message below button */}
+        {!isResumeReady && (
+          <Typography color="error" mt={1} textAlign="center" fontSize="0.9rem">
+            Please complete Basic Details, Education, Projects, and Skills to
+            generate your resume.
+          </Typography>
+        )}
       </form>
     </Box>
   );

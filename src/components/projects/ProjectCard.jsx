@@ -7,10 +7,14 @@ import {
   Chip,
   Stack,
 } from "@mui/material";
+import StatusChip from "../internship/StatusChip";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import { formatDuration } from "../../utils/dateUtils";
 
 export default function ProjectCard({ project, onEdit, onDelete, onFiles }) {
+
+  const isApproved = project.approve_status === "approved";
+
   return (
     <Card>
       <CardContent>
@@ -65,11 +69,17 @@ export default function ProjectCard({ project, onEdit, onDelete, onFiles }) {
           </Box>
         )}
 
+        {/* Status */}
+        <Box mb={1}>
+          <StatusChip status={project.approve_status} />
+        </Box>
+
         {/* Actions */}
         <Box display="flex" gap={1} mt={1}>
           <Button
             size="small"
             variant="outlined"
+            disabled={isApproved}
             onClick={() => onEdit(project)}
           >
             Edit
@@ -87,6 +97,7 @@ export default function ProjectCard({ project, onEdit, onDelete, onFiles }) {
             size="small"
             color="error"
             variant="outlined"
+            disabled={isApproved}
             onClick={() => onDelete(project.id)}
           >
             Delete

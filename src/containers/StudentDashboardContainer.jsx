@@ -5,6 +5,7 @@ import { getStudentDashboard } from "../services/dashboardApi";
 import StatCard from "../components/dashboard/StatCard";
 import ProgressCard from "../components/dashboard/ProgressCard";
 import SectionStatus from "../components/dashboard/SectionStatus";
+import RecentActivity from "../components/dashboard/RecentActivity";
 
 export default function StudentDashboardContainer() {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -13,26 +14,25 @@ export default function StudentDashboardContainer() {
   const [dashboard, setDashboard] = useState(null);
 
   useEffect(() => {
-  if (!dashboard) return;
+    if (!dashboard) return;
 
-  const suggestions = getImprovementSuggestions();
+    const suggestions = getImprovementSuggestions();
 
-  if (suggestions.length > 0) {
-    const resumeNotifications = suggestions.map((text, index) => ({
-      id: `resume-${index}`,
-      title: "Resume Improvement",
-      message: text,
-      is_read: false,
-      created_at: new Date().toISOString(),
-    }));
+    if (suggestions.length > 0) {
+      const resumeNotifications = suggestions.map((text, index) => ({
+        id: `resume-${index}`,
+        title: "Resume Improvement",
+        message: text,
+        is_read: false,
+        created_at: new Date().toISOString(),
+      }));
 
-    localStorage.setItem(
-      "resume_notifications",
-      JSON.stringify(resumeNotifications)
-    );
-  }
-}, [dashboard]);
-
+      localStorage.setItem(
+        "resume_notifications",
+        JSON.stringify(resumeNotifications),
+      );
+    }
+  }, [dashboard]);
 
   useEffect(() => {
     fetchDashboard();
@@ -45,8 +45,13 @@ export default function StudentDashboardContainer() {
 
   if (!dashboard) return null;
 
-  const { resume_completion, skill_score, quick_stats, section_status } =
-    dashboard;
+  const {
+    resume_completion,
+    skill_score,
+    quick_stats,
+    section_status,
+    recent_activity,
+  } = dashboard;
 
   const getImprovementSuggestions = () => {
     const suggestions = [];
@@ -146,6 +151,12 @@ export default function StudentDashboardContainer() {
           />
         </Grid>
       </Grid>
+
+      {recent_activity?.length > 0 && (
+        <Box mt={3} mb={3}>
+          <RecentActivity activities={recent_activity} />
+        </Box>
+      )}
 
       {/* Section Status */}
       <Box>

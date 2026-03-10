@@ -25,6 +25,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import DescriptionIcon from "@mui/icons-material/Description";
 import TableChartIcon from "@mui/icons-material/TableChart";
+import LockResetIcon from "@mui/icons-material/LockReset";
 
 // PDF imports
 import jsPDF from "jspdf";
@@ -52,6 +53,7 @@ export default function EntityList({
   onEdit,
   onDelete,
   entityType,
+  onResetPassword,
 }) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
@@ -94,83 +96,87 @@ export default function EntityList({
           { key: "college", label: "College" },
         ]
       : entityType === "subjects"
-      ? [
-          { key: "subject_code", label: "Subject Code" },
-          { key: "subject_name", label: "Subject Name" },
-          { key: "department", label: "Department" },
-          { key: "college", label: "College" },
-          { key: "year", label: "Year" },
-        ]
-      : entityType === "timetables"
-      ? [
-          { key: "teacher_name", label: "Teacher Name" },
-          { key: "subject_name", label: "Subject" },
-          { key: "department", label: "Department" },
-          { key: "college", label: "College" },
-          { key: "year", label: "Year" },
-          { key: "day", label: "Day" },
-          { key: "time", label: "Time" },
-        ]
-      : entityType === "students"
-      ? [
-          { key: "admission_no", label: "Admission No" },
-          { key: "name", label: "Name" },
-          { key: "father_name", label: "Father Name" },
-          { key: "dob", label: "DOB" },
-          { key: "college", label: "College" },
-          { key: "year", label: "Year" },
-          { key: "department", label: "Department" },
-          { key: "gender", label: "Gender" },
-          { key: "phone", label: "Phone" },
-          { key: "email", label: "Email" },
-        ]
-      : entityType === "parents"
-      ? [
-          { key: "name", label: "Name" },
-          { key: "email", label: "Email" },
-          { key: "phone", label: "Phone Number" },
-          {
-          key: "admission_no",
-          label: "Admission Number",
-          type: "text",
-          required: true,
-        },
-        { key: "year", label: "Year", type: "text", required: true },
-        {
-          key: "department",
-          label: "Department",
-          type: "text",
-          required: true,
-        },
-          { key: "studentLinked", label: "Student Linked" },
-          { key: "college", label: "College" },
-          { key: "address", label: "Address" },
-        ]
-      : entityType === "teachers"
-      ? [
-          { key: "name", label: "Name" },
-          { key: "email", label: "Email" },
-          { key: "college", label: "College" },
-          { key: "department", label: "Department" },
-          { key: "subjects", label: "Subject(s) Taught" },
-          { key: "designation", label: "Designation" },
-          { key: "phone", label: "Phone Number" },
-          { key: "joining_date", label: "Joining Date" },
-        ]
-      : [
-          { key: "name", label: "Name" },
-          { key: "email", label: "Email" },
-        ];
+        ? [
+            { key: "subject_code", label: "Subject Code" },
+            { key: "subject_name", label: "Subject Name" },
+            { key: "department", label: "Department" },
+            { key: "college", label: "College" },
+            { key: "year", label: "Year" },
+          ]
+        : entityType === "timetables"
+          ? [
+              { key: "teacher_name", label: "Teacher Name" },
+              { key: "subject_name", label: "Subject" },
+              { key: "department", label: "Department" },
+              { key: "college", label: "College" },
+              { key: "year", label: "Year" },
+              { key: "day", label: "Day" },
+              { key: "time", label: "Time" },
+            ]
+          : entityType === "students"
+            ? [
+                { key: "admission_no", label: "Admission No" },
+                { key: "name", label: "Name" },
+                { key: "father_name", label: "Father Name" },
+                { key: "dob", label: "DOB" },
+                { key: "college", label: "College" },
+                { key: "year", label: "Year" },
+                { key: "department", label: "Department" },
+                { key: "gender", label: "Gender" },
+                { key: "phone", label: "Phone" },
+                { key: "email", label: "Email" },
+                { key: "location", label: "Location" },
+                { key: "graduation_year", label: "Graduation Year" },
+                { key: "avatar", label: "Avatar" },
+              ]
+            : entityType === "parents"
+              ? [
+                  { key: "name", label: "Name" },
+                  { key: "email", label: "Email" },
+                  { key: "phone", label: "Phone Number" },
+                  { key: "avatar", label: "Avatar" },
+                  {
+                    key: "admission_no",
+                    label: "Admission Number",
+                    type: "text",
+                    required: true,
+                  },
+                  { key: "year", label: "Year", type: "text", required: true },
+                  {
+                    key: "department",
+                    label: "Department",
+                    type: "text",
+                    required: true,
+                  },
+                  { key: "studentLinked", label: "Student Linked" },
+                  { key: "college", label: "College" },
+                  { key: "address", label: "Address" },
+                ]
+              : entityType === "teachers"
+                ? [
+                    { key: "name", label: "Name" },
+                    { key: "email", label: "Email" },
+                    { key: "college", label: "College" },
+                    { key: "department", label: "Department" },
+                    { key: "subjects", label: "Subject(s) Taught" },
+                    { key: "designation", label: "Designation" },
+                    { key: "phone", label: "Phone Number" },
+                    { key: "joining_date", label: "Joining Date" },
+                  ]
+                : [
+                    { key: "name", label: "Name" },
+                    { key: "email", label: "Email" },
+                  ];
 
   // Add button text
   const addButtonText =
     entityType === "students"
       ? "Add Student"
       : entityType === "teachers"
-      ? "Add Teacher"
-      : entityType === "parents"
-      ? "Add Parent"
-      : "Add";
+        ? "Add Teacher"
+        : entityType === "parents"
+          ? "Add Parent"
+          : "Add";
 
   // Apply pagination only for students
   const paginatedItems =
@@ -188,7 +194,7 @@ export default function EntityList({
       doc.text(
         `${entityType.charAt(0).toUpperCase() + entityType.slice(1)} List`,
         14,
-        20
+        20,
       );
 
       // Add table
@@ -239,7 +245,7 @@ export default function EntityList({
           (col) =>
             new DocxTableCell({
               children: [new Paragraph({ text: col.label })],
-            })
+            }),
         ),
       });
 
@@ -251,9 +257,9 @@ export default function EntityList({
               (col) =>
                 new DocxTableCell({
                   children: [new Paragraph({ text: item[col.key] || "-" })],
-                })
+                }),
             ),
-          })
+          }),
       );
 
       const doc = new Document({
@@ -291,12 +297,13 @@ export default function EntityList({
 
   // Updated: Safely parse and display the error to prevent React crash
   const displayError = error
-    ? (typeof error === "object" && error?.errors
-        ? Object.values(error.errors).join(", ")  // e.g., "Email already exists"
-        : error?.message || error.toString() || "An error occurred.")
+    ? typeof error === "object" && error?.errors
+      ? Object.values(error.errors).join(", ") // e.g., "Email already exists"
+      : error?.message || error.toString() || "An error occurred."
     : "";
 
-  if (displayError)  // Changed: Use the parsed string instead of the raw object
+  if (displayError)
+    // Changed: Use the parsed string instead of the raw object
     return (
       <Typography color="error" mt={2}>
         {displayError}
@@ -449,13 +456,29 @@ export default function EntityList({
                             minWidth: shouldScroll
                               ? "150px"
                               : col.key === "email" || col.key === "phone"
-                              ? "120px"
-                              : "auto",
+                                ? "120px"
+                                : "auto",
                             p: { xs: 0.5, sm: 1 },
                             width: shouldScroll ? "150px" : "auto",
                           }}
                         >
-                          {row[col.key] || "-"}
+                          {col.key === "avatar"
+                            ? row.avatar
+                              ? (console.log("Avatar URL:", row.avatar),
+                                (
+                                  <img
+                                    src={row.avatar}
+                                    alt="avatar"
+                                    style={{
+                                      width: 40,
+                                      height: 40,
+                                      borderRadius: "50%",
+                                      objectFit: "cover",
+                                    }}
+                                  />
+                                ))
+                              : "-"
+                            : row[col.key] || "-"}
                         </TableCell>
                       ))}
                       <TableCell
@@ -492,6 +515,16 @@ export default function EntityList({
                           >
                             <DeleteIcon fontSize="small" />
                           </IconButton>
+                          {entityType === "students" && (
+                            <IconButton
+                              aria-label="reset-password"
+                              size="small"
+                              onClick={() => onResetPassword(row)}
+                              color="warning"
+                            >
+                              <LockResetIcon fontSize="small" />
+                            </IconButton>
+                          )}
                         </Box>
                       </TableCell>
                     </TableRow>

@@ -1,15 +1,71 @@
+// import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+// import axios from 'axios';
+
+// export const registerUser  = createAsyncThunk(
+//   'register/registerUser ',
+//   async (userData, { rejectWithValue }) => {
+//     try {
+//       const response = await axios.post('https://www.scratchprod.in/resume-generator-backend/api/register', userData);
+//       if (response.data.success === false) {
+//         return rejectWithValue(response.data.message || 'Registration failed');
+//       }
+//       return response.data.data; // Assuming { data: { user/token details } }
+//     } catch (error) {
+//       return rejectWithValue(error.response?.data?.message || 'Server error. Please try again.');
+//     }
+//   }
+// );
+
+// const registerSlice = createSlice({
+//   name: 'register',
+//   initialState: {
+//     user: null,
+//     token: null,
+//     isLoading: false,
+//     error: null,
+//   },
+//   reducers: {
+//     clearError: (state) => {
+//       state.error = null;
+//     },
+//   },
+//   extraReducers: (builder) => {
+//     builder
+//       .addCase(registerUser .pending, (state) => {
+//         state.isLoading = true;
+//         state.error = null;
+//       })
+//       .addCase(registerUser .fulfilled, (state, action) => {
+//         state.isLoading = false;
+//         state.user = action.payload.user || action.payload; // Adjust based on response structure
+//         state.token = action.payload.token;
+//       })
+//       .addCase(registerUser .rejected, (state, action) => {
+//         state.isLoading = false;
+//         state.error = action.payload;
+//       });
+//   },
+// });
+
+// export const { clearError } = registerSlice.actions;
+// export default registerSlice.reducer;
+
+// src/features/registerSlice.js
+
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-export const registerUser  = createAsyncThunk(
-  'register/registerUser ',
+export const registerUser = createAsyncThunk(
+  'register/registerUser',
   async (userData, { rejectWithValue }) => {
     try {
       const response = await axios.post('https://www.scratchprod.in/resume-generator-backend/api/register', userData);
+      
       if (response.data.success === false) {
         return rejectWithValue(response.data.message || 'Registration failed');
       }
-      return response.data.data; // Assuming { data: { user/token details } }
+      
+      return response.data.data; // Should contain user_id
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Server error. Please try again.');
     }
@@ -23,29 +79,40 @@ const registerSlice = createSlice({
     token: null,
     isLoading: false,
     error: null,
+    success: false, // ✅ ADD THIS
   },
   reducers: {
     clearError: (state) => {
       state.error = null;
     },
+    clearRegisterState: (state) => { // ✅ ADD THIS
+      state.user = null;
+      state.token = null;
+      state.isLoading = false;
+      state.error = null;
+      state.success = false;
+    },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(registerUser .pending, (state) => {
+      .addCase(registerUser.pending, (state) => {
         state.isLoading = true;
         state.error = null;
+        state.success = false;
       })
-      .addCase(registerUser .fulfilled, (state, action) => {
+      .addCase(registerUser.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.user = action.payload.user || action.payload; // Adjust based on response structure
-        state.token = action.payload.token;
+        state.user = action.payload; // Store user info including id
+        state.token = action.payload?.token || null;
+        state.success = true;
       })
-      .addCase(registerUser .rejected, (state, action) => {
+      .addCase(registerUser.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
+        state.success = false;
       });
   },
 });
 
-export const { clearError } = registerSlice.actions;
+export const { clearError, clearRegisterState } = registerSlice.actions;
 export default registerSlice.reducer;
