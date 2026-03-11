@@ -13,3 +13,6 @@ export const getStudentDashboard = (userId) => {
 // ✅ NEW — Recent Activity
 export const getRecentActivity = () =>
   api.get("/api/student/dashboard/recent-activity");
+
+export const getIndustrySkillGap = () =>
+  api.get("/api/industry-skill-gap");

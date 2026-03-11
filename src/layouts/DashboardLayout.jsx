@@ -146,7 +146,8 @@ export default function ResponsiveSidebar() {
           zIndex: (theme) => theme.zIndex.drawer + 1,
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           ml: { sm: `${drawerWidth}px` },
-          borderLeft: { sm: "1px solid rgba(245, 248, 245, 0.82)" },
+          background:
+            "linear-gradient(to right, #4F46E5 0%, #6366F1 50%, #4F46E5 100%)",
         }}
       >
         <Toolbar>
