@@ -92,22 +92,38 @@ export default function AdminJobModeration() {
 
                 <Typography>Description: {job.description}</Typography>
 
-                <Box mt={2} display="flex" gap={2}>
-                  <Button
-                    variant="contained"
-                    color="success"
-                    onClick={() => handleApprove(job.id)}
+                <Box
+                  mt={2}
+                  sx={{
+                    width: "100%",
+                    overflowX: "auto",
+                  }}
+                >
+                  <Box
+                    sx={{
+                      display: "inline-flex", // 🔥 key change
+                      gap: 2,
+                      minWidth: "max-content", // 🔥 prevents shrinking
+                    }}
                   >
-                    Approve
-                  </Button>
+                    <Button
+                      variant="contained"
+                      color="success"
+                      sx={{ minWidth: "120px" }}
+                      onClick={() => handleApprove(job.id)}
+                    >
+                      Approve
+                    </Button>
 
-                  <Button
-                    variant="contained"
-                    color="error"
-                    onClick={() => handleReject(job.id)}
-                  >
-                    Reject
-                  </Button>
+                    <Button
+                      variant="contained"
+                      color="error"
+                      sx={{ minWidth: "120px" }}
+                      onClick={() => handleReject(job.id)}
+                    >
+                      Reject
+                    </Button>
+                  </Box>
                 </Box>
               </Paper>
             </Grid>

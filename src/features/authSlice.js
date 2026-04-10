@@ -27,8 +27,8 @@ export const loginAsync = createAsyncThunk(
         return rejectWithValue("Invalid login response structure");
       }
 
-      // Persist user
       localStorage.setItem("user", JSON.stringify(userData));
+      localStorage.setItem("collegeId", collegeId); // ✅ add this
 
       return {
         user: userData,
@@ -84,7 +84,7 @@ export const adminLoginAsync = createAsyncThunk(
 */
 const initialState = {
   user: JSON.parse(localStorage.getItem("user") || "null"),
-  collegeId: null,
+  collegeId: localStorage.getItem("collegeId") || null,
   loading: false,
   error: null,
 };
@@ -107,6 +107,7 @@ const authSlice = createSlice({
       state.error = null;
       localStorage.removeItem("user");
       localStorage.removeItem("token");
+      localStorage.removeItem("collegeId");
     },
 
     setUser: (state, action) => {

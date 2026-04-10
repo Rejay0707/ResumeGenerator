@@ -336,179 +336,6 @@ function ResumeFormContainer() {
     setFormData({ ...formData, [type]: [...formData[type], newItem] });
   };
 
-  // Handle submit (save to backend and navigate to preview)
-  //   const handleSubmit = async (e) => {
-  //     e.preventDefault();
-  //     setLoading(true);
-
-  //     try {
-  //       const token = localStorage.getItem("token");
-  //       console.log("Retrieved token:", token);
-
-  //       if (!token) {
-  //         alert("No token found. Please log in.");
-  //         return;
-  //       }
-
-  //       // Optional: Basic client-side check (not foolproof, but helpful for debugging)
-  //       const payload = JSON.parse(atob(token.split('.')[1]));  // Decode payload
-  //       const currentTime = Math.floor(Date.now() / 1000);
-  //       if (payload.exp < currentTime) {
-  //         alert("Token expired. Please log in again.");
-  //         return;
-  //       }
-  //       if (payload.iat > currentTime) {
-  //         console.warn("Token issued in future—server clock issue likely.");
-  //       }
-
-  //       const formattedData = {
-  //   ...formData,
-  //   skills: formData.skills
-  //     .split(",")
-  //     .map((s) => s.trim())
-  //     .filter((s) => s.length > 0),   // remove empty values
-  // };
-
-  // const response = await axios.post(
-  //   "https://www.scratchprod.in/resume-generator-backend/api/resumes",
-  //   formattedData,
-  //   {
-  //     headers: {
-  //       Authorization: `Bearer ${token}`,
-  //       "Content-Type": "application/json",
-  //     },
-  //   }
-  // );
-
-  //       // const response = await axios.post(
-  //       //   "https://www.scratchprod.in/resume-generator-backend/api/resumes",
-  //       //   formData,
-  //       //   {
-  //       //     headers: {
-  //       //       Authorization: `Bearer ${token}`,
-  //       //       "Content-Type": "multipart/form-data",
-  //       //     },
-  //       //   }
-  //       // );
-
-  //       console.log("Saved successfully:", response.data);
-  //       const newResumeId = response.data?.data?.id;
-  //       if (newResumeId) {
-  //         navigate("/preview", { state: { resumeId: newResumeId } });
-  //       } else {
-  //         console.error("Resume ID not found in response");
-  //         alert("Resume saved but could not retrieve the ID.");
-  //       }
-  //     } catch (error) {
-  //       console.error("Error details:", {
-  //         status: error.response?.status,
-  //         message: error.response?.data?.message || error.message,
-  //         fullResponse: error.response?.data,
-  //       });
-  //       alert("Something went wrong while saving the resume.");
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   setLoading(true);
-
-  //   try {
-  //     const token = localStorage.getItem("token");
-
-  //     if (!token) {
-  //       alert("No token found. Please log in.");
-  //       return;
-  //     }
-
-  //     const payload = JSON.parse(atob(token.split(".")[1]));
-  //     const currentTime = Math.floor(Date.now() / 1000);
-
-  //     if (payload.exp < currentTime) {
-  //       alert("Token expired. Please log in again.");
-  //       return;
-  //     }
-
-  //     // Convert skills string → array
-  //     const formattedData = {
-  //       ...formData,
-  //       skills: formData.skills
-  //         .split(",")
-  //         .map((s) => s.trim())
-  //         .filter((s) => s.length > 0),
-  //     };
-
-  //     const response = await axios.post(
-  //       "https://www.scratchprod.in/resume-generator-backend/api/resumes",
-  //       formattedData,
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //           "Content-Type": "application/json",
-  //         },
-  //       }
-  //     );
-  //     console.log(response.data?.id)
-
-  //     const newResumeId = response.data?.id;
-  //     console.log(newResumeId)
-  //     if (newResumeId) {
-  //       navigate("/preview", { state: { resumeId: newResumeId } });
-  //     } else {
-  //       alert("Resume saved but could not retrieve ID.");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error saving resume:", error);
-  //     alert("Something went wrong while saving the resume.");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   setLoading(true);
-
-  //   try {
-  //     if (!user) {
-  //       alert("Please log in first.");
-  //       return;
-  //     }
-
-  //     const formattedData = {
-  //       ...formData,
-  //       skills: formData.skills
-  //         .split(",")
-  //         .map((s) => s.trim())
-  //         .filter(Boolean),
-  //     };
-
-  //     const response = await axios.post(
-  //       "https://www.scratchprod.in/resume-generator-backend/api/resumes",
-  //       formattedData,
-  //       {
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //       },
-  //     );
-
-  //     const newResumeId = response.data?.id;
-
-  //     if (newResumeId) {
-  //       navigate("/preview", { state: { resumeId: newResumeId } });
-  //     } else {
-  //       alert("Resume saved but ID not returned.");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error saving resume:", error);
-  //     alert("Something went wrong while saving the resume.");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -727,831 +554,996 @@ function ResumeFormContainer() {
     }
   };
 
-  return (
-    <Box sx={{ mx: "auto", mt: -2, px: 0, overflowX: "hidden" }}>
-      <ResumeProgressTracker formData={formData} />
-      <Typography variant="h6" mb={1}>
-        Basic Details
-      </Typography>
-      <form onSubmit={handleSubmit}>
-        <Grid container spacing={2} sx={{ width: "100%" }}>
-          <Grid item xs={12} sm={6} sx={{ width: { xs: "100%", md: "545px" } }}>
-            <TextField
-              label="Full Name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              fullWidth
-              required
-            />
-          </Grid>
-          <Grid item xs={12} sm={6} sx={{ width: { xs: "100%", md: "545px" } }}>
-            <TextField
-              label="Email"
-              name="email"
-              type="email"
-              value={formData.email}
-              onChange={handleChange}
-              fullWidth
-              required
-              InputProps={{
-                readOnly: true,
-              }}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6} sx={{ width: { xs: "100%", md: "545px" } }}>
-            <TextField
-              label="Phone"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              fullWidth
-              required
-            />
-          </Grid>
-          <Grid item xs={12} sm={6} sx={{ width: { xs: "100%", md: "545px" } }}>
-            <TextField
-              label="GitHub Link"
-              name="github"
-              value={formData.github}
-              onChange={handleChange}
-              fullWidth
-            />
-          </Grid>
-          <Grid
-            item
-            xs={12}
-            sm={6}
-            sx={{ width: { xs: "100%", md: "1105px" } }}
-          >
-            <TextField
-              label="LinkedIn URL"
-              name="linkedin"
-              value={formData.linkedin}
-              onChange={handleChange}
-              fullWidth
-            />
-          </Grid>
-        </Grid>
+  // return (
+  //   <Box sx={{ mx: "auto", mt: -2, px: 0, overflowX: "hidden" }}>
+  //     <ResumeProgressTracker formData={formData} />
+  //     <Typography variant="h6" mb={1}>
+  //       Basic Details
+  //     </Typography>
+  //     <form onSubmit={handleSubmit}>
+  //       <Grid container spacing={2} sx={{ width: "100%" }}>
+  //         <Grid item xs={12} sm={6} sx={{ width: { xs: "100%", md: "545px" } }}>
+  //           <TextField
+  //             label="Full Name"
+  //             name="name"
+  //             value={formData.name}
+  //             onChange={handleChange}
+  //             fullWidth
+  //             required
+  //           />
+  //         </Grid>
+  //         <Grid item xs={12} sm={6} sx={{ width: { xs: "100%", md: "545px" } }}>
+  //           <TextField
+  //             label="Email"
+  //             name="email"
+  //             type="email"
+  //             value={formData.email}
+  //             onChange={handleChange}
+  //             fullWidth
+  //             required
+  //             InputProps={{
+  //               readOnly: true,
+  //             }}
+  //           />
+  //         </Grid>
+  //         <Grid item xs={12} sm={6} sx={{ width: { xs: "100%", md: "545px" } }}>
+  //           <TextField
+  //             label="Phone"
+  //             name="phone"
+  //             value={formData.phone}
+  //             onChange={handleChange}
+  //             fullWidth
+  //             required
+  //           />
+  //         </Grid>
+  //         <Grid item xs={12} sm={6} sx={{ width: { xs: "100%", md: "545px" } }}>
+  //           <TextField
+  //             label="GitHub Link"
+  //             name="github"
+  //             value={formData.github}
+  //             onChange={handleChange}
+  //             fullWidth
+  //           />
+  //         </Grid>
+  //         <Grid
+  //           item
+  //           xs={12}
+  //           sm={6}
+  //           sx={{ width: { xs: "100%", md: "1105px" } }}
+  //         >
+  //           <TextField
+  //             label="LinkedIn URL"
+  //             name="linkedin"
+  //             value={formData.linkedin}
+  //             onChange={handleChange}
+  //             fullWidth
+  //           />
+  //         </Grid>
+  //       </Grid>
 
-        <Divider sx={{ my: 3 }} />
+  //       <Divider sx={{ my: 3 }} />
 
-        {/* Education */}
-        {/* Education */}
-        {/* Education */}
-        <Typography variant="h6" mb={1}>
-          Education
-        </Typography>
+  //       {/* Education */}
+  //       {/* Education */}
+  //       {/* Education */}
+  //       <Typography variant="h6" mb={1}>
+  //         Education
+  //       </Typography>
 
-        {formData.education.map((edu, index) => (
-          <Grid container spacing={2} mb={3} key={index} sx={{ width: "100%" }}>
-            {/* Education Level */}
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              sx={{ width: { xs: "100%", md: "545px" } }}
-            >
-              <TextField
-                select
-                label="Education Level"
-                name="level"
-                value={edu.level}
-                onChange={(e) => handleNestedChange(e, index, "education")}
-                fullWidth
-              >
-                <MenuItem value="school">School</MenuItem>
-                <MenuItem value="college">College</MenuItem>
-              </TextField>
-            </Grid>
+  //       {formData.education.map((edu, index) => (
+  //         <Grid container spacing={2} mb={3} key={index} sx={{ width: "100%" }}>
+  //           {/* Education Level */}
+  //           <Grid
+  //             item
+  //             xs={12}
+  //             sm={6}
+  //             sx={{ width: { xs: "100%", md: "545px" } }}
+  //           >
+  //             <TextField
+  //               select
+  //               label="Education Level"
+  //               name="level"
+  //               value={edu.level}
+  //               onChange={(e) => handleNestedChange(e, index, "education")}
+  //               fullWidth
+  //             >
+  //               <MenuItem value="school">School</MenuItem>
+  //               <MenuItem value="college">College</MenuItem>
+  //             </TextField>
+  //           </Grid>
 
-            {/* Institution */}
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              sx={{ width: { xs: "100%", md: "545px" } }}
-            >
-              <TextField
-                label="Institution"
-                name="institution"
-                value={edu.institution}
-                onChange={(e) => handleNestedChange(e, index, "education")}
-                fullWidth
-                required
-              />
-            </Grid>
+  //           {/* Institution */}
+  //           <Grid
+  //             item
+  //             xs={12}
+  //             sm={6}
+  //             sx={{ width: { xs: "100%", md: "545px" } }}
+  //           >
+  //             <TextField
+  //               label="Institution"
+  //               name="institution"
+  //               value={edu.institution}
+  //               onChange={(e) => handleNestedChange(e, index, "education")}
+  //               fullWidth
+  //               required
+  //             />
+  //           </Grid>
 
-            {/* SCHOOL FIELDS */}
-            {edu.level === "school" && (
-              <>
-                <Grid item xs={12} sx={{ width: { xs: "100%", md: "545px" } }}>
-                  <TextField
-                    label="Board"
-                    name="board"
-                    value={edu.board}
-                    onChange={(e) => handleNestedChange(e, index, "education")}
-                    fullWidth
-                    required
-                  />
-                </Grid>
-                <Grid item xs={12} sx={{ width: { xs: "100%", md: "545px" } }}>
-                  <TextField
-                    label="Grade"
-                    name="grade"
-                    value={edu.grade}
-                    onChange={(e) => handleNestedChange(e, index, "education")}
-                    fullWidth
-                    required
-                  />
-                </Grid>
-              </>
-            )}
+  //           {/* SCHOOL FIELDS */}
+  //           {edu.level === "school" && (
+  //             <>
+  //               <Grid item xs={12} sx={{ width: { xs: "100%", md: "545px" } }}>
+  //                 <TextField
+  //                   label="Board"
+  //                   name="board"
+  //                   value={edu.board}
+  //                   onChange={(e) => handleNestedChange(e, index, "education")}
+  //                   fullWidth
+  //                   required
+  //                 />
+  //               </Grid>
+  //               <Grid item xs={12} sx={{ width: { xs: "100%", md: "545px" } }}>
+  //                 <TextField
+  //                   label="Grade"
+  //                   name="grade"
+  //                   value={edu.grade}
+  //                   onChange={(e) => handleNestedChange(e, index, "education")}
+  //                   fullWidth
+  //                   required
+  //                 />
+  //               </Grid>
+  //             </>
+  //           )}
 
-            {/* COLLEGE FIELDS */}
-            {edu.level === "college" && (
-              <>
-                <Grid
-                  item
-                  xs={12}
-                  sm={6}
-                  sx={{ width: { xs: "100%", md: "545px" } }}
-                >
-                  <TextField
-                    label="Degree"
-                    name="degree"
-                    value={edu.degree}
-                    onChange={(e) => handleNestedChange(e, index, "education")}
-                    fullWidth
-                    required
-                  />
-                </Grid>
+  //           {/* COLLEGE FIELDS */}
+  //           {edu.level === "college" && (
+  //             <>
+  //               <Grid
+  //                 item
+  //                 xs={12}
+  //                 sm={6}
+  //                 sx={{ width: { xs: "100%", md: "545px" } }}
+  //               >
+  //                 <TextField
+  //                   label="Degree"
+  //                   name="degree"
+  //                   value={edu.degree}
+  //                   onChange={(e) => handleNestedChange(e, index, "education")}
+  //                   fullWidth
+  //                   required
+  //                 />
+  //               </Grid>
 
-                <Grid
-                  item
-                  xs={12}
-                  sm={6}
-                  sx={{ width: { xs: "100%", md: "545px" } }}
-                >
-                  <TextField
-                    label="Field of Study"
-                    name="field_of_study"
-                    value={edu.field_of_study}
-                    onChange={(e) => handleNestedChange(e, index, "education")}
-                    fullWidth
-                  />
-                </Grid>
+  //               <Grid
+  //                 item
+  //                 xs={12}
+  //                 sm={6}
+  //                 sx={{ width: { xs: "100%", md: "545px" } }}
+  //               >
+  //                 <TextField
+  //                   label="Field of Study"
+  //                   name="field_of_study"
+  //                   value={edu.field_of_study}
+  //                   onChange={(e) => handleNestedChange(e, index, "education")}
+  //                   fullWidth
+  //                 />
+  //               </Grid>
 
-                <Grid
-                  item
-                  xs={12}
-                  sm={6}
-                  sx={{ width: { xs: "100%", md: "545px" } }}
-                >
-                  <TextField
-                    label="Grade"
-                    name="grade"
-                    value={edu.grade}
-                    onChange={(e) => handleNestedChange(e, index, "education")}
-                    fullWidth
-                  />
-                </Grid>
-              </>
-            )}
+  //               <Grid
+  //                 item
+  //                 xs={12}
+  //                 sm={6}
+  //                 sx={{ width: { xs: "100%", md: "545px" } }}
+  //               >
+  //                 <TextField
+  //                   label="Grade"
+  //                   name="grade"
+  //                   value={edu.grade}
+  //                   onChange={(e) => handleNestedChange(e, index, "education")}
+  //                   fullWidth
+  //                 />
+  //               </Grid>
+  //             </>
+  //           )}
 
-            {/* YEARS */}
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              sx={{ width: { xs: "100%", md: "545px" } }}
-            >
-              <TextField
-                label="Start Year"
-                name="start_year"
-                value={edu.start_year}
-                onChange={(e) => handleNestedChange(e, index, "education")}
-                fullWidth
-                required
-              />
-            </Grid>
+  //           {/* YEARS */}
+  //           <Grid
+  //             item
+  //             xs={12}
+  //             sm={6}
+  //             sx={{ width: { xs: "100%", md: "545px" } }}
+  //           >
+  //             <TextField
+  //               label="Start Year"
+  //               name="start_year"
+  //               value={edu.start_year}
+  //               onChange={(e) => handleNestedChange(e, index, "education")}
+  //               fullWidth
+  //               required
+  //             />
+  //           </Grid>
 
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              sx={{ width: { xs: "100%", md: "545px" } }}
-            >
-              <TextField
-                label="End Year"
-                name="end_year"
-                value={edu.end_year}
-                onChange={(e) => handleNestedChange(e, index, "education")}
-                fullWidth
-                required
-              />
-            </Grid>
-          </Grid>
-        ))}
+  //           <Grid
+  //             item
+  //             xs={12}
+  //             sm={6}
+  //             sx={{ width: { xs: "100%", md: "545px" } }}
+  //           >
+  //             <TextField
+  //               label="End Year"
+  //               name="end_year"
+  //               value={edu.end_year}
+  //               onChange={(e) => handleNestedChange(e, index, "education")}
+  //               fullWidth
+  //               required
+  //             />
+  //           </Grid>
+  //         </Grid>
+  //       ))}
 
-        {/* Add Education Button */}
-        <Button
-          variant="outlined"
-          onClick={() => handleAdd("education")}
-          sx={{
-            px: 2,
-            py: 2,
-            fontSize: "1rem",
-            borderRadius: 2,
-            mb: 3,
-            borderLeft: "4px solid #1976d2",
-            "&:focus": {
-              outline: "none",
-              backgroundColor: "transparent",
-              borderLeft: "4px solid #1976d2",
-            },
-            "&:active": {
-              backgroundColor: "transparent",
-              borderLeft: "4px solid #1976d2",
-            },
-          }}
-        >
-          + Add Education
-        </Button>
+  //       {/* Add Education Button */}
+  //       <Button
+  //         variant="outlined"
+  //         onClick={() => handleAdd("education")}
+  //         sx={{
+  //           px: 2,
+  //           py: 2,
+  //           fontSize: "1rem",
+  //           borderRadius: 2,
+  //           mb: 3,
+  //           borderLeft: "4px solid #1976d2",
+  //           "&:focus": {
+  //             outline: "none",
+  //             backgroundColor: "transparent",
+  //             borderLeft: "4px solid #1976d2",
+  //           },
+  //           "&:active": {
+  //             backgroundColor: "transparent",
+  //             borderLeft: "4px solid #1976d2",
+  //           },
+  //         }}
+  //       >
+  //         + Add Education
+  //       </Button>
 
-        <Divider sx={{ my: 3 }} />
+  //       <Divider sx={{ my: 3 }} />
 
-        {/* Skills */}
-        <Typography variant="h6" mb={1}>
-          Skills
-        </Typography>
-        <Grid container spacing={2} sx={{ width: "100%" }}>
-          <Grid item xs={12} sx={{ width: { xs: "100%", md: "1105px" } }}>
-            <TextField
-              label="Skills (comma-separated)"
-              name="skills"
-              value={formData.skills}
-              onChange={handleChange}
-              fullWidth
-              multiline
-              rows={2}
-              placeholder="e.g., JavaScript, React, Node.js"
-            />
-          </Grid>
-        </Grid>
+  //       {/* Skills */}
+  //       <Typography variant="h6" mb={1}>
+  //         Skills
+  //       </Typography>
+  //       <Grid container spacing={2} sx={{ width: "100%" }}>
+  //         <Grid item xs={12} sx={{ width: { xs: "100%", md: "1105px" } }}>
+  //           <TextField
+  //             label="Skills (comma-separated)"
+  //             name="skills"
+  //             value={formData.skills}
+  //             onChange={handleChange}
+  //             fullWidth
+  //             multiline
+  //             rows={2}
+  //             placeholder="e.g., JavaScript, React, Node.js"
+  //           />
+  //         </Grid>
+  //       </Grid>
 
-        <Divider sx={{ my: 3 }} />
+  //       <Divider sx={{ my: 3 }} />
 
-        {/* Projects */}
-        <Typography variant="h6" mb={1}>
-          Projects
-        </Typography>
-        {formData.projects.map((project, index) => (
-          <Grid container spacing={2} mb={3} key={index}>
-            {/* Project Title - 50% */}
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              sx={{ width: { xs: "100%", md: "545px" } }}
-            >
-              <TextField
-                label="Project Title"
-                name="title"
-                value={project.title}
-                onChange={(e) => handleNestedChange(e, index, "projects")}
-                fullWidth
-              />
-            </Grid>
+  //       {/* Projects */}
+  //       <Typography variant="h6" mb={1}>
+  //         Projects
+  //       </Typography>
+  //       {formData.projects.map((project, index) => (
+  //         <Grid container spacing={2} mb={3} key={index}>
+  //           {/* Project Title - 50% */}
+  //           <Grid
+  //             item
+  //             xs={12}
+  //             sm={6}
+  //             sx={{ width: { xs: "100%", md: "545px" } }}
+  //           >
+  //             <TextField
+  //               label="Project Title"
+  //               name="title"
+  //               value={project.title}
+  //               onChange={(e) => handleNestedChange(e, index, "projects")}
+  //               fullWidth
+  //             />
+  //           </Grid>
 
-            {/* GitHub Link - 50% */}
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              sx={{ width: { xs: "100%", md: "545px" } }}
-            >
-              <TextField
-                label="GitHub Link"
-                name="github_url"
-                value={project.github_url}
-                onChange={(e) => handleNestedChange(e, index, "projects")}
-                fullWidth
-              />
-            </Grid>
+  //           {/* GitHub Link - 50% */}
+  //           <Grid
+  //             item
+  //             xs={12}
+  //             sm={6}
+  //             sx={{ width: { xs: "100%", md: "545px" } }}
+  //           >
+  //             <TextField
+  //               label="GitHub Link"
+  //               name="github_url"
+  //               value={project.github_url}
+  //               onChange={(e) => handleNestedChange(e, index, "projects")}
+  //               fullWidth
+  //             />
+  //           </Grid>
 
-            {/* Start Date */}
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              sx={{ width: { xs: "100%", md: "545px" } }}
-            >
-              <TextField
-                label="Start Date"
-                name="start_date"
-                type="date"
-                value={project.start_date}
-                onChange={(e) => handleNestedChange(e, index, "projects")}
-                fullWidth
-                InputLabelProps={{ shrink: true }}
-              />
-            </Grid>
+  //           {/* Start Date */}
+  //           <Grid
+  //             item
+  //             xs={12}
+  //             sm={6}
+  //             sx={{ width: { xs: "100%", md: "545px" } }}
+  //           >
+  //             <TextField
+  //               label="Start Date"
+  //               name="start_date"
+  //               type="date"
+  //               value={project.start_date}
+  //               onChange={(e) => handleNestedChange(e, index, "projects")}
+  //               fullWidth
+  //               InputLabelProps={{ shrink: true }}
+  //             />
+  //           </Grid>
 
-            {/* End Date */}
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              sx={{ width: { xs: "100%", md: "545px" } }}
-            >
-              <TextField
-                label="End Date"
-                name="end_date"
-                type="date"
-                value={project.end_date}
-                onChange={(e) => handleNestedChange(e, index, "projects")}
-                fullWidth
-                InputLabelProps={{ shrink: true }}
-              />
-            </Grid>
+  //           {/* End Date */}
+  //           <Grid
+  //             item
+  //             xs={12}
+  //             sm={6}
+  //             sx={{ width: { xs: "100%", md: "545px" } }}
+  //           >
+  //             <TextField
+  //               label="End Date"
+  //               name="end_date"
+  //               type="date"
+  //               value={project.end_date}
+  //               onChange={(e) => handleNestedChange(e, index, "projects")}
+  //               fullWidth
+  //               InputLabelProps={{ shrink: true }}
+  //             />
+  //           </Grid>
 
-            {/* Description - FULL WIDTH */}
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              sx={{ width: { xs: "100%", md: "1105px" } }}
-            >
-              <TextField
-                label="Project Description"
-                name="description"
-                value={project.description}
-                onChange={(e) => handleNestedChange(e, index, "projects")}
-                fullWidth
-                multiline
-                rows={3}
-              />
-            </Grid>
+  //           {/* Description - FULL WIDTH */}
+  //           <Grid
+  //             item
+  //             xs={12}
+  //             sm={6}
+  //             sx={{ width: { xs: "100%", md: "1105px" } }}
+  //           >
+  //             <TextField
+  //               label="Project Description"
+  //               name="description"
+  //               value={project.description}
+  //               onChange={(e) => handleNestedChange(e, index, "projects")}
+  //               fullWidth
+  //               multiline
+  //               rows={3}
+  //             />
+  //           </Grid>
 
-            {/* Upload Button */}
-            <Grid item xs={12}>
-              <Button
-                variant="outlined"
-                component="label"
-                sx={{
-                  px: 3,
-                  py: 2,
-                  borderRadius: 2,
-                  borderLeft: "4px solid #1976d2",
-                }}
-              >
-                Upload Project Files
-                <input
-                  type="file"
-                  multiple
-                  hidden
-                  onChange={(e) => handleProjectFileChange(e, index)}
-                />
-              </Button>
-            </Grid>
+  //           {/* Upload Button */}
+  //           <Grid item xs={12}>
+  //             <Button
+  //               variant="outlined"
+  //               component="label"
+  //               sx={{
+  //                 px: 3,
+  //                 py: 2,
+  //                 borderRadius: 2,
+  //                 borderLeft: "4px solid #1976d2",
+  //               }}
+  //             >
+  //               Upload Project Files
+  //               <input
+  //                 type="file"
+  //                 multiple
+  //                 hidden
+  //                 onChange={(e) => handleProjectFileChange(e, index)}
+  //               />
+  //             </Button>
+  //           </Grid>
 
-            {/* Uploaded Files - ATTRACTIVE */}
-            {project.files?.length > 0 && (
-              <Grid item xs={12}>
-                <Typography variant="body2" mb={1}>
-                  Uploaded Files
-                </Typography>
+  //           {/* Uploaded Files - ATTRACTIVE */}
+  //           {project.files?.length > 0 && (
+  //             <Grid item xs={12}>
+  //               <Typography variant="body2" mb={1}>
+  //                 Uploaded Files
+  //               </Typography>
 
-                <Box display="flex" gap={1} flexWrap="wrap">
-                  {project.files.map((file, i) => (
-                    <Button
-                      key={i}
-                      size="small"
-                      variant="outlined"
-                      href={file.file_url}
-                      target="_blank"
-                      sx={{
-                        textTransform: "none",
-                        borderRadius: 2,
-                      }}
-                    >
-                      {file.file_name}
-                    </Button>
-                  ))}
-                </Box>
-              </Grid>
-            )}
-          </Grid>
-        ))}
+  //               <Box display="flex" gap={1} flexWrap="wrap">
+  //                 {project.files.map((file, i) => (
+  //                   <Button
+  //                     key={i}
+  //                     size="small"
+  //                     variant="outlined"
+  //                     href={file.file_url}
+  //                     target="_blank"
+  //                     sx={{
+  //                       textTransform: "none",
+  //                       borderRadius: 2,
+  //                     }}
+  //                   >
+  //                     {file.file_name}
+  //                   </Button>
+  //                 ))}
+  //               </Box>
+  //             </Grid>
+  //           )}
+  //         </Grid>
+  //       ))}
 
-        <Button
-          variant="outlined"
-          onClick={() => handleAdd("projects")}
-          sx={{
-            px: 2,
-            py: 2,
-            fontSize: "1rem",
-            borderRadius: 2,
-            mb: 3,
-            borderLeft: "4px solid #1976d2", // example left border color
-            // Keep border and background consistent on focus and active
-            "&:focus": {
-              outline: "none",
-              backgroundColor: "transparent",
-              borderLeft: "4px solid #1976d2",
-            },
-            "&:active": {
-              backgroundColor: "transparent",
-              borderLeft: "4px solid #1976d2",
-            },
-          }}
-        >
-          + Add Project
-        </Button>
+  //       <Button
+  //         variant="outlined"
+  //         onClick={() => handleAdd("projects")}
+  //         sx={{
+  //           px: 2,
+  //           py: 2,
+  //           fontSize: "1rem",
+  //           borderRadius: 2,
+  //           mb: 3,
+  //           borderLeft: "4px solid #1976d2", // example left border color
+  //           // Keep border and background consistent on focus and active
+  //           "&:focus": {
+  //             outline: "none",
+  //             backgroundColor: "transparent",
+  //             borderLeft: "4px solid #1976d2",
+  //           },
+  //           "&:active": {
+  //             backgroundColor: "transparent",
+  //             borderLeft: "4px solid #1976d2",
+  //           },
+  //         }}
+  //       >
+  //         + Add Project
+  //       </Button>
 
-        <Divider sx={{ my: 3 }} />
+  //       <Divider sx={{ my: 3 }} />
 
-        {/* Internships */}
-        <Typography variant="h6" mb={1}>
-          Internships
-        </Typography>
-        {formData.internships.map((internship, index) => (
-          <Grid container spacing={2} mb={2} key={index}>
-            <Grid
-              item
-              xs={12}
-              md={6}
-              sx={{ width: { xs: "100%", md: "545px" } }}
-            >
-              <TextField
-                label="Company"
-                name="company"
-                value={internship.company}
-                onChange={(e) => handleNestedChange(e, index, "internships")}
-                fullWidth
-              />
-            </Grid>
-            <Grid
-              item
-              xs={12}
-              md={6}
-              sx={{ width: { xs: "100%", md: "545px" } }}
-            >
-              <TextField
-                label="Role"
-                name="role"
-                value={internship.role}
-                onChange={(e) => handleNestedChange(e, index, "internships")}
-                fullWidth
-              />
-            </Grid>
-            {/* <Grid item xs={12} md={6}>
-              <TextField
-                label="Internship Type"
-                name="internship_type"
-                value={internship.internship_type}
-                onChange={(e) => handleNestedChange(e, index, "internships")}
-                fullWidth
-                placeholder="e.g., Remote / Onsite / Paid / Unpaid"
-              />
-            </Grid> */}
+  //       {/* Internships */}
+  //       <Typography variant="h6" mb={1}>
+  //         Internships
+  //       </Typography>
+  //       {formData.internships.map((internship, index) => (
+  //         <Grid container spacing={2} mb={2} key={index}>
+  //           <Grid
+  //             item
+  //             xs={12}
+  //             md={6}
+  //             sx={{ width: { xs: "100%", md: "545px" } }}
+  //           >
+  //             <TextField
+  //               label="Company"
+  //               name="company"
+  //               value={internship.company}
+  //               onChange={(e) => handleNestedChange(e, index, "internships")}
+  //               fullWidth
+  //             />
+  //           </Grid>
+  //           <Grid
+  //             item
+  //             xs={12}
+  //             md={6}
+  //             sx={{ width: { xs: "100%", md: "545px" } }}
+  //           >
+  //             <TextField
+  //               label="Role"
+  //               name="role"
+  //               value={internship.role}
+  //               onChange={(e) => handleNestedChange(e, index, "internships")}
+  //               fullWidth
+  //             />
+  //           </Grid>
+  //           {/* <Grid item xs={12} md={6}>
+  //             <TextField
+  //               label="Internship Type"
+  //               name="internship_type"
+  //               value={internship.internship_type}
+  //               onChange={(e) => handleNestedChange(e, index, "internships")}
+  //               fullWidth
+  //               placeholder="e.g., Remote / Onsite / Paid / Unpaid"
+  //             />
+  //           </Grid> */}
 
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              sx={{ width: { xs: "100%", md: "545px" } }}
-            >
-              <TextField
-                label="Start Date"
-                name="start_date"
-                type="date"
-                value={internship.start_date}
-                onChange={(e) => handleNestedChange(e, index, "internships")}
-                fullWidth
-                InputLabelProps={{ shrink: true }}
-              />
-            </Grid>
+  //           <Grid
+  //             item
+  //             xs={12}
+  //             sm={6}
+  //             sx={{ width: { xs: "100%", md: "545px" } }}
+  //           >
+  //             <TextField
+  //               label="Start Date"
+  //               name="start_date"
+  //               type="date"
+  //               value={internship.start_date}
+  //               onChange={(e) => handleNestedChange(e, index, "internships")}
+  //               fullWidth
+  //               InputLabelProps={{ shrink: true }}
+  //             />
+  //           </Grid>
 
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              sx={{ width: { xs: "100%", md: "545px" } }}
-            >
-              <TextField
-                label="End Date"
-                name="end_date"
-                type="date"
-                value={internship.end_date}
-                onChange={(e) => handleNestedChange(e, index, "internships")}
-                fullWidth
-                InputLabelProps={{ shrink: true }}
-              />
-            </Grid>
-            <Grid
-              item
-              xs={12}
-              md={12}
-              sx={{ width: { xs: "100%", md: "1105px" } }}
-            >
-              <TextField
-                label="Description"
-                name="description"
-                value={internship.description}
-                onChange={(e) => handleNestedChange(e, index, "internships")}
-                fullWidth
-              />
-            </Grid>
-          </Grid>
-        ))}
-        <Button
-          variant="outlined"
-          onClick={() => handleAdd("internships")}
-          sx={{
-            px: 2,
-            py: 2,
-            fontSize: "1rem",
-            borderRadius: 2,
-            mb: 3,
-            borderLeft: "4px solid #1976d2", // example left border color
-            // Keep border and background consistent on focus and active
-            "&:focus": {
-              outline: "none",
-              backgroundColor: "transparent",
-              borderLeft: "4px solid #1976d2",
-            },
-            "&:active": {
-              backgroundColor: "transparent",
-              borderLeft: "4px solid #1976d2",
-            },
-          }}
-        >
-          + Add Internship
-        </Button>
+  //           <Grid
+  //             item
+  //             xs={12}
+  //             sm={6}
+  //             sx={{ width: { xs: "100%", md: "545px" } }}
+  //           >
+  //             <TextField
+  //               label="End Date"
+  //               name="end_date"
+  //               type="date"
+  //               value={internship.end_date}
+  //               onChange={(e) => handleNestedChange(e, index, "internships")}
+  //               fullWidth
+  //               InputLabelProps={{ shrink: true }}
+  //             />
+  //           </Grid>
+  //           <Grid
+  //             item
+  //             xs={12}
+  //             md={12}
+  //             sx={{ width: { xs: "100%", md: "1105px" } }}
+  //           >
+  //             <TextField
+  //               label="Description"
+  //               name="description"
+  //               value={internship.description}
+  //               onChange={(e) => handleNestedChange(e, index, "internships")}
+  //               fullWidth
+  //             />
+  //           </Grid>
+  //         </Grid>
+  //       ))}
+  //       <Button
+  //         variant="outlined"
+  //         onClick={() => handleAdd("internships")}
+  //         sx={{
+  //           px: 2,
+  //           py: 2,
+  //           fontSize: "1rem",
+  //           borderRadius: 2,
+  //           mb: 3,
+  //           borderLeft: "4px solid #1976d2", // example left border color
+  //           // Keep border and background consistent on focus and active
+  //           "&:focus": {
+  //             outline: "none",
+  //             backgroundColor: "transparent",
+  //             borderLeft: "4px solid #1976d2",
+  //           },
+  //           "&:active": {
+  //             backgroundColor: "transparent",
+  //             borderLeft: "4px solid #1976d2",
+  //           },
+  //         }}
+  //       >
+  //         + Add Internship
+  //       </Button>
 
-        <Divider sx={{ my: 3 }} />
+  //       <Divider sx={{ my: 3 }} />
 
-        {/* Certifications */}
-        <Typography variant="h6" mb={1}>
-          Certifications
-        </Typography>
-        {formData.certifications.map((cert, index) => (
-          <Grid container spacing={2} mb={2} key={index}>
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              sx={{ width: { xs: "100%", md: "545px" } }}
-            >
-              <TextField
-                label="Certification Title" // Fixed typo: "Tile" -> "Title"
-                name="title"
-                value={cert.title || cert.name || ""} // Use 'title' consistently
-                onChange={(e) => handleNestedChange(e, index, "certifications")} // Fixed: Use handleNestedChange
-                fullWidth
-                InputLabelProps={{ shrink: true }}
-              />
-            </Grid>
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              sx={{ width: { xs: "100%", md: "545px" } }}
-            >
-              <TextField
-                label="Issuer"
-                name="issuer"
-                value={cert.issuer}
-                onChange={(e) => handleNestedChange(e, index, "certifications")}
-                fullWidth
-              />
-            </Grid>
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              sx={{ width: { xs: "100%", md: "545px" } }}
-            >
-              <TextField
-                label="Date"
-                name="date"
-                type="date"
-                value={cert.date}
-                onChange={(e) => handleNestedChange(e, index, "certifications")}
-                fullWidth
-                InputLabelProps={{ shrink: true }}
-              />
-            </Grid>
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              sx={{ width: { xs: "100%", md: "545px" } }}
-            >
-              <TextField
-                label="Skills (comma-separated)"
-                name="skills"
-                value={cert.skills}
-                onChange={(e) => handleNestedChange(e, index, "certifications")}
-                fullWidth
-              />
-            </Grid>
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              sx={{ width: { xs: "100%", md: "1105px" } }}
-            >
-              <TextField
-                label="Category"
-                name="category"
-                value={cert.category}
-                onChange={(e) => handleNestedChange(e, index, "certifications")}
-                fullWidth
-              />
-            </Grid>
-            {/* Upload Certificate File */}
-            <Grid item xs={12}>
-              <Button
-                variant="outlined"
-                component="label"
-                sx={{
-                  px: 3,
-                  py: 2,
-                  borderRadius: 2,
-                  borderLeft: "4px solid #1976d2",
-                }}
-              >
-                Upload Certificate File
-                <input
-                  type="file"
-                  hidden
-                  onChange={(e) => {
-                    const file = e.target.files[0];
-                    if (!file) return;
+  //       {/* Certifications */}
+  //       <Typography variant="h6" mb={1}>
+  //         Certifications
+  //       </Typography>
+  //       {formData.certifications.map((cert, index) => (
+  //         <Grid container spacing={2} mb={2} key={index}>
+  //           <Grid
+  //             item
+  //             xs={12}
+  //             sm={6}
+  //             sx={{ width: { xs: "100%", md: "545px" } }}
+  //           >
+  //             <TextField
+  //               label="Certification Title" // Fixed typo: "Tile" -> "Title"
+  //               name="title"
+  //               value={cert.title || cert.name || ""} // Use 'title' consistently
+  //               onChange={(e) => handleNestedChange(e, index, "certifications")} // Fixed: Use handleNestedChange
+  //               fullWidth
+  //               InputLabelProps={{ shrink: true }}
+  //             />
+  //           </Grid>
+  //           <Grid
+  //             item
+  //             xs={12}
+  //             sm={6}
+  //             sx={{ width: { xs: "100%", md: "545px" } }}
+  //           >
+  //             <TextField
+  //               label="Issuer"
+  //               name="issuer"
+  //               value={cert.issuer}
+  //               onChange={(e) => handleNestedChange(e, index, "certifications")}
+  //               fullWidth
+  //             />
+  //           </Grid>
+  //           <Grid
+  //             item
+  //             xs={12}
+  //             sm={6}
+  //             sx={{ width: { xs: "100%", md: "545px" } }}
+  //           >
+  //             <TextField
+  //               label="Date"
+  //               name="date"
+  //               type="date"
+  //               value={cert.date}
+  //               onChange={(e) => handleNestedChange(e, index, "certifications")}
+  //               fullWidth
+  //               InputLabelProps={{ shrink: true }}
+  //             />
+  //           </Grid>
+  //           <Grid
+  //             item
+  //             xs={12}
+  //             sm={6}
+  //             sx={{ width: { xs: "100%", md: "545px" } }}
+  //           >
+  //             <TextField
+  //               label="Skills (comma-separated)"
+  //               name="skills"
+  //               value={cert.skills}
+  //               onChange={(e) => handleNestedChange(e, index, "certifications")}
+  //               fullWidth
+  //             />
+  //           </Grid>
+  //           <Grid
+  //             item
+  //             xs={12}
+  //             sm={6}
+  //             sx={{ width: { xs: "100%", md: "1105px" } }}
+  //           >
+  //             <TextField
+  //               label="Category"
+  //               name="category"
+  //               value={cert.category}
+  //               onChange={(e) => handleNestedChange(e, index, "certifications")}
+  //               fullWidth
+  //             />
+  //           </Grid>
+  //           {/* Upload Certificate File */}
+  //           <Grid item xs={12}>
+  //             <Button
+  //               variant="outlined"
+  //               component="label"
+  //               sx={{
+  //                 px: 3,
+  //                 py: 2,
+  //                 borderRadius: 2,
+  //                 borderLeft: "4px solid #1976d2",
+  //               }}
+  //             >
+  //               Upload Certificate File
+  //               <input
+  //                 type="file"
+  //                 hidden
+  //                 onChange={(e) => {
+  //                   const file = e.target.files[0];
+  //                   if (!file) return;
 
-                    setFormData((prev) => {
-                      const updated = [...prev.certifications];
-                      updated[index] = {
-                        ...updated[index],
-                        file, // store file locally
-                      };
-                      return { ...prev, certifications: updated };
-                    });
-                  }}
-                />
-              </Button>
-            </Grid>
+  //                   setFormData((prev) => {
+  //                     const updated = [...prev.certifications];
+  //                     updated[index] = {
+  //                       ...updated[index],
+  //                       file, // store file locally
+  //                     };
+  //                     return { ...prev, certifications: updated };
+  //                   });
+  //                 }}
+  //               />
+  //             </Button>
+  //           </Grid>
 
-            {/* Already Uploaded Certificate Link */}
-            {/* Uploaded Certificates - ATTRACTIVE */}
-            {cert.file_url && (
-              <Grid item xs={12}>
-                <Typography variant="body2" mb={1}>
-                  Uploaded Certificate
-                </Typography>
+  //           {/* Already Uploaded Certificate Link */}
+  //           {/* Uploaded Certificates - ATTRACTIVE */}
+  //           {cert.file_url && (
+  //             <Grid item xs={12}>
+  //               <Typography variant="body2" mb={1}>
+  //                 Uploaded Certificate
+  //               </Typography>
 
-                <Box display="flex" gap={1} flexWrap="wrap">
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    href={cert.file_url}
-                    target="_blank"
-                    sx={{
-                      textTransform: "none",
-                      borderRadius: 2,
-                      color: "text.primary", // ✅ NOT blue
-                      borderColor: "grey.400", // subtle border
-                      "&:hover": {
-                        backgroundColor: "grey.100",
-                        borderColor: "grey.600",
-                      },
-                    }}
-                  >
-                    {cert.name || "View Certificate"}
-                  </Button>
-                </Box>
-              </Grid>
-            )}
-          </Grid>
-        ))}
+  //               <Box display="flex" gap={1} flexWrap="wrap">
+  //                 <Button
+  //                   size="small"
+  //                   variant="outlined"
+  //                   href={cert.file_url}
+  //                   target="_blank"
+  //                   sx={{
+  //                     textTransform: "none",
+  //                     borderRadius: 2,
+  //                     color: "text.primary", // ✅ NOT blue
+  //                     borderColor: "grey.400", // subtle border
+  //                     "&:hover": {
+  //                       backgroundColor: "grey.100",
+  //                       borderColor: "grey.600",
+  //                     },
+  //                   }}
+  //                 >
+  //                   {cert.name || "View Certificate"}
+  //                 </Button>
+  //               </Box>
+  //             </Grid>
+  //           )}
+  //         </Grid>
+  //       ))}
 
-        <Button
-          variant="outlined"
-          onClick={() => handleAdd("internships")}
-          sx={{
-            px: 2,
-            py: 2,
-            fontSize: "1rem",
-            borderRadius: 2,
-            mb: 3,
-            borderLeft: "4px solid #1976d2", // example left border color
-            // Keep border and background consistent on focus and active
-            "&:focus": {
-              outline: "none",
-              backgroundColor: "transparent",
-              borderLeft: "4px solid #1976d2",
-            },
-            "&:active": {
-              backgroundColor: "transparent",
-              borderLeft: "4px solid #1976d2",
-            },
-          }}
-        >
-          + Add Certificate
-        </Button>
+  //       <Button
+  //         variant="outlined"
+  //         onClick={() => handleAdd("internships")}
+  //         sx={{
+  //           px: 2,
+  //           py: 2,
+  //           fontSize: "1rem",
+  //           borderRadius: 2,
+  //           mb: 3,
+  //           borderLeft: "4px solid #1976d2", // example left border color
+  //           // Keep border and background consistent on focus and active
+  //           "&:focus": {
+  //             outline: "none",
+  //             backgroundColor: "transparent",
+  //             borderLeft: "4px solid #1976d2",
+  //           },
+  //           "&:active": {
+  //             backgroundColor: "transparent",
+  //             borderLeft: "4px solid #1976d2",
+  //           },
+  //         }}
+  //       >
+  //         + Add Certificate
+  //       </Button>
 
-        <Divider sx={{ my: 3 }} />
+  //       <Divider sx={{ my: 3 }} />
 
-        {/* Awards */}
-        <Typography variant="h6" mb={1}>
-          Awards
-        </Typography>
-        {formData.awards.map((award, index) => (
-          <Grid container spacing={2} mb={2} key={index}>
-            <Grid
-              item
-              xs={12}
-              md={6}
-              sx={{ width: { xs: "100%", md: "545px" } }}
-            >
-              <TextField
-                label="Award Name"
-                name="name"
-                value={award.name}
-                onChange={(e) => handleNestedChange(e, index, "awards")}
-                fullWidth
-              />
-            </Grid>
-            <Grid
-              item
-              xs={12}
-              md={6}
-              sx={{ width: { xs: "100%", md: "545px" } }}
-            >
-              <TextField
-                label="Description"
-                name="description"
-                value={award.description}
-                onChange={(e) => handleNestedChange(e, index, "awards")}
-                fullWidth
-              />
-            </Grid>
-          </Grid>
-        ))}
-        <Button
-          variant="outlined"
-          onClick={() => handleAdd("awards")}
-          sx={{
-            px: 2,
-            py: 2,
-            fontSize: "1rem",
-            borderRadius: 2,
-            mb: 3,
-            borderLeft: "4px solid #1976d2",
-            "&:focus": {
-              outline: "none",
-              backgroundColor: "transparent",
-              borderLeft: "4px solid #1976d2",
-            },
-            "&:active": {
-              backgroundColor: "transparent",
-              borderLeft: "4px solid #1976d2",
-            },
-          }}
-        >
-          + Add Award
-        </Button>
+  //       {/* Awards */}
+  //       <Typography variant="h6" mb={1}>
+  //         Awards
+  //       </Typography>
+  //       {formData.awards.map((award, index) => (
+  //         <Grid container spacing={2} mb={2} key={index}>
+  //           <Grid
+  //             item
+  //             xs={12}
+  //             md={6}
+  //             sx={{ width: { xs: "100%", md: "545px" } }}
+  //           >
+  //             <TextField
+  //               label="Award Name"
+  //               name="name"
+  //               value={award.name}
+  //               onChange={(e) => handleNestedChange(e, index, "awards")}
+  //               fullWidth
+  //             />
+  //           </Grid>
+  //           <Grid
+  //             item
+  //             xs={12}
+  //             md={6}
+  //             sx={{ width: { xs: "100%", md: "545px" } }}
+  //           >
+  //             <TextField
+  //               label="Description"
+  //               name="description"
+  //               value={award.description}
+  //               onChange={(e) => handleNestedChange(e, index, "awards")}
+  //               fullWidth
+  //             />
+  //           </Grid>
+  //         </Grid>
+  //       ))}
+  //       <Button
+  //         variant="outlined"
+  //         onClick={() => handleAdd("awards")}
+  //         sx={{
+  //           px: 2,
+  //           py: 2,
+  //           fontSize: "1rem",
+  //           borderRadius: 2,
+  //           mb: 3,
+  //           borderLeft: "4px solid #1976d2",
+  //           "&:focus": {
+  //             outline: "none",
+  //             backgroundColor: "transparent",
+  //             borderLeft: "4px solid #1976d2",
+  //           },
+  //           "&:active": {
+  //             backgroundColor: "transparent",
+  //             borderLeft: "4px solid #1976d2",
+  //           },
+  //         }}
+  //       >
+  //         + Add Award
+  //       </Button>
 
-        <Box mt={2} display="flex" justifyContent="center">
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            disabled={!isResumeReady || loading}
-            sx={{
-              px: 4,
-              py: 2,
-              borderRadius: 2,
-              fontSize: "1rem",
-            }}
-          >
-            {loading ? <CircularProgress size={24} /> : "Generate Resume"}
-          </Button>
-        </Box>
+  //       <Box mt={2} display="flex" justifyContent="center">
+  //         <Button
+  //           type="submit"
+  //           variant="contained"
+  //           color="primary"
+  //           disabled={!isResumeReady || loading}
+  //           sx={{
+  //             px: 4,
+  //             py: 2,
+  //             borderRadius: 2,
+  //             fontSize: "1rem",
+  //           }}
+  //         >
+  //           {loading ? <CircularProgress size={24} /> : "Generate Resume"}
+  //         </Button>
+  //       </Box>
 
-        {/* Message below button */}
-        {!isResumeReady && (
-          <Typography color="error" mt={1} textAlign="center" fontSize="0.9rem">
-            Please complete Basic Details, Education, Projects, and Skills to
-            generate your resume.
-          </Typography>
-        )}
-      </form>
+  //       {/* Message below button */}
+  //       {!isResumeReady && (
+  //         <Typography color="error" mt={1} textAlign="center" fontSize="0.9rem">
+  //           Please complete Basic Details, Education, Projects, and Skills to
+  //           generate your resume.
+  //         </Typography>
+  //       )}
+  //     </form>
+  //   </Box>
+  // );
+return (
+  <Box sx={{ mx: "auto", mt: -2, px: 0, overflowX: "hidden" }}>
+    <div sx={{overflowX:"auto"}}>
+    <ResumeProgressTracker formData={formData} />
+    </div>
+
+    {/* BASIC DETAILS */}
+    <Typography variant="h6" mb={1}>Basic Details</Typography>
+
+    <Box mb={2}>
+      <Typography><b>Name:</b> {formData.name}</Typography>
+      <Typography><b>Email:</b> {formData.email}</Typography>
+      <Typography><b>Phone:</b> {formData.phone}</Typography>
+      <Typography><b>GitHub:</b> {formData.github}</Typography>
+      <Typography><b>LinkedIn:</b> {formData.linkedin}</Typography>
     </Box>
-  );
+
+    <Divider sx={{ my: 3 }} />
+
+    {/* EDUCATION */}
+    <Typography variant="h6" mb={1}>Education</Typography>
+
+    {formData.education.map((edu, index) => (
+      <Box key={index} mb={2}>
+        <Typography><b>Level:</b> {edu.level}</Typography>
+        <Typography><b>Institution:</b> {edu.institution}</Typography>
+
+        {edu.level === "school" && (
+          <>
+            <Typography><b>Board:</b> {edu.board}</Typography>
+            <Typography><b>Grade:</b> {edu.grade}</Typography>
+          </>
+        )}
+
+        {edu.level === "college" && (
+          <>
+            <Typography><b>Degree:</b> {edu.degree}</Typography>
+            <Typography><b>Field:</b> {edu.field_of_study}</Typography>
+            <Typography><b>Grade:</b> {edu.grade}</Typography>
+          </>
+        )}
+
+        <Typography>
+          <b>Years:</b> {edu.start_year} - {edu.end_year}
+        </Typography>
+      </Box>
+    ))}
+
+    <Divider sx={{ my: 3 }} />
+
+    {/* SKILLS */}
+    <Typography variant="h6" mb={1}>Skills</Typography>
+
+    <Typography>{formData.skills}</Typography>
+
+    <Divider sx={{ my: 3 }} />
+
+    {/* PROJECTS */}
+    <Typography variant="h6" mb={1}>Projects</Typography>
+
+    {formData.projects.map((project, index) => (
+      <Box key={index} mb={2}>
+        <Typography><b>Title:</b> {project.title}</Typography>
+        <Typography><b>Description:</b> {project.description}</Typography>
+        <Typography><b>GitHub:</b> {project.github_url}</Typography>
+        <Typography>
+          <b>Date:</b> {project.start_date} - {project.end_date}
+        </Typography>
+
+        {project.files?.length > 0 && (
+          <Box mt={1}>
+            {project.files.map((file, i) => (
+              <Button
+                key={i}
+                size="small"
+                variant="outlined"
+                href={file.file_url}
+                target="_blank"
+                sx={{ mr: 1, mb: 1 }}
+              >
+                {file.file_name}
+              </Button>
+            ))}
+          </Box>
+        )}
+      </Box>
+    ))}
+
+    <Divider sx={{ my: 3 }} />
+
+    {/* INTERNSHIPS */}
+    <Typography variant="h6" mb={1}>Internships</Typography>
+
+    {formData.internships.map((intern, index) => (
+      <Box key={index} mb={2}>
+        <Typography><b>Company:</b> {intern.company}</Typography>
+        <Typography><b>Role:</b> {intern.role}</Typography>
+        <Typography>
+          <b>Date:</b> {intern.start_date} - {intern.end_date}
+        </Typography>
+        <Typography><b>Description:</b> {intern.description}</Typography>
+      </Box>
+    ))}
+
+    <Divider sx={{ my: 3 }} />
+
+    {/* CERTIFICATIONS */}
+    <Typography variant="h6" mb={1}>Certifications</Typography>
+
+    {formData.certifications.map((cert, index) => (
+      <Box key={index} mb={2}>
+        <Typography><b>Title:</b> {cert.title || cert.name}</Typography>
+        <Typography><b>Issuer:</b> {cert.issuer}</Typography>
+        <Typography><b>Date:</b> {cert.date}</Typography>
+
+        {cert.file_url && (
+          <Button
+            size="small"
+            variant="outlined"
+            href={cert.file_url}
+            target="_blank"
+            sx={{ mt: 1 }}
+          >
+            View Certificate
+          </Button>
+        )}
+      </Box>
+    ))}
+
+    <Divider sx={{ my: 3 }} />
+
+    {/* AWARDS */}
+    {/* <Typography variant="h6" mb={1}>Awards</Typography>
+
+    {formData.awards.map((award, index) => (
+      <Box key={index} mb={2}>
+        <Typography><b>Name:</b> {award.name}</Typography>
+        <Typography><b>Description:</b> {award.description}</Typography>
+      </Box>
+    ))} */}
+
+    <Box mt={4} display="flex" justifyContent="center">
+      <Button
+        variant="contained"
+        onClick={handleSubmit}
+        disabled={!isResumeReady || loading}
+        sx={{
+          px: 4,
+          py: 2,
+          borderRadius: 2,
+          fontSize: "1rem",
+        }}
+      >
+        {loading ? <CircularProgress size={24} /> : "Generate Resume"}
+      </Button>
+    </Box>
+
+    {!isResumeReady && (
+      <Typography color="error" mt={1} textAlign="center">
+        Please complete Basic Details, Education, Projects, and Skills to generate your resume.
+      </Typography>
+    )}
+  </Box>
+);
+
 }
 
 export default ResumeFormContainer;

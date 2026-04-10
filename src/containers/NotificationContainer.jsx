@@ -14,40 +14,33 @@ export default function NotificationContainer() {
 
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0); // Added state for unread count
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchNotifications();
   }, []);
 
-  // const fetchNotifications = async () => {
-  //   const res = await getNotifications(userId);
-  //   const apiNotifications = res.data.notifications || [];
+  const fetchNotifications = async () => {
+    try {
+      setLoading(true);
 
-  //   // const resumeNotifications =
-  //   //   JSON.parse(localStorage.getItem("resume_notifications")) || [];
+      const res = await getNotifications(userId);
 
-  //   // const combined = [...resumeNotifications, ...apiNotifications];
+      setNotifications(res.data.notifications || []);
+      setUnreadCount(res.data.unread_count || 0);
 
-  //   setNotifications(apiNotifications);
+      localStorage.setItem(
+        "unread_notification_count",
+        res.data.unread_count || 0,
+      );
 
-  //   const unread = apiNotifications.filter((n) => !n.is_read).length;
-
-  //   setUnreadCount(unread);
-  // };
-const fetchNotifications = async () => {
-  const res = await getNotifications(userId);
-
-  setNotifications(res.data.notifications || []);
-  setUnreadCount(res.data.unread_count || 0);
-
-  localStorage.setItem(
-    "unread_notification_count",
-    res.data.unread_count || 0
-  );
-
-  // Dispatch custom event to notify sidebar of count update
-  window.dispatchEvent(new Event('notificationCountUpdated'));
-};
+      window.dispatchEvent(new Event("notificationCountUpdated"));
+    } catch (err) {
+      console.error("Failed to fetch notifications", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleRead = async (id) => {
     await markNotificationRead(id);
@@ -60,7 +53,7 @@ const fetchNotifications = async () => {
   };
 
   return (
-    <Box p={3} style={{color:"black"}}>
+    <Box p={3} style={{ color: "black" }}>
       <Box display="flex" justifyContent="space-between" mb={2}>
         <Typography variant="h5" fontWeight="bold" color="black">
           Notifications
@@ -73,7 +66,7 @@ const fetchNotifications = async () => {
         )}
       </Box>
 
-      <NotificationList notifications={notifications} onRead={handleRead} />
+      <NotificationList notifications={notifications} onRead={handleRead} loading={loading} />
     </Box>
   );
 }

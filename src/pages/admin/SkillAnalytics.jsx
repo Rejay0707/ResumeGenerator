@@ -19,7 +19,11 @@ import {
   Tabs,
   Tab,
   CircularProgress,
+  IconButton,
 } from "@mui/material";
+import FileDownloadIcon from "@mui/icons-material/FileDownload"; // ADD THIS
+import * as XLSX from "xlsx";
+
 import {
   BarChart,
   Bar,
@@ -118,6 +122,39 @@ const SkillAnalytics = () => {
 
   const deptChartData = getTopSkillsData(filteredDeptData);
   const yearChartData = getTopSkillsData(filteredYearData);
+
+    // ADD THIS FUNCTION before return statement
+  const handleDownloadCSV = () => {
+    try {
+      const fileName = `skill-analytics-${activeTab === 0 ? 'department' : 'year'}-${new Date().toISOString().split('T')[0]}.csv`;
+      const tableData = activeTab === 0 ? filteredDeptData : filteredYearData;
+      
+      const csvData = [
+        ["Department/Year", "Skill", "Total Students", "Skill Score"],
+        ...tableData.map((item) => [
+          activeTab === 0 ? item.department : item.year,
+          item.skill,
+          item.total_students || "-",
+          item.skill_score
+        ])
+      ];
+
+      const ws = XLSX.utils.aoa_to_sheet(csvData);
+      const csv = XLSX.utils.sheet_to_csv(ws);
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement("a");
+      const url = URL.createObjectURL(blob);
+      link.setAttribute("href", url);
+      link.setAttribute("download", fileName);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      console.error("CSV export failed:", err);
+      alert("Failed to export CSV");
+    }
+  };
 
   const pieColors = [
     "#42a5f5",
@@ -337,9 +374,25 @@ const SkillAnalytics = () => {
           borderRadius: 4,
         }}
       >
-        <Typography variant="h6" mb={2}>
-          Detailed Skill Breakdown
-        </Typography>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 2,
+          }}
+        >
+          <Typography variant="h6">Detailed Skill Breakdown</Typography>
+          <IconButton
+            onClick={handleDownloadCSV}
+            color="primary"
+            size="small"
+            title="Download CSV"
+            sx={{ mr: 1 }}
+          >
+            <FileDownloadIcon />
+          </IconButton>
+        </Box>
 
         <TableContainer>
           <Table>

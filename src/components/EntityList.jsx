@@ -44,6 +44,8 @@ import {
   TableCell as DocxTableCell,
 } from "docx";
 import { saveAs } from "file-saver";
+// Add this to your imports
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
 
 export default function EntityList({
   items,
@@ -83,6 +85,39 @@ export default function EntityList({
   const handleDeleteCancel = () => {
     setDeleteDialogOpen(false);
     setDeleteId(null);
+  };
+
+  // CSV Download Handler
+  const handleDownloadCSV = () => {
+    try {
+      const fileName = `${entityType}-list.csv`;
+
+      // Create CSV data array
+      const wsData = [
+        columns.map((col) => col.label), // Headers
+        ...items.map((item) => columns.map((col) => item[col.key] || "-")),
+      ];
+
+      // Convert to sheet
+      const ws = XLSX.utils.aoa_to_sheet(wsData);
+
+      // Generate CSV string
+      const csv = XLSX.utils.sheet_to_csv(ws);
+
+      // Create blob and trigger download
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      const url = URL.createObjectURL(blob);
+      link.setAttribute("href", url);
+      link.setAttribute("download", fileName);
+      link.style.visibility = "hidden";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      console.error("CSV generation failed:", err);
+      alert("Failed to generate CSV. Please try again.");
+    }
   };
 
   // Dynamic columns
@@ -156,6 +191,7 @@ export default function EntityList({
                 ? [
                     { key: "name", label: "Name" },
                     { key: "email", label: "Email" },
+                    { key: "avatar", label: "Avatar" },
                     { key: "college", label: "College" },
                     { key: "department", label: "Department" },
                     { key: "subjects", label: "Subject(s) Taught" },
@@ -361,6 +397,16 @@ export default function EntityList({
               <TableChartIcon />
             </IconButton>
           </Tooltip>
+          <Tooltip title="Download as CSV">
+            <IconButton
+              onClick={handleDownloadCSV}
+              sx={{
+                color: "primary.main",
+              }}
+            >
+              <FileDownloadIcon />
+            </IconButton>
+          </Tooltip>
           <Button
             variant="contained"
             color="primary"
@@ -516,14 +562,16 @@ export default function EntityList({
                             <DeleteIcon fontSize="small" />
                           </IconButton>
                           {entityType === "students" && (
-                            <IconButton
-                              aria-label="reset-password"
-                              size="small"
-                              onClick={() => onResetPassword(row)}
-                              color="warning"
-                            >
-                              <LockResetIcon fontSize="small" />
-                            </IconButton>
+                            <Tooltip title="Reset Password">
+                              <IconButton
+                                aria-label="reset-password"
+                                size="small"
+                                onClick={() => onResetPassword(row)}
+                                color="warning"
+                              >
+                                <LockResetIcon fontSize="small" />
+                              </IconButton>
+                            </Tooltip>
                           )}
                         </Box>
                       </TableCell>

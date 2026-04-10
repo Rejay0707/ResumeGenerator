@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useNavigate, useLocation } from "react-router-dom";
-import logo1 from "../assets/logo1.png";
+import logo3 from "../assets/logo3.png";
 
 export default function TeacherSidebar() {
   const navigate = useNavigate();
@@ -38,7 +38,7 @@ export default function TeacherSidebar() {
     <Box
       sx={{
         width: 220,
-        bgcolor: "#0d47a1",
+        backgroundColor:"black",
         color: "white",
         minHeight: "100vh",
       }}
@@ -53,7 +53,7 @@ export default function TeacherSidebar() {
             mb: 2,
           }}
         >
-          <img src={logo1} alt="logo" style={{ width: "100%", maxWidth: "215px", height: "auto" }} />
+          <img src={logo3} alt="logo" style={{ width: "100%", maxWidth: "215px", height: "auto" }} />
         </Box>
       )}
       <List>

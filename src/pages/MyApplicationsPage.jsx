@@ -11,7 +11,7 @@ import {
   Chip,
 } from "@mui/material";
 
-export default function MyApplicationsPage({ applications = [] }) {
+export default function MyApplicationsPage({ applications = [], loading }) {
   return (
     <Box sx={{ p: { xs: 2, md: 4 } }}>
       <Typography variant="h5" fontWeight="bold" gutterBottom>
@@ -24,14 +24,26 @@ export default function MyApplicationsPage({ applications = [] }) {
           <Table sx={{ minWidth: 500 }}>
             <TableHead>
               <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
-                <TableCell><strong>Internship</strong></TableCell>
-                <TableCell><strong>Company</strong></TableCell>
-                <TableCell><strong>Status</strong></TableCell>
+                <TableCell>
+                  <strong>Internship</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Company</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Status</strong>
+                </TableCell>
               </TableRow>
             </TableHead>
 
             <TableBody>
-              {applications.length === 0 ? (
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={3} align="center">
+                    Loading applications...
+                  </TableCell>
+                </TableRow>
+              ) : applications.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={3} align="center">
                     No applications yet
@@ -49,8 +61,8 @@ export default function MyApplicationsPage({ applications = [] }) {
                           app.status === "approved"
                             ? "success"
                             : app.status === "rejected"
-                            ? "error"
-                            : "warning"
+                              ? "error"
+                              : "warning"
                         }
                         size="small"
                       />

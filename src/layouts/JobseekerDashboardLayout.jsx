@@ -19,7 +19,7 @@ import EducationSection from "../components/EducationSection";
 import ExperienceDetails from "../components/ExperienceDetails";
 import ProjectDetails from "../components/ProjectDetails";
 import SkillDetails from "../components/SkillDetails";
-import logo1 from "../assets/logo1.png";
+import logo3 from "../assets/logo3.png";
 
 const JobSeekerDashboard = () => {
   // ========= Global Form States =========
@@ -115,7 +115,7 @@ const JobSeekerDashboard = () => {
     <Box
       sx={{
         // width: { xs: "160px", sm: "240px" },
-        backgroundColor: "#2E3B55",
+        backgroundColor: "black",
         color: "white",
         // padding: { xs: "10px", sm: "20px" },
         height: "100%",
@@ -138,7 +138,7 @@ const JobSeekerDashboard = () => {
             }}
           >
             <img
-              src={logo1}
+              src={logo3}
               alt="logo"
               style={{
                 width: "100%",
@@ -226,7 +226,7 @@ const JobSeekerDashboard = () => {
         height: "100dvh",
         maxHeight: "100vh",
         overflowY: "auto",
-        backgroundColor: "#9292e2ff",
+        background: "linear-gradient(to right, #4F46E5 0%, #6366F1 50%, #4F46E5 100%)",
       }}
     >
       {/* AppBar for mobile */}

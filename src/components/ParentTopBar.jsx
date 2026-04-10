@@ -8,7 +8,7 @@ export default function ParentTopbar() {
     <Box
       sx={{
         height: 64,
-        bgcolor: "#333",
+        background: "linear-gradient(to right, #4F46E5 0%, #6366F1 50%, #4F46E5 100%)",
         display: "flex",
         alignItems: "center",
         justifyContent: "flex-end",

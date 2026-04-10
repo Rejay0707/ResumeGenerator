@@ -24,6 +24,7 @@ import AdminCollegeSettings from "./pages/admin/AdminCollegeSettings";
 import AdminResumeVerification from "./pages/admin/AdminResumeVerification";
 import AdminJobModeration from "./pages/admin/AdminJobModeration";
 import SkillAnalytics from "./pages/admin/SkillAnalytics";
+import AdminBilling from "./pages/admin/AdminBilling";
 
 import StudentDashboardLayout from "./layouts/StudentDashboardLayout";
 import StudentDashboardPage from "./pages/StudentDashboardPage";
@@ -38,6 +39,7 @@ import InternshipListContainer from "./containers/InternshipListContainer";
 import MyApplicationsContainer from "./containers/MyApplicationsContainer";
 import JobsPage from "./pages/JobsPage";
 import MyJobApplicationPage from "./pages/MyJobApplicationsPage";
+import StudentProfilePage from "./pages/StudentProfilePage";
 
 import TeacherDashboardLayout from "./layouts/TeacherDashboardLayout";
 import TeacherHome from "./containers/TeacherHome";
@@ -136,10 +138,11 @@ function App() {
         >
           <Route index element={<StudentDashboardPage />} />
 
+          <Route path="profile" element={<StudentProfilePage />} />
+
           <Route path="personalDetails" element={<PersonalDetailsPage />} />
           <Route path="education" element={<EducationPage />} />
           <Route path="internships" element={<InternshipTrackerContainer />} />
-          {/* ✅ NEW INTERNSHIP PORTAL */}
           <Route
             path="browse-internships"
             element={<InternshipListContainer />}
@@ -213,6 +216,7 @@ function App() {
             element={<AdminResumeVerification />}
           />
           <Route path="/admin/settings" element={<AdminCollegeSettings />} />
+          <Route path="billing" element={<AdminBilling />} />
         </Route>
         {/* {Job seekers dashboard */}
         <Route

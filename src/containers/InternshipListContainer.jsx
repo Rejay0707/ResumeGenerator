@@ -6,6 +6,7 @@ import InternshipListPage from "../pages/InternshipListPage";
 export default function InternshipListContainer() {
   const [internships, setInternships] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [pageLoading, setPageLoading] = useState(true);
 
   // ✅ Move useSelector to top level of component
   const user = useSelector((state) => state.auth.user);
@@ -16,10 +17,13 @@ export default function InternshipListContainer() {
 
   const fetchInternships = async () => {
     try {
+      setPageLoading(true);
       const res = await getInternships();
-      setInternships(res.data);
+      setInternships(res.data || []);
     } catch (err) {
       console.error(err);
+    } finally {
+      setPageLoading(false);
     }
   };
 
@@ -61,6 +65,7 @@ export default function InternshipListContainer() {
       internships={internships}
       onApply={handleApply}
       loading={loading}
+      pageLoading={pageLoading}
     />
   );
 }

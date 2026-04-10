@@ -29,8 +29,9 @@ import WorkIcon from "@mui/icons-material/Work"; //
 import GavelIcon from "@mui/icons-material/Gavel"; //
 import SettingsIcon from "@mui/icons-material/Settings";
 import AssessmentIcon from "@mui/icons-material/Assessment";
+import PaymentsIcon from "@mui/icons-material/Payments";
 import { Link, Outlet, useNavigate } from "react-router-dom";
-import logo1 from "../assets/logo1.png";
+import logo3 from "../assets/logo3.png";
 import useAuth from "../containers/AuthContainer";
 
 const drawerWidth = 240;
@@ -63,10 +64,10 @@ export default function ResponsiveSidebar() {
             mb: 1,
           }}
         >
-          <img src={logo1} alt="logo" style={{ width: "234px", height: 100 }} />
+          <img src={logo3} alt="logo" style={{ width: "234px", height: 100 }} />
         </Box>
       )}
-      <Toolbar />
+      {/* <Toolbar /> */}
 
       <List>
         {[
@@ -121,6 +122,11 @@ export default function ResponsiveSidebar() {
             to: "/admin/settings",
             icon: <SettingsIcon />,
           },
+          {
+            text: "Billing & Subscription",
+            to: "/admin/billing",
+            icon: <PaymentsIcon />,
+          },
         ].map(({ text, to, icon }) => (
           <ListItem
             button
@@ -148,6 +154,7 @@ export default function ResponsiveSidebar() {
           ml: { sm: `${drawerWidth}px` },
           background:
             "linear-gradient(to right, #4F46E5 0%, #6366F1 50%, #4F46E5 100%)",
+            
         }}
       >
         <Toolbar>
@@ -188,6 +195,7 @@ export default function ResponsiveSidebar() {
               borderRight: "5px solid rgba(29, 20, 20, 0.12)",
               backgroundColor: "black",
               color: "white",
+              overflowX: "hidden",
             },
           }}
           open
@@ -211,6 +219,7 @@ export default function ResponsiveSidebar() {
               boxSizing: "border-box",
               backgroundColor: "black",
               color: "white",
+              overflowX: "hidden",
             },
           }}
         >

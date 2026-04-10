@@ -429,7 +429,7 @@ const TeacherExamScores = () => {
           </Typography>
         </Box>
       </Paper>
-      // ... existing code ...
+      
       <Paper elevation={3} sx={{ p: 3 }}>
         <Typography variant="h6" sx={{ mb: 2 }}>
           Students
@@ -493,7 +493,7 @@ const TeacherExamScores = () => {
             : "Save Scores"}
         </Button>
       </Paper>
-      // ... existing code ...
+      
       <Paper elevation={3} sx={{ p: 3, mt: 3 }}>
         <Typography variant="h6" sx={{ mb: 2, color: "#1976d2" }}>
           📊 Existing Test Results

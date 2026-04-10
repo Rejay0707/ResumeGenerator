@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useNavigate, useLocation } from "react-router-dom";
-import logo1 from "../assets/logo1.png";
+import logo3 from "../assets/logo3.png";
 
 export default function ParentSidebar() {
   const navigate = useNavigate();
@@ -37,7 +37,7 @@ export default function ParentSidebar() {
     <Box
       sx={{
         width: 220,
-        bgcolor: "#4a148c",
+        backgroundColor:"black",
         color: "white",
         height: "100%", // 👈 fill parent height
         display: "flex",
@@ -56,7 +56,7 @@ export default function ParentSidebar() {
               mb: 2,
             }}
           >
-            <img src={logo1} alt="logo" style={{ width: "100%", maxWidth: "215px", height: "auto" }} />
+            <img src={logo3} alt="logo" style={{ width: "100%", maxWidth: "215px", height: "auto" }} />
           </Box>
         )}
         <List>
@@ -98,7 +98,7 @@ export default function ParentSidebar() {
       {!mobileOpen && (
         <Box
           sx={{
-            display: { xs: "block", md: "none" },
+            display: { xs: "block", lg: "none" },
             position: "fixed",
             top: 10,
             left: 10,
@@ -114,7 +114,7 @@ export default function ParentSidebar() {
       {/* Fixed sidebar on desktop */}
       <Box
         sx={{
-          display: { xs: "none", md: "block" },
+          display: { xs: "none", lg: "block" },
           position: "sticky", // 👈 sticks to top
           top: 0,
           height: "100vh", // fills full screen height and grows naturally with parent

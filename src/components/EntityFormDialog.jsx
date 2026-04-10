@@ -138,6 +138,7 @@ export default function EntityFormDialog({
       return [
         { key: "name", label: "Name", type: "text", required: true },
         { key: "email", label: "Email", type: "email", required: true },
+        { key: "avatar", label: "Avatar", type: "file", required: false },
         { key: "college", label: "College", type: "text", required: true },
         {
           key: "department",

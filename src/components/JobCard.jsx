@@ -26,6 +26,7 @@ export default function JobCard({ job, onApply, applyingJobId, appliedJobs }) {
         borderRadius: 3,
         boxShadow: 3,
         height: "100%",
+        width:"250px",
         display: "flex",
         flexDirection: "column",
         transition: "0.2s",

@@ -24,7 +24,7 @@ export default function ModerationFilters({
         >
           <MenuItem value="certificates">Certificates</MenuItem>
           <MenuItem value="projects">Projects</MenuItem>
-          <MenuItem value="portfolios">Portfolios</MenuItem>
+
         </Select>
       </FormControl>
 

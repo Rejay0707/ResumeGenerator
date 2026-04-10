@@ -3,7 +3,7 @@ import {
   uploadCertificate,
   getCertificates,
   deleteCertificate,
-  editCertificate
+  editCertificate,
 } from "../services/certificateApi";
 
 import CertificateUpload from "../components/certificates/CertificateUpload";
@@ -25,15 +25,22 @@ export default function CertificateContainer() {
 
   const [certificates, setCertificates] = useState([]);
   const [uploading, setUploading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchCertificates();
   }, []);
 
   const fetchCertificates = async () => {
-    const res = await getCertificates(userId);
-    console.log(res)
-    setCertificates(res.data);
+    try {
+      setLoading(true);
+      const res = await getCertificates(userId);
+      setCertificates(res.data || []);
+    } catch (err) {
+      console.error("Failed to fetch certificates", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // ✅ SINGLE RESPONSIBILITY: upload selected file
@@ -70,7 +77,7 @@ export default function CertificateContainer() {
       formData.append("title", updatedData.title);
       formData.append("issuer", updatedData.issuer);
       formData.append("issue_date", updatedData.issue_date);
-     formData.append("category", updatedData.category);
+      formData.append("category", updatedData.category);
 
       if (newFile) {
         formData.append("file", newFile);
@@ -127,7 +134,18 @@ export default function CertificateContainer() {
         Your Certificates
       </Typography>
 
-      {certificates.length === 0 ? (
+      {loading ? (
+        <Box
+          sx={{
+            mt: 4,
+            textAlign: "center",
+          }}
+        >
+          <Typography color="text.secondary">
+            Loading certificates...
+          </Typography>
+        </Box>
+      ) : certificates.length === 0 ? (
         <Box
           sx={{
             mt: 4,

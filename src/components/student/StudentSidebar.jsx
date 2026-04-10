@@ -12,6 +12,7 @@ import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { getNotifications } from "../../services/notificationApi";
 import { getPlacementScore } from "../../services/placementApi";
+
 import {
   Box,
   List,
@@ -26,7 +27,8 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import { Badge } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
-import logo1 from "../../assets/logo1.png";
+// import logo1 from "../../assets/logo1.png";
+import logo3 from "../../assets/logo3.png"
 import WorkIcon from "@mui/icons-material/Work";
 
 export default function StudentSidebar() {
@@ -49,7 +51,7 @@ export default function StudentSidebar() {
 
     try {
       const res = await getPlacementScore(studentId);
-      console.log(studentId)
+      console.log(studentId);
 
       setPlacementScore(res.data.placement_score);
       setPlacementStatus(res.data.status);
@@ -140,6 +142,11 @@ export default function StudentSidebar() {
       icon: <DashboardIcon fontSize="small" />,
     },
     {
+      label: "Profile",
+      path: "/student/dashboard/profile",
+      icon: <PersonIcon fontSize="small" />,
+    },
+    {
       label: "Personal Details",
       path: "/student/dashboard/personalDetails",
       icon: <PersonIcon fontSize="small" />,
@@ -217,11 +224,13 @@ export default function StudentSidebar() {
     <Box
       sx={{
         width: 220,
-        bgcolor: "#122d47",
+        backgroundColor:"black",
         color: "white",
-        height: "100%",
+        height: "100vh",
         display: "flex",
         flexDirection: "column",
+        overflow: "hidden",
+        overflowY:"auto"
       }}
     >
       <Box>
@@ -229,7 +238,7 @@ export default function StudentSidebar() {
         {!isMobile && (
           <Box sx={{ mb: 2 }}>
             <img
-              src={logo1}
+              src={logo3}
               alt="logo"
               style={{
                 width: "100%",

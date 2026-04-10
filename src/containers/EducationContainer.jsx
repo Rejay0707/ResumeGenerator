@@ -39,13 +39,17 @@ export default function EducationContainer() {
   const user = JSON.parse(localStorage.getItem("user"));
   const userId = user?.id;
 
+  const [loading, setLoading] = useState(true);
+
   const [list, setList] = useState([]);
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState(emptyForm);
 
   const fetchEducation = async () => {
+    setLoading(true);
     const res = await getEducation(userId);
     setList(res.data || []);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -128,7 +132,18 @@ export default function EducationContainer() {
         )}
       </Box>
 
-      {list.length === 0 ? (
+      {loading ? (
+        <Box
+          sx={{
+            mt: 4,
+            p: 4,
+            textAlign: "center",
+            color: "text.secondary",
+          }}
+        >
+          <Typography variant="body2">Loading education...</Typography>
+        </Box>
+      ) : list.length === 0 ? (
         <Box
           sx={{
             mt: 4,

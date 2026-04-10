@@ -1,9 +1,9 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import ParentProfileCard from "../components/ParentProfileCard";
+import StudentProfileCard from "../components/student/StudentProfileCard";
 import { Box, Container } from "@mui/material";
 
-export default function ParentProfilePage() {
+export default function StudentProfilePage() {
   const user = useSelector((state) => state.auth.user);
 
   if (!user) return null;
@@ -11,7 +11,7 @@ export default function ParentProfilePage() {
   return (
     <Container maxWidth="sm">
       <Box mt={4}>
-        <ParentProfileCard user={user} />
+        <StudentProfileCard user={user} />
       </Box>
     </Container>
   );
